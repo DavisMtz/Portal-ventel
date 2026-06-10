@@ -485,7 +485,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
     <span class="logo-divider"></span>
     <span class="logo-sub">Promociones</span>
   </div>
-  <a class="back-link" href="javascript:void(0)" onclick="goToPortal()">← <span>Portal principal</span></a>
+  <a class="back-link" id="portalNavLink" href="<?= APP_URL ?>" target="_top" onclick="handlePortalNav(event,this)">← <span>Portal principal</span></a>
   <div class="clock-pill" id="clockPill">
     <span class="clock-dot"></span>
     <span class="clock-time" id="clockTime">--:--:--</span>
@@ -597,9 +597,12 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 </main>
 
 <script>
-function goToPortal(){
-  const base = window.location.href.split('?')[0];
-  window.location.href = base;
+function handlePortalNav(e, link) {
+  const href = link.getAttribute('href') || '';
+  if (href.indexOf('<?') > -1 || !href.startsWith('http')) {
+    e.preventDefault();
+    window.location.href = window.location.href.split('?')[0];
+  }
 }
 
 let globalData = null;

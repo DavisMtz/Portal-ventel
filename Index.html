@@ -348,7 +348,7 @@ mark{background:var(--rosa-soft);color:var(--rosa-deep);border-radius:3px;paddin
     <button class="nav-tab" data-sec="formatos" onclick="switchSec('formatos',this)">📋 Formatos <span class="tab-n" id="n-formatos">…</span></button>
     <button class="nav-tab" data-sec="pdepago" onclick="switchSec('pdepago',this)">💳 Pago Web <span class="tab-n" id="n-pdepago">…</span></button>
     <button class="nav-tab" data-sec="formaspago" onclick="switchSec('formaspago',this)">💰 Formas de Pago</button>
-    <a class="nav-tab nav-ext" href="javascript:void(0)" onclick="goToPromos()">✨ Monitor Promos ↗</a>
+    <a class="nav-tab nav-ext" id="promoNavLink" href="<?= APP_URL ?>?page=promociones" target="_top" onclick="handlePromoNav(event,this)">✨ Monitor Promos ↗</a>
   </div>
 </nav>
 
@@ -713,9 +713,14 @@ function switchSec(id, btn) {
   if (window.gsap && !RM)
     gsap.fromTo(target, { opacity:0, y:12 }, { opacity:1, y:0, duration:.38, ease:'power3.out' });
 }
-function goToPromos() {
-  const base = window.location.href.split('?')[0];
-  window.location.href = base + '?page=promociones';
+function handlePromoNav(e, link) {
+  const href = link.getAttribute('href') || '';
+  // Si la plantilla GAS no procesó la variable, el href contendrá "<?="
+  if (href.indexOf('<?') > -1 || !href.startsWith('http')) {
+    e.preventDefault();
+    window.location.href = '?page=promociones';
+  }
+  // Si GAS inyectó la URL correcta, target="_top" del <a> se encarga de la navegación
 }
 
 /* ── DATA ── */

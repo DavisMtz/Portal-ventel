@@ -11,17 +11,20 @@
 
 function doGet(e) {
   const page = (e && e.parameter && e.parameter.page) || 'portal';
+  const appUrl = ScriptApp.getService().getUrl();
 
   if (page === 'promociones') {
-    return HtmlService.createTemplateFromFile('Promociones')
-      .evaluate()
+    const t = HtmlService.createTemplateFromFile('Promociones');
+    t.APP_URL = appUrl;
+    return t.evaluate()
       .setTitle('Monitor de Promociones | Liverpool · VENTEL')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
 
-  return HtmlService.createTemplateFromFile('Index')
-    .evaluate()
+  const t = HtmlService.createTemplateFromFile('Index');
+  t.APP_URL = appUrl;
+  return t.evaluate()
     .setTitle('Portal VENTEL · Liverpool')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
