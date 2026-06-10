@@ -10,22 +10,15 @@
 // ── 1. ROUTING Y RENDERIZADO ──────────────────────────────────────────────────
 
 function doGet(e) {
-  const page = (e && e.parameter && e.parameter.page) || 'portal';
-  const appUrl = ScriptApp.getService().getUrl();
+  var page = (e && e.parameter && e.parameter.page) || 'portal';
+  var appUrl = ScriptApp.getService().getUrl();
+  var isPromos = (page === 'promociones');
 
-  if (page === 'promociones') {
-    const t = HtmlService.createTemplateFromFile('Promociones');
-    t.APP_URL = appUrl;
-    return t.evaluate()
-      .setTitle('Monitor de Promociones | Liverpool · VENTEL')
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1');
-  }
+  var template = HtmlService.createTemplateFromFile(isPromos ? 'Promociones' : 'Index');
+  template.APP_URL = appUrl;
 
-  const t = HtmlService.createTemplateFromFile('Index');
-  t.APP_URL = appUrl;
-  return t.evaluate()
-    .setTitle('Portal VENTEL · Liverpool')
+  return template.evaluate()
+    .setTitle(isPromos ? 'Monitor de Promociones | Liverpool · VENTEL' : 'Portal VENTEL · Liverpool')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
