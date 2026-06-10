@@ -899,6 +899,7 @@ function handlePortalNav(e, link) {
 }
 
 let globalData = null;
+let promosFresh = false; // true cuando ya respondió Apps Script (no el caché local)
 let activePromosToday = [];
 let parsedPromos = [];
 let currentCalendarFilter = 'activos';
@@ -923,14 +924,20 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', () => backTop.classList.toggle('show', window.scrollY > 600), { passive:true });
   backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior: RM ? 'auto' : 'smooth' }));
 
+  // SWR: pinta al instante con el último dato local y revalida contra Apps Script
+  try {
+    const cached = JSON.parse(localStorage.getItem('ventel-promos-v1') || 'null');
+    if (cached && cached.data) handleDataSuccess(cached.data, true);
+  } catch(e){}
+
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
-      .withSuccessHandler(handleDataSuccess)
+      .withSuccessHandler(d => handleDataSuccess(d, false))
       .withFailureHandler(handleDataError)
       .fetchApplicationData();
   } else {
     document.getElementById('previewBanner').style.display = 'block';
-    setTimeout(() => handleDataSuccess(buildMockData()), 600);
+    setTimeout(() => handleDataSuccess(buildMockData(), false), 600);
   }
 });
 
@@ -966,8 +973,13 @@ function switchTab(tabId, btn){
   if (window.gsap && !RM) gsap.fromTo(target, {opacity:0,y:15}, {opacity:1,y:0,duration:.45,ease:'power3.out'});
 }
 
-function handleDataSuccess(data){
-  if (data.status === 'error') { handleDataError(data.error); return; }
+function handleDataSuccess(data, fromCache){
+  if (!data || data.status === 'error') { if (!fromCache) handleDataError(data && data.error); return; }
+  if (fromCache && promosFresh) return; // ya están pintados los datos frescos
+  if (!fromCache) {
+    promosFresh = true;
+    try { localStorage.setItem('ventel-promos-v1', JSON.stringify({ t: Date.now(), data: data })); } catch(e){}
+  }
   globalData = data;
   refreshActiveData();
   document.getElementById('promos-loader').style.display = 'none';
@@ -991,6 +1003,7 @@ function refreshActiveData(){
 }
 
 function handleDataError(error){
+  if (globalData) return; // el caché local ya pintó contenido; no lo tapamos con el error
   document.getElementById('promos-loader').innerHTML = `<div class="empty-state"><h3>Error de conexión</h3><p>${error}</p></div>`;
   document.getElementById('calendar-loader').innerHTML = `<div class="empty-state"><h3>Error de conexión</h3><p>No se pudo sincronizar el calendario.</p></div>`;
 }

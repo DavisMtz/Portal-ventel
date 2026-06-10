@@ -83,7 +83,7 @@
   --content-bg:#15181E;
   --surface:#1C2027;
   --surface-2:#22272F;
-  --ink:#F1EDEF; --ink-soft:#A7A2AC; --ink-faint:#6F6A73;
+  --ink:#F1EDEF; --ink-soft:#A7A2AC; --ink-faint:#8B8590;
   --line:#2C313A; --line-soft:#262B33;
   --brand-tint:rgba(225,0,152,.16); --brand-soft:rgba(225,0,152,.34);
   /* La barra lateral conserva el rosa Liverpool base en todos los temas */
@@ -287,20 +287,10 @@ main{flex:1}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
 
 /* ════════════════════════════════════════════════════════════
-   FX gsap.com · spotlight que sigue el cursor + realce de borde
-   Compartido por las tarjetas de contenido (herramientas,
-   presentaciones, formatos, pagos). Cada tarjeta expone
-   --spot-x / --spot-y que el script actualiza con el puntero.
+   Hover de tarjetas de contenido: solo elevación + borde acentuado
+   (un efecto por tarjeta para no saturar y rendir mejor).
 ════════════════════════════════════════════════════════════ */
-.tool-card,.pres-card,.pago-card,.fmt-card{--spot-x:50%;--spot-y:50%;--card-glow:var(--accent,var(--brand))}
 .tool-card>*,.pres-card>*,.pago-card>*,.fmt-card>*{position:relative;z-index:1}
-.tool-card::after,.pago-card::after,.fmt-card::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
-  background:radial-gradient(340px circle at var(--spot-x) var(--spot-y),
-    color-mix(in srgb,var(--card-glow) 16%,transparent),transparent 60%);
-  opacity:0;transition:opacity .45s ease;
-}
-.tool-card:hover::after,.pago-card:hover::after,.fmt-card:hover::after{opacity:1}
 
 /* — Herramienta — */
 .tool-card{
@@ -315,10 +305,6 @@ main{flex:1}
   transform:scaleX(.34);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .tool-card:hover::before{transform:scaleX(1)}
 .tool-card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--accent,var(--brand)) 55%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 42%,var(--line))}
-.tool-card .tc-icon{transition:transform .45s cubic-bezier(.34,1.4,.5,1),box-shadow .4s ease}
-.tool-card:hover .tc-icon{transform:translateY(-2px) scale(1.06) rotate(-3deg)}
-.tool-card .tc-name{transition:color .35s ease}
-.tool-card:hover .tc-name{color:var(--accent,var(--brand))}
 .tc-top{display:flex;align-items:center;gap:.8rem}
 .tc-icon{
   width:48px;height:48px;border-radius:14px;flex-shrink:0;color:#fff;
@@ -347,13 +333,8 @@ main{flex:1}
 
 /* — Presentación — */
 .pres-card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:20px;padding:1.4rem;box-shadow:var(--sh-sm);display:flex;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;will-change:transform;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),border-color .4s ease}
-.pres-card::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--violet) 16%,transparent),transparent 70%);transition:transform .55s cubic-bezier(.22,1,.36,1),opacity .45s ease;z-index:0}
-.pres-card::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(340px circle at var(--spot-x) var(--spot-y),color-mix(in srgb,var(--violet) 15%,transparent),transparent 60%);opacity:0;transition:opacity .45s ease}
-.pres-card:hover::after{opacity:1}
-.pres-card:hover::before{transform:scale(1.55);opacity:.8}
+.pres-card::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--violet) 16%,transparent),transparent 70%);z-index:0}
 .pres-card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--violet) 50%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--violet) 38%,var(--line))}
-.pres-card .pres-icon{transition:transform .45s cubic-bezier(.34,1.4,.5,1)}
-.pres-card:hover .pres-icon{transform:translateY(-2px) scale(1.06) rotate(-3deg)}
 .pres-top{display:flex;align-items:center;gap:.8rem}
 .pres-icon{width:48px;height:48px;border-radius:14px;flex-shrink:0;color:#fff;background:linear-gradient(145deg,#8B5CF6,#6D28D9);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px -8px rgba(91,33,182,.6),inset 0 1px 0 rgba(255,255,255,.35)}
 .pres-icon .ic{width:22px;height:22px}
@@ -386,8 +367,6 @@ main{flex:1}
 .fmt-card::before{content:'';position:absolute;left:0;top:0;width:4px;height:100%;z-index:2;background:linear-gradient(180deg,var(--accent,var(--brand)),color-mix(in srgb,var(--accent,var(--brand)) 40%,transparent));transform:scaleY(.4);transform-origin:top;transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .fmt-card:hover::before{transform:scaleY(1)}
 .fmt-card:hover{transform:translateY(-5px);box-shadow:0 24px 44px -22px color-mix(in srgb,var(--accent,var(--brand)) 52%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 38%,var(--line))}
-.fmt-card .fmt-emoji{transition:transform .45s cubic-bezier(.34,1.4,.5,1)}
-.fmt-card:hover .fmt-emoji{transform:scale(1.08) rotate(-4deg)}
 .fmt-head{display:flex;align-items:center;gap:.7rem}
 .fmt-emoji{width:38px;height:38px;border-radius:11px;flex-shrink:0;color:var(--accent,var(--brand));background:color-mix(in srgb,var(--accent,var(--brand)) 12%,var(--surface));display:flex;align-items:center;justify-content:center}
 .fmt-emoji .ic{width:19px;height:19px}
@@ -405,8 +384,6 @@ main{flex:1}
 .pago-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;z-index:2;background:linear-gradient(90deg,var(--accent,var(--brand)),color-mix(in srgb,var(--accent,var(--brand)) 45%,var(--brand-bright)));transform:scaleX(.34);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .pago-card:hover::before{transform:scaleX(1)}
 .pago-card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--accent,var(--brand)) 52%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 40%,var(--line))}
-.pago-card .pago-icon{transition:transform .45s cubic-bezier(.34,1.4,.5,1)}
-.pago-card:hover .pago-icon{transform:translateY(-2px) scale(1.06) rotate(-3deg)}
 .pago-head{display:flex;align-items:center;gap:.8rem}
 .pago-icon{width:46px;height:46px;border-radius:13px;flex-shrink:0;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--accent,var(--brand)) 88%,#fff),var(--accent,var(--brand)));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px -8px color-mix(in srgb,var(--accent,var(--brand)) 72%,transparent),inset 0 1px 0 rgba(255,255,255,.35)}
 .pago-icon .ic{width:21px;height:21px}
@@ -466,8 +443,8 @@ main{flex:1}
 .qa-ic{width:42px;height:42px;border-radius:12px;flex-shrink:0;color:#fff;background:var(--accent,var(--brand));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 16px -9px color-mix(in srgb,var(--accent,var(--brand)) 70%,transparent)}
 .qa-ic .ic{width:20px;height:20px}
 .qa-body{min-width:0;flex:1}
-.qa-name{font-weight:700;font-size:.92rem;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qa-sub{font-size:.74rem;color:var(--ink-soft);margin-top:.12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qa-name{display:block;font-weight:700;font-size:.92rem;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qa-sub{display:block;font-size:.74rem;color:var(--ink-soft);margin-top:.12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qa-arrow{color:var(--ink-faint);flex-shrink:0;transition:var(--tr)}
 .qa-arrow .ic{width:17px;height:17px}
 .qa-card:hover .qa-arrow{color:var(--accent,var(--brand));transform:translateX(3px)}
@@ -644,6 +621,130 @@ main{flex:1}
 ::-webkit-scrollbar-thumb:hover{background:var(--brand-soft)}
 
 /* ════════════════════════════════════════════════════════════
+   ACCESIBILIDAD · foco visible consistente
+════════════════════════════════════════════════════════════ */
+a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+  outline:2.5px solid var(--brand);outline-offset:2px;border-radius:8px;
+}
+.side-link:focus-visible,.theme-btn:focus-visible{outline-color:#fff}
+
+/* ════════════════════════════════════════════════════════════
+   SKELETONS · carga percibida (sustituyen al spinner)
+════════════════════════════════════════════════════════════ */
+.sk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+.sk-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1.4rem;display:flex;flex-direction:column;gap:.85rem}
+.sk-line{border-radius:8px;background:linear-gradient(90deg,var(--surface-2) 25%,var(--line-soft) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:skShimmer 1.4s ease infinite}
+@keyframes skShimmer{to{background-position:-200% 0}}
+.sk-ic{width:48px;height:48px;border-radius:14px}
+.sk-t{height:18px;width:60%}
+.sk-s{height:12px;width:90%}
+.sk-s.short{width:70%}
+.sk-btn{height:38px;width:100%;border-radius:11px;margin-top:.3rem}
+.sk-row{height:46px;border-radius:12px}
+.sk-qa{height:74px;border-radius:var(--rad)}
+@media(prefers-reduced-motion:reduce){.sk-line{animation:none}}
+
+/* ════════════════════════════════════════════════════════════
+   AVISOS DEL EQUIPO (hoja "Avisos" — banner descartable)
+════════════════════════════════════════════════════════════ */
+.avisos-wrap{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.4rem}
+.aviso{display:flex;align-items:flex-start;gap:.7rem;border-radius:14px;padding:.8rem 1rem;font-size:.88rem;font-weight:600;line-height:1.45;box-shadow:var(--sh-xs)}
+.aviso .ic{width:18px;height:18px;flex-shrink:0;margin-top:.1rem}
+.aviso.info{background:var(--info-bg);color:var(--info);border:1px solid color-mix(in srgb,var(--info) 24%,transparent)}
+.aviso.warn{background:var(--warn-bg);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 26%,transparent)}
+.aviso.alert{background:var(--alert-bg);color:var(--alert);border:1px solid color-mix(in srgb,var(--alert) 26%,transparent)}
+.aviso.ok{background:var(--ok-bg);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 24%,transparent)}
+.aviso-close{margin-left:auto;flex-shrink:0;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;background:transparent;color:inherit;display:flex;align-items:center;justify-content:center;opacity:.65;transition:opacity .2s,background .2s}
+.aviso-close:hover{opacity:1;background:rgba(0,0,0,.08)}
+.aviso-close .ic{width:13px;height:13px;margin:0}
+
+/* ════════════════════════════════════════════════════════════
+   WIDGET PROMOS DEL DÍA (dashboard → Monitor de Promociones)
+════════════════════════════════════════════════════════════ */
+.promo-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:1.05rem}
+.promo-strip .stat-card.cta{justify-content:center;align-items:flex-start;background:var(--grad-brand);border-color:transparent;color:#fff}
+.promo-strip .stat-card.cta .stat-name{color:rgba(255,255,255,.92);font-weight:700}
+.promo-strip .stat-card.cta .go{color:rgba(255,255,255,.85)}
+.promo-strip .stat-card.cta:hover .go{color:#fff}
+
+/* ════════════════════════════════════════════════════════════
+   FAVORITOS · botón pin en tarjetas y accesos rápidos
+════════════════════════════════════════════════════════════ */
+.pin-btn{width:30px;height:30px;border-radius:9px;border:none;cursor:pointer;background:transparent;color:var(--ink-faint);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:auto;transition:color .2s,background .2s}
+.pin-btn .ic{width:16px;height:16px}
+.pin-btn:hover{background:var(--brand-tint);color:var(--brand)}
+.pin-btn.pinned{color:var(--brand)}
+.pin-btn.pinned svg{fill:currentColor}
+.qa-card .pin-btn{margin-left:0}
+.qa-hint{font-size:.78rem;font-weight:600;color:var(--ink-faint);margin-left:.4rem;letter-spacing:0;text-transform:none}
+
+/* ════════════════════════════════════════════════════════════
+   TARJETA HERRAMIENTA · divulgación progresiva ("Ver acceso")
+════════════════════════════════════════════════════════════ */
+.tc-more{display:none;flex-direction:column;gap:.85rem}
+.tool-card.expanded .tc-more{display:flex}
+.tc-toggle{display:inline-flex;align-items:center;gap:.4rem;border:none;background:transparent;cursor:pointer;padding:.15rem 0;font-size:.8rem;font-weight:700;color:var(--ink-soft);transition:color .2s;align-self:flex-start}
+.tc-toggle:hover{color:var(--brand)}
+.tc-toggle .ic{width:14px;height:14px;transition:transform .25s ease}
+.tool-card.expanded .tc-toggle .ic{transform:rotate(180deg)}
+
+/* Botón discreto "reportar enlace caído" */
+.btn-report{width:34px;height:34px;align-self:center;border-radius:9px;border:none;cursor:pointer;background:transparent;color:var(--ink-faint);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color .2s,background .2s}
+.btn-report .ic{width:15px;height:15px}
+.btn-report:hover{background:var(--warn-bg);color:var(--warn)}
+.btn-report.sent{color:var(--ok);pointer-events:none}
+
+/* ════════════════════════════════════════════════════════════
+   FORMAS DE PAGO · barra de anclas sticky + tiendas colapsadas
+════════════════════════════════════════════════════════════ */
+.fp-nav{position:sticky;top:64px;z-index:30;display:flex;gap:.45rem;overflow-x:auto;padding:.55rem .2rem;margin:-.4rem 0 1.6rem;background:color-mix(in srgb,var(--content-bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.fp-nav::-webkit-scrollbar{display:none}
+.fp-nav-chip{flex-shrink:0;border:1.5px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:999px;padding:.42rem .9rem;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:var(--tr)}
+.fp-nav-chip:hover{border-color:var(--brand-soft);color:var(--brand)}
+.fp-nav-chip.active{background:var(--grad-brand);border-color:transparent;color:#fff}
+.store-grid.collapsed .store-card:nth-child(n+7){display:none}
+.stores-toggle{margin-top:.9rem;border:1.5px dashed var(--line);background:transparent;color:var(--ink-soft);border-radius:11px;padding:.6rem 1.1rem;font-size:.83rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem;transition:var(--tr)}
+.stores-toggle:hover{border-color:var(--brand-soft);color:var(--brand)}
+.stores-toggle .ic{width:15px;height:15px;transition:transform .25s}
+.stores-toggle.open .ic{transform:rotate(180deg)}
+
+/* ════════════════════════════════════════════════════════════
+   COPIABLES · datos de pago que se copian con un clic
+════════════════════════════════════════════════════════════ */
+.copyable{cursor:pointer;position:relative;transition:background .2s,border-color .2s}
+.copyable:hover{background:var(--brand-tint)}
+.copyable::after{content:'Copiar';position:absolute;top:.3rem;right:.5rem;font-family:var(--f-body);font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);opacity:0;transition:opacity .2s}
+.copyable:hover::after{opacity:1}
+.ref-block.copyable::after,.conv-num.copyable::after{display:none}
+.ref-block.copyable:hover,.conv-num.copyable:hover{box-shadow:0 0 0 2.5px var(--brand-soft)}
+
+/* ════════════════════════════════════════════════════════════
+   BÚSQUEDA · coachmark de bienvenida + búsquedas recientes
+════════════════════════════════════════════════════════════ */
+.coachmark{position:absolute;top:calc(100% + 12px);left:0;z-index:70;background:var(--grad-ink);color:#fff;border-radius:13px;padding:.75rem 1rem;font-size:.84rem;font-weight:600;line-height:1.45;max-width:300px;box-shadow:var(--sh-lg);display:flex;gap:.6rem;align-items:flex-start}
+.coachmark::before{content:'';position:absolute;top:-6px;left:26px;width:12px;height:12px;background:var(--grad-ink);transform:rotate(45deg)}
+.coachmark kbd{font-family:var(--f-mono);font-size:.78em;font-weight:700;background:rgba(255,255,255,.18);border-radius:5px;padding:.1rem .4rem}
+.coachmark button{margin-left:.2rem;flex-shrink:0;border:none;background:rgba(255,255,255,.16);color:#fff;border-radius:8px;padding:.3rem .65rem;font-size:.74rem;font-weight:700;cursor:pointer;align-self:center}
+.coachmark button:hover{background:rgba(255,255,255,.28)}
+.sd-recent-lbl{display:flex;align-items:center;justify-content:space-between;font-size:.64rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);padding:.95rem 1.15rem .4rem}
+.sd-recent-lbl button{border:none;background:transparent;color:var(--brand);font-size:.68rem;font-weight:700;cursor:pointer;letter-spacing:0;text-transform:none}
+
+/* ════════════════════════════════════════════════════════════
+   BOTTOM NAV · navegación fija en móvil
+════════════════════════════════════════════════════════════ */
+.bottom-nav{display:none}
+@media(max-width:720px){
+  body{padding-bottom:66px}
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;
+    background:var(--top-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-top:1px solid var(--top-border);padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom))}
+  .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.18rem;border:none;background:transparent;cursor:pointer;padding:.4rem .2rem;border-radius:11px;color:var(--ink-faint);font-family:var(--f-body);font-size:.6rem;font-weight:700;letter-spacing:.02em;transition:color .2s}
+  .bn-item .ic{width:21px;height:21px}
+  .bn-item.active{color:var(--brand)}
+  .bn-item:active{background:var(--brand-tint)}
+}
+
+/* ════════════════════════════════════════════════════════════
    RESPONSIVE
 ════════════════════════════════════════════════════════════ */
 @media(max-width:1024px){
@@ -754,6 +855,7 @@ main{flex:1}
 
   <!-- ══ INICIO / DASHBOARD ══ -->
   <section id="sec-inicio" class="view-section active">
+    <div class="avisos-wrap" id="avisosWrap"></div>
     <div class="hero">
       <div class="hero-l">
         <div class="hero-greet"><span id="heroGreet">Buen día</span> · Equipo VENTEL</div>
@@ -766,11 +868,17 @@ main{flex:1}
       </div>
     </div>
 
-    <div class="dash-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-7M21 20H3"/></svg> Resumen <span class="dl-line"></span></div>
-    <div class="stat-grid" id="statGrid"></div>
+    <div class="dash-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/></svg> Hoy en promociones <span class="dl-line"></span></div>
+    <div class="promo-strip" id="promoStrip">
+      <div class="sk-card sk-line sk-qa" style="height:118px"></div>
+      <div class="sk-card sk-line sk-qa" style="height:118px"></div>
+      <div class="sk-card sk-line sk-qa" style="height:118px"></div>
+    </div>
 
-    <div class="dash-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Accesos rápidos <span class="dl-line"></span></div>
-    <div class="qa-grid" id="qaGrid"><div class="loader" style="grid-column:1/-1"><div class="spinner"></div><p>Cargando accesos…</p></div></div>
+    <div class="dash-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Tus accesos rápidos <span class="qa-hint">se ordenan según tu uso · fíjalos con el pin</span><span class="dl-line"></span></div>
+    <div class="qa-grid" id="qaGrid">
+      <div class="sk-line sk-qa"></div><div class="sk-line sk-qa"></div><div class="sk-line sk-qa"></div><div class="sk-line sk-qa"></div>
+    </div>
 
     <div class="dash-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg> Guías operativas <span class="dl-line"></span></div>
     <div class="guide-grid">
@@ -815,7 +923,14 @@ main{flex:1}
       </div>
       <span class="result-count-badge" id="rc-herramientas"></span>
     </div>
-    <div id="ld-herramientas" class="loader"><div class="spinner"></div><p>Cargando herramientas…</p></div>
+    <div id="ld-herramientas" class="sk-grid" aria-hidden="true">
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div><div class="sk-line sk-btn"></div></div>
+    </div>
     <div id="gr-herramientas" class="cards-grid"></div>
   </section>
 
@@ -833,7 +948,9 @@ main{flex:1}
       </div>
       <span class="result-count-badge" id="rc-paqueterias"></span>
     </div>
-    <div id="ld-paqueterias" class="loader"><div class="spinner"></div><p>Cargando paqueterías…</p></div>
+    <div id="ld-paqueterias" aria-hidden="true" style="display:flex;flex-direction:column;gap:.7rem;">
+      <div class="sk-line sk-row"></div><div class="sk-line sk-row"></div><div class="sk-line sk-row"></div><div class="sk-line sk-row"></div><div class="sk-line sk-row"></div><div class="sk-line sk-row"></div>
+    </div>
     <div id="gr-paqueterias"></div>
   </section>
 
@@ -842,8 +959,18 @@ main{flex:1}
     <div class="sec-head">
       <span class="sec-eyebrow"><span class="dot"></span>Guía operativa</span>
       <h1 class="sec-title">Formas de pago, <em>sin enredos</em></h1>
-      <p class="sec-sub">Métodos de pago, referencias bancarias y procesos de validación explicados de forma visual.</p>
+      <p class="sec-sub">Métodos de pago, referencias bancarias y procesos de validación explicados de forma visual. Toca cualquier dato (CLABE, convenio, RFC) para copiarlo.</p>
     </div>
+
+    <!-- Navegación interna sticky -->
+    <nav class="fp-nav" aria-label="Bloques de formas de pago">
+      <button class="fp-nav-chip" onclick="jumpToFp('fp-efectivo')">1 · Efectivo</button>
+      <button class="fp-nav-chip" onclick="jumpToFp('fp-transfer')">2 · Transferencia</button>
+      <button class="fp-nav-chip" onclick="jumpToFp('fp-fiscal')">3 · Datos fiscales</button>
+      <button class="fp-nav-chip" onclick="jumpToFp('fp-monedero')">4 · Monedero</button>
+      <button class="fp-nav-chip" onclick="jumpToFp('fp-fbl5n')">5 · FBL5N</button>
+      <button class="fp-nav-chip" onclick="jumpToFp('fp-fraudes')">6 · Fraudes</button>
+    </nav>
 
     <!-- 1. Efectivo -->
     <div class="fp-block" id="fp-efectivo">
@@ -870,7 +997,7 @@ main{flex:1}
       </div>
 
       <div class="store-subhead" id="fp-tiendas"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9M3 9h18"/></svg> Tiendas afiliadas y montos máximos <span class="count">16</span><span class="dl-line"></span></div>
-      <div class="store-grid">
+      <div class="store-grid collapsed" id="storeGrid">
         <div class="store-card">
           <div class="store-name">7-Eleven</div>
           <div class="store-amt-lbl">Monto máximo por pago</div>
@@ -968,6 +1095,10 @@ main{flex:1}
           <div class="store-cov nat"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg> Nivel nacional</div>
         </div>
       </div>
+      <button class="stores-toggle" id="storesToggle" onclick="toggleStores()" aria-expanded="false">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        <span>Ver las 16 tiendas</span>
+      </button>
     </div>
 
     <!-- 2. Transferencia BBVA -->
@@ -1214,7 +1345,11 @@ main{flex:1}
       </div>
       <span class="result-count-badge" id="rc-pdepago"></span>
     </div>
-    <div id="ld-pdepago" class="loader"><div class="spinner"></div><p>Cargando formas de pago web…</p></div>
+    <div id="ld-pdepago" class="sk-grid" aria-hidden="true">
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-s short"></div></div>
+    </div>
     <div id="gr-pdepago" class="cards-grid"></div>
   </section>
 
@@ -1232,7 +1367,11 @@ main{flex:1}
       </div>
       <span class="result-count-badge" id="rc-formatos"></span>
     </div>
-    <div id="ld-formatos" class="loader"><div class="spinner"></div><p>Cargando formatos…</p></div>
+    <div id="ld-formatos" class="sk-grid" aria-hidden="true">
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-btn"></div></div>
+    </div>
     <div id="gr-formatos" class="cards-grid"></div>
   </section>
 
@@ -1250,7 +1389,11 @@ main{flex:1}
       </div>
       <span class="result-count-badge" id="rc-presentaciones"></span>
     </div>
-    <div id="ld-presentaciones" class="loader"><div class="spinner"></div><p>Cargando presentaciones…</p></div>
+    <div id="ld-presentaciones" class="sk-grid" aria-hidden="true">
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-btn"></div></div>
+      <div class="sk-card"><div class="sk-line sk-ic"></div><div class="sk-line sk-t"></div><div class="sk-line sk-s"></div><div class="sk-line sk-btn"></div></div>
+    </div>
     <div id="gr-presentaciones" class="cards-grid"></div>
   </section>
 
@@ -1258,7 +1401,15 @@ main{flex:1}
 </div>
 </div>
 
-<div class="copy-toast" id="copyToast"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Copiado al portapapeles</div>
+<!-- ══ BOTTOM NAV (solo móvil) ══ -->
+<nav class="bottom-nav" aria-label="Navegación principal móvil">
+  <button class="bn-item active" data-bn="inicio" onclick="goSec('inicio')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.4V21h5v-6h4v6h5V9.4"/></svg>Inicio</button>
+  <button class="bn-item" data-bn="herramientas" onclick="goSec('herramientas')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a3.8 3.8 0 0 0-5 5l-6 6 2.5 2.5 6-6a3.8 3.8 0 0 0 5-5l-2.4 2.4-2-2 1.9-2.9Z"/></svg>Herramientas</button>
+  <button class="bn-item" data-bn="formaspago" onclick="goSec('formaspago')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5h.5M18 14.5h-.5"/></svg>Pagos</button>
+  <a class="bn-item" href="<?= APP_URL ?>?page=promociones" target="_top" onclick="handlePromoNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/></svg>Promos</a>
+</nav>
+
+<div class="copy-toast" id="copyToast"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span id="copyToastMsg">Copiado al portapapeles</span></div>
 
 <script>
 /* ══════════════════════════════════════════════════════════════
@@ -1294,11 +1445,18 @@ const ICONS = {
   external:'<path d="M7 17 17 7M8 7h9v9"/>',
   arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
   chevron:'<path d="m9 6 6 6-6 6"/>',
+  chevdown:'<path d="m6 9 6 6 6-6"/>',
   gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
   receipt:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6"/>',
   truck:'<path d="M3 6h11v9H3zM14 9h3.2L21 12.5V15h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>',
   search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
-  bolt:'<path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/>'
+  bolt:'<path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/>',
+  pin:'<path d="M12 17v5M7 4h10l-1.5 6 2.5 4H6l2.5-4L7 4Z"/>',
+  flag:'<path d="M5 21V4a1 1 0 0 1 1-1h11l-2 4 2 4H6"/>',
+  megaphone:'<path d="M3 11v3a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M14 7.5a5 5 0 0 1 0 7M17.5 5a9 9 0 0 1 0 12"/>',
+  history:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  close:'<path d="M6 6l12 12M18 6 6 18"/>',
+  sparkle:'<path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/>'
 };
 function icon(name, cls){
   const p = ICONS[name] || ICONS.tools;
@@ -1340,9 +1498,18 @@ const FP_INDEX = [
   { name:'Prevención de Fraudes', sub:'Validación Cybersource, SAF, FMS y SVL', target:'fp-fraudes', kw:'fraude fraudes cybersource saf svl fms validacion listas negativas rechazo banco prevencion' }
 ];
 
-let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[] };
+let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[], avisos:[] };
 let searchTimer;
 let fpRevealsReady = false;
+
+/* ── PERSISTENCIA LOCAL (preferencias y caché del asesor) ── */
+function lsGet(key, fallback){ try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e){ return fallback; } }
+function lsSet(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+let usage   = lsGet('ventel-usage', {});       // clics por herramienta → ordena los accesos rápidos
+let pins    = lsGet('ventel-pins', []);        // herramientas fijadas con el pin
+let recents = lsGet('ventel-recent', []);      // últimas búsquedas (máx. 5)
+let dismissedAvisos = lsGet('ventel-avisos-out', []);
+let dataIsFresh = false;                       // true cuando ya respondió Apps Script (no el caché)
 
 /* ──────── TEMA ──────── */
 function setTheme(name){
@@ -1372,10 +1539,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setTheme(document.documentElement.getAttribute('data-theme') || 'aurora');
   startClock();
   playIntro();
-
-  // Abrir sección desde hash (#herramientas, #formatos…) — usado por enlaces externos (Monitor Promos)
-  const _h = (location.hash || '').replace('#','');
-  if (_h && document.getElementById('sec-' + _h)) switchSec(_h);
+  initNavigation();
+  initCopyables();
+  initCoachmark();
 
   // El reloj del topbar se oculta en Inicio (ya hay reloj grande en el hero)
   const _topClock = document.querySelector('.topbar .clock');
@@ -1389,6 +1555,12 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(doGlobalSearch, 180);
   });
+  const maybeShowRecents = () => {
+    dismissCoach();
+    if (!gs.value.trim() && !document.getElementById('searchDrop').classList.contains('open')) showRecentSearches();
+  };
+  gs.addEventListener('focus', maybeShowRecents);
+  gs.addEventListener('click', maybeShowRecents);
   gs.addEventListener('keydown', e => {
     const open = document.getElementById('searchDrop').classList.contains('open');
     if (e.key === 'Escape') { clearPendingOpen(); clearGlobalSearch(); return; }
@@ -1405,29 +1577,96 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (e.key === 'Enter') { if (activateSd()) e.preventDefault(); }
   });
   document.addEventListener('keydown', e => {
-    if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    const typing = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA';
+    if ((e.key === '/' && !typing) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
       e.preventDefault(); gs.focus();
     }
   });
   document.addEventListener('click', e => { if (!e.target.closest('.search')) closeDrop(); });
+
+  // Delegación global: pines, "ver acceso", reportes, avisos y conteo de uso
+  document.addEventListener('click', e => {
+    const pin = e.target.closest('.pin-btn');
+    if (pin) { e.preventDefault(); e.stopPropagation(); togglePin(pin.dataset.name); return; }
+    const tg = e.target.closest('.tc-toggle');
+    if (tg) {
+      const card = tg.closest('.tool-card');
+      const open = card.classList.toggle('expanded');
+      tg.querySelector('span').textContent = open ? 'Ocultar acceso' : 'Ver acceso';
+      return;
+    }
+    const rep = e.target.closest('.btn-report');
+    if (rep) { e.preventDefault(); reportLink(rep); return; }
+    const dis = e.target.closest('.aviso-close');
+    if (dis) { dismissAviso(dis); return; }
+    const tracked = e.target.closest('[data-track]');
+    if (tracked) trackUse(tracked.dataset.track);
+  });
+
   const sdrop = document.getElementById('searchDrop');
-  sdrop.addEventListener('click', e => { const it = e.target.closest('.sd-item'); if (it) jumpToExact(it.dataset.key, it.dataset.name || '', it.dataset.target || ''); });
+  sdrop.addEventListener('click', e => {
+    const it = e.target.closest('.sd-item');
+    if (!it) return;
+    if (it.classList.contains('sd-recent')) {
+      gs.value = it.dataset.q || '';
+      document.getElementById('hsClear').style.display = 'flex';
+      gs.focus(); doGlobalSearch();
+      return;
+    }
+    jumpToExact(it.dataset.key, it.dataset.name || '', it.dataset.target || '');
+  });
   sdrop.addEventListener('mousemove', e => {
     const it = e.target.closest('.sd-item'); if (!it) return;
     const items = sdItems(); const i = items.indexOf(it);
     if (i >= 0 && i !== sdIndex) { sdIndex = i; items.forEach((el, idx) => el.classList.toggle('sd-active', idx === i)); }
   });
 
-  // Fetch al backend de Apps Script (lógica original intacta)
+  // SWR: pinta al instante con el último dato guardado localmente…
+  const cached = lsGet('ventel-data-v1', null);
+  if (cached && cached.data) onToolsData(cached.data, true);
+
+  // …y revalida contra Apps Script en segundo plano (lógica original intacta)
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
-      .withSuccessHandler(onToolsData)
+      .withSuccessHandler(d => onToolsData(d, false))
       .withFailureHandler(onToolsError)
       .fetchToolsData();
+    google.script.run
+      .withSuccessHandler(renderPromoStrip)
+      .withFailureHandler(() => renderPromoStrip(null))
+      .fetchPromoCounts();
   } else {
-    setTimeout(() => onToolsData(mockData()), 380);
+    setTimeout(() => {
+      onToolsData(mockData(), false);
+      renderPromoStrip({ status:'ok', activas:12, porTerminar:3 });
+    }, 380);
   }
 });
+
+/* ──────── NAVEGACIÓN CON HISTORIAL (botón atrás + enlaces a secciones) ──────── */
+let suppressHistory = false;
+function initNavigation(){
+  const restore = sec => {
+    if (sec && document.getElementById('sec-' + sec)) { suppressHistory = true; switchSec(sec); suppressHistory = false; }
+  };
+  if (typeof google !== 'undefined' && google.script && google.script.history) {
+    google.script.url.getLocation(loc => restore((loc.parameter && loc.parameter.sec) || loc.hash || ''));
+    google.script.history.setChangeHandler(e => {
+      restore((e.location.parameter && e.location.parameter.sec) || e.location.hash || 'inicio');
+    });
+  } else {
+    restore((location.hash || '').replace('#',''));
+    window.addEventListener('hashchange', () => restore((location.hash || '').replace('#','') || 'inicio'));
+  }
+}
+function pushNav(id){
+  if (suppressHistory) return;
+  if (typeof google !== 'undefined' && google.script && google.script.history) {
+    try { google.script.history.push(null, { sec:id }, id); } catch(e){}
+  } else {
+    try { history.pushState(null, '', '#' + id); } catch(e){ location.hash = id; }
+  }
+}
 
 /* ──────── INTRO ──────── */
 function playIntro(){
@@ -1457,9 +1696,10 @@ function pad(v){ return String(v).padStart(2,'0'); }
 
 /* ──────── NAVEGACIÓN ──────── */
 function switchSec(id, btn){
-  document.querySelectorAll('.side-link').forEach(t => t.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  else { const b = document.querySelector(`.side-link[data-sec="${id}"]`); if (b) b.classList.add('active'); }
+  document.querySelectorAll('.side-link').forEach(t => { t.classList.remove('active'); t.removeAttribute('aria-current'); });
+  const b = btn || document.querySelector(`.side-link[data-sec="${id}"]`);
+  if (b){ b.classList.add('active'); b.setAttribute('aria-current','page'); }
+  document.querySelectorAll('.bn-item[data-bn]').forEach(t => t.classList.toggle('active', t.dataset.bn === id));
 
   document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(`sec-${id}`);
@@ -1470,6 +1710,7 @@ function switchSec(id, btn){
   closeSidebar();
   document.querySelector('main').scrollTo?.(0,0);
   window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
+  pushNav(id);
 }
 function sectionEnter(section){
   if (!section || !GS()) return;
@@ -1497,15 +1738,18 @@ function jumpToFp(blockId){
   }, 120);
 }
 
-/* ──────── DATOS (Apps Script) ──────── */
-function onToolsData(data){
-  if (data.status === 'error') { onToolsError(data.error); return; }
+/* ──────── DATOS (Apps Script · stale-while-revalidate) ──────── */
+function onToolsData(data, fromCache){
+  if (!data || data.status === 'error') { if (!fromCache) onToolsError(data && data.error); return; }
+  if (fromCache && dataIsFresh) return; // ya están pintados los datos frescos
+  if (!fromCache){ dataIsFresh = true; lsSet('ventel-data-v1', { t: Date.now(), data: data }); }
   store = {
     herramientas:   data.herramientas   || [],
     presentaciones: data.presentaciones || [],
     paqueterias:    data.paqueterias    || [],
     formatos:       data.formatos       || [],
-    pdePago:        data.pdePago        || []
+    pdePago:        data.pdePago        || [],
+    avisos:         data.avisos         || []
   };
   setCount('herramientas', store.herramientas.length);
   setCount('presentaciones', store.presentaciones.length);
@@ -1520,6 +1764,8 @@ function onToolsData(data){
   renderPP(store.pdePago);
 }
 function onToolsError(err){
+  // Si el caché local ya pintó contenido, no lo tapamos con el error
+  if (store.herramientas.length || store.formatos.length || store.paqueterias.length) return;
   ['herramientas','presentaciones','paqueterias','formatos','pdepago'].forEach(id => {
     const el = document.getElementById(`ld-${id}`);
     if (el) el.innerHTML = `<div class="empty-card"><span class="big">${icon('chat')}</span><h3>Sin conexión</h3><p>${err || 'Error al cargar datos'}</p></div>`;
@@ -1539,35 +1785,11 @@ function hideLoader(id){ const el = document.getElementById(`ld-${id}`); if (el)
 
 /* ──────── DASHBOARD ──────── */
 function renderDashboard(){
-  const stats = [
-    { sec:'herramientas',   icon:'tools',        name:'Herramientas',   n:store.herramientas.length,   color:ACCENT_PALETTE[0] },
-    { sec:'paqueterias',    icon:'package',      name:'Paqueterías',    n:store.paqueterias.length,    color:ACCENT_PALETTE[2] },
-    { sec:'pdepago',        icon:'card',         name:'Pagos Web',      n:store.pdePago.length,        color:ACCENT_PALETTE[3] },
-    { sec:'formatos',       icon:'document',     name:'Formatos',       n:store.formatos.length,       color:ACCENT_PALETTE[4] },
-    { sec:'presentaciones', icon:'presentation', name:'Presentaciones', n:store.presentaciones.length, color:ACCENT_PALETTE[1] }
-  ];
-  const sg = document.getElementById('statGrid');
-  sg.innerHTML = stats.map(s => `
-    <button class="stat-card" style="--accent:${s.color}" onclick="goSec('${s.sec}')">
-      <div class="stat-top">
-        <span class="stat-ic">${icon(s.icon)}</span>
-        <span class="go">${icon('arrow')}</span>
-      </div>
-      <div class="stat-num" data-n="${s.n}">0</div>
-      <div class="stat-name">${s.name}</div>
-    </button>`).join('');
-  if (GS()) {
-    document.querySelectorAll('#statGrid .stat-num').forEach(el => {
-      const target = +el.dataset.n, obj = { v:0 };
-      gsap.to(obj, { v:target, duration:.9, ease:'power2.out', snap:{ v:1 }, onUpdate:() => el.textContent = obj.v });
-    });
-  } else {
-    document.querySelectorAll('#statGrid .stat-num').forEach(el => el.textContent = el.dataset.n);
-  }
+  renderAvisos();
 
-  // Accesos rápidos: herramientas con enlace válido
+  // Accesos rápidos personalizados: fijados primero, luego los más usados
   const qg = document.getElementById('qaGrid');
-  const quick = store.herramientas.filter(h => linkHref(h.enlace)).slice(0, 8);
+  const quick = personalizedQuick(store.herramientas.filter(h => linkHref(h.enlace))).slice(0, 8);
   if (!quick.length) {
     qg.innerHTML = `<div class="empty-card"><span class="big">${icon('bolt')}</span><h3>Sin accesos directos</h3><p>Las herramientas con enlace aparecerán aquí.</p></div>`;
   } else {
@@ -1575,16 +1797,109 @@ function renderDashboard(){
       const color = ACCENT_PALETTE[i % ACCENT_PALETTE.length];
       const href = linkHref(h.enlace);
       const ic = pickIcon(`${h.nombre} ${h.descripcion}`);
+      const pinned = pins.includes(h.nombre);
+      const uses = usage[h.nombre] || 0;
       return `
-      <a class="qa-card" style="--accent:${color}" href="${href}" target="_blank" rel="noopener">
+      <a class="qa-card" style="--accent:${color}" href="${href}" target="_blank" rel="noopener" data-track="${esc(h.nombre)}">
         <span class="qa-ic">${icon(ic)}</span>
-        <span class="qa-body"><span class="qa-name">${esc(h.nombre)}</span><span class="qa-sub">Abrir herramienta</span></span>
+        <span class="qa-body"><span class="qa-name">${esc(h.nombre)}</span><span class="qa-sub">${pinned ? 'Fijado' : uses > 1 ? `Usado ${uses} veces` : 'Abrir herramienta'}</span></span>
+        <button class="pin-btn${pinned ? ' pinned' : ''}" data-name="${esc(h.nombre)}" title="${pinned ? 'Quitar de fijados' : 'Fijar arriba'}" aria-label="${pinned ? 'Quitar de fijados' : 'Fijar en accesos rápidos'}">${icon('pin')}</button>
         <span class="qa-arrow">${icon('external')}</span>
       </a>`;
     }).join('');
   }
 }
 function goSec(id){ const b = document.querySelector(`.side-link[data-sec="${id}"]`); switchSec(id, b); }
+
+/* Orden: pines (en su orden) → frecuencia de uso → orden original de la hoja */
+function personalizedQuick(items){
+  return items.slice().sort((a, b) => {
+    const pa = pins.indexOf(a.nombre), pb = pins.indexOf(b.nombre);
+    if (pa > -1 || pb > -1) return (pa < 0 ? 1e9 : pa) - (pb < 0 ? 1e9 : pb);
+    return (usage[b.nombre] || 0) - (usage[a.nombre] || 0);
+  });
+}
+function trackUse(name){
+  if (!name) return;
+  usage[name] = (usage[name] || 0) + 1;
+  lsSet('ventel-usage', usage);
+}
+function togglePin(name){
+  if (!name) return;
+  const i = pins.indexOf(name);
+  if (i > -1) pins.splice(i, 1); else pins.unshift(name);
+  lsSet('ventel-pins', pins);
+  // sincroniza los pines visibles en las tarjetas de Herramientas
+  document.querySelectorAll('.tool-card .pin-btn').forEach(b => {
+    if (b.dataset.name === name) b.classList.toggle('pinned', i === -1);
+  });
+  renderDashboard();
+}
+
+/* ── Avisos del equipo (hoja "Avisos") ── */
+function avisoId(a){ return a.tipo + '|' + a.mensaje; }
+function renderAvisos(){
+  const wrap = document.getElementById('avisosWrap');
+  if (!wrap) return;
+  const list = (store.avisos || []).filter(a => !dismissedAvisos.includes(avisoId(a)));
+  wrap.innerHTML = list.map(a => {
+    const tipo = ['info','warn','alert','ok'].includes(a.tipo) ? a.tipo : 'info';
+    return `
+    <div class="aviso ${tipo}" role="status">
+      ${icon('megaphone')}
+      <span>${esc(a.mensaje)}</span>
+      <button class="aviso-close" data-aviso="${esc(avisoId(a))}" aria-label="Descartar aviso">${icon('close')}</button>
+    </div>`;
+  }).join('');
+}
+function dismissAviso(btn){
+  const id = btn.dataset.aviso;
+  if (id && !dismissedAvisos.includes(id)) { dismissedAvisos.push(id); lsSet('ventel-avisos-out', dismissedAvisos); }
+  const el = btn.closest('.aviso');
+  if (!el) return;
+  if (GS()) gsap.to(el, { opacity:0, height:0, marginBottom:0, paddingTop:0, paddingBottom:0, duration:.3, ease:'power2.in', onComplete:() => el.remove() });
+  else el.remove();
+}
+
+/* ── Widget "Hoy en promociones" (puente al Monitor) ── */
+function renderPromoStrip(counts){
+  const strip = document.getElementById('promoStrip');
+  if (!strip) return;
+  const promoLink = document.getElementById('promoNavLink');
+  const href = promoLink ? promoLink.getAttribute('href') : '#';
+  const cta = `
+    <a class="stat-card cta" href="${esc(href)}" target="_top" onclick="handlePromoNav(event,this)">
+      <div class="stat-top"><span class="go">${icon('arrow')}</span></div>
+      <div class="stat-name">Abrir Monitor de Promociones</div>
+    </a>`;
+  if (!counts || counts.status !== 'ok') { strip.innerHTML = cta; return; }
+  strip.innerHTML = `
+    <div class="stat-card" style="--accent:#E10098;cursor:default">
+      <div class="stat-top"><span class="stat-ic">${icon('sparkle')}</span></div>
+      <div class="stat-num">${counts.activas}</div>
+      <div class="stat-name">Promos activas hoy</div>
+    </div>
+    <div class="stat-card" style="--accent:#B45309;cursor:default">
+      <div class="stat-top"><span class="stat-ic">${icon('history')}</span></div>
+      <div class="stat-num">${counts.porTerminar}</div>
+      <div class="stat-name">Terminan en ≤ 3 días</div>
+    </div>` + cta;
+}
+
+/* ── Reporte de enlace caído → hoja "Reportes" ── */
+function reportLink(btn){
+  const payload = { seccion: btn.dataset.sec || '', nombre: btn.dataset.name || '', enlace: btn.dataset.link || '' };
+  btn.classList.add('sent');
+  btn.innerHTML = `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;
+  btn.title = 'Reporte enviado';
+  showToast(null, 'Reporte enviado · ¡gracias!');
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run.reportBrokenLink(payload);
+  }
+}
+function reportBtn(sec, nombre, enlace){
+  return `<button class="btn-report" data-sec="${esc(sec)}" data-name="${esc(nombre)}" data-link="${esc(enlace || '')}" title="Reportar enlace caído o dato incorrecto" aria-label="Reportar problema con ${esc(nombre)}">${icon('flag')}</button>`;
+}
 
 /* ──────── FILTRO POR SECCIÓN ──────── */
 function filterSec(sec, term){
@@ -1613,20 +1928,28 @@ function renderH(items){
     const hasKey = h.claves && String(h.claves).trim();
     const safeKey = esc(String(h.claves || ''));
     const ic = pickIcon(`${h.nombre} ${h.descripcion}`);
+    const pinned = pins.includes(h.nombre);
+    const hasExtra = h.comoAcceder || hasKey;
     return `
     <div class="tool-card" style="--accent:${color}">
       <div class="tc-top">
         <div class="tc-icon">${icon(ic)}</div>
         <div class="tc-name">${esc(h.nombre)}</div>
+        ${href ? `<button class="pin-btn${pinned ? ' pinned' : ''}" data-name="${esc(h.nombre)}" title="${pinned ? 'Quitar de accesos rápidos' : 'Fijar en accesos rápidos'}" aria-label="Fijar en accesos rápidos">${icon('pin')}</button>` : ''}
       </div>
       ${h.descripcion ? `<div class="tc-desc">${esc(h.descripcion)}</div>` : ''}
-      ${h.comoAcceder ? `<div class="tc-access"><div class="tc-access-lbl">${icon('unlock')} Cómo acceder</div><div class="tc-access-txt">${esc(h.comoAcceder)}</div></div>` : ''}
-      ${hasKey ? `<div><span class="key-chip">${icon('key')} ${safeKey}</span></div>` : ''}
+      ${hasExtra ? `
+      <button class="tc-toggle" aria-expanded="false">${icon('chevdown')}<span>Ver acceso</span></button>
+      <div class="tc-more">
+        ${h.comoAcceder ? `<div class="tc-access"><div class="tc-access-lbl">${icon('unlock')} Cómo acceder</div><div class="tc-access-txt">${esc(h.comoAcceder)}</div></div>` : ''}
+        ${hasKey ? `<div><span class="key-chip">${icon('key')} ${safeKey}</span></div>` : ''}
+      </div>` : ''}
       <div class="tc-footer">
         ${href
-          ? `<a href="${href}" target="_blank" rel="noopener" class="btn-go">Abrir ${icon('external')}</a>`
+          ? `<a href="${href}" target="_blank" rel="noopener" class="btn-go" data-track="${esc(h.nombre)}">Abrir ${icon('external')}</a>`
           : `<span class="btn-go disabled">Sin enlace</span>`}
-        ${hasKey ? `<button class="btn-copy" onclick="copyText('${safeKey.replace(/'/g,"\\'")}',this)">${icon('copy')} Copiar</button>` : ''}
+        ${hasKey ? `<button class="btn-copy" onclick="copyText('${safeKey.replace(/'/g,"\\'")}',this)">${icon('copy')} Copiar clave</button>` : ''}
+        ${reportBtn('Herramientas', h.nombre, h.enlace)}
       </div>
     </div>`;
   }).join('');
@@ -1646,10 +1969,11 @@ function renderP(items){
         <div class="pres-name">${esc(p.nombre)}</div>
       </div>
       ${p.descripcion ? `<div class="pres-desc">${esc(p.descripcion)}</div>` : ''}
-      <div style="margin-top:auto;">
+      <div style="margin-top:auto;display:flex;gap:.5rem;">
         ${href
-          ? `<a href="${href}" target="_blank" rel="noopener" class="btn-violet">Ver presentación ${icon('external')}</a>`
-          : `<span class="btn-violet disabled">Sin enlace</span>`}
+          ? `<a href="${href}" target="_blank" rel="noopener" class="btn-violet" style="flex:1;">Ver presentación ${icon('external')}</a>`
+          : `<span class="btn-violet disabled" style="flex:1;">Sin enlace</span>`}
+        ${reportBtn('Presentaciones', p.nombre, p.liga)}
       </div>
     </div>`;
   }).join('');
@@ -1704,7 +2028,10 @@ function renderF(items){
         <div class="fmt-name">${esc(f.acceso || f.nombre || '—')}</div>
       </div>
       ${f.observaciones ? `<div class="fmt-obs">${icon('bolt')}<span>${esc(f.observaciones)}</span></div>` : ''}
-      ${href ? `<a href="${href}" target="_blank" rel="noopener" class="btn-go" style="font-size:.83rem;padding:.62rem .9rem;margin-top:auto;">Abrir formato ${icon('external')}</a>` : ''}
+      <div style="display:flex;gap:.5rem;margin-top:auto;">
+        ${href ? `<a href="${href}" target="_blank" rel="noopener" class="btn-go" style="flex:1;font-size:.83rem;padding:.62rem .9rem;">Abrir formato ${icon('external')}</a>` : ''}
+        ${reportBtn('Formatos', f.acceso || f.nombre || '—', f.liga)}
+      </div>
     </div>`;
   }).join('');
   animateGrid('#gr-formatos > *');
@@ -1728,6 +2055,7 @@ function renderPP(items){
       <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:auto;">
         <a href="${href}" target="_blank" rel="noopener" class="link-sm">Ver simulador ${icon('external')}</a>
         <span class="sim-note">${icon('bolt')} Solo referencia</span>
+        ${reportBtn('Pago Web', p.nombre, p.liga)}
       </div>` : ''}
     </div>`;
   }).join('');
@@ -1837,13 +2165,14 @@ function moveSd(delta){ const items = sdItems(); if (items.length) setSdActive((
 function activateSd(){
   const items = sdItems(); if (!items.length) return false;
   const el = items[sdIndex >= 0 ? sdIndex : 0];
-  if (el) { jumpToExact(el.dataset.key, el.dataset.name || '', el.dataset.target || ''); return true; }
+  if (el) { el.click(); return true; } // el handler delegado distingue recientes vs resultados
   return false;
 }
 function jumpToExact(key, name, targetId){
   const secId = key === 'pdePago' ? 'pdepago' : key;
   const tab = document.querySelector('.side-link[data-sec="' + secId + '"]');
   if (tab) switchSec(secId, tab);
+  saveRecent(document.getElementById('globalSearch').value);
   document.getElementById('globalSearch').value = '';
   document.getElementById('hsClear').style.display = 'none';
   closeDrop();
@@ -1875,6 +2204,74 @@ function jumpToExact(key, name, targetId){
   }, 400);
 }
 function flashEl(el){ el.classList.add('search-flash'); setTimeout(() => el.classList.remove('search-flash'), 1600); }
+
+/* ──────── BÚSQUEDAS RECIENTES ──────── */
+function saveRecent(q){
+  q = String(q || '').trim();
+  if (!q) return;
+  recents = [q].concat(recents.filter(r => r.toLowerCase() !== q.toLowerCase())).slice(0, 5);
+  lsSet('ventel-recent', recents);
+}
+function showRecentSearches(){
+  if (!recents.length) return;
+  const drop = document.getElementById('searchDrop');
+  drop.innerHTML = `<div class="sd-recent-lbl"><span>Búsquedas recientes</span><button onclick="clearRecents(event)">Borrar</button></div>` +
+    recents.map(r => `
+    <div class="sd-item sd-recent" data-q="${esc(r)}" role="option">
+      <div class="sd-emoji">${icon('history')}</div>
+      <div style="min-width:0;"><div class="sd-name">${esc(r)}</div></div>
+      <span class="sd-go">${icon('arrow')}</span>
+    </div>`).join('');
+  drop.classList.add('open');
+  sdIndex = -1;
+}
+function clearRecents(e){
+  if (e) e.stopPropagation();
+  recents = []; lsSet('ventel-recent', []);
+  closeDrop();
+}
+
+/* ──────── COACHMARK DE BIENVENIDA (solo primera visita) ──────── */
+function initCoachmark(){
+  if (lsGet('ventel-coach-done', false)) return;
+  const search = document.querySelector('.search');
+  if (!search) return;
+  const cm = document.createElement('div');
+  cm.className = 'coachmark'; cm.id = 'coachmark';
+  cm.innerHTML = `<span>Pulsa <kbd>/</kbd> o <kbd>Ctrl K</kbd> y escribe lo que necesites: una herramienta, la CLABE, una paquetería…</span><button onclick="dismissCoach()">Entendido</button>`;
+  search.appendChild(cm);
+  if (GS()) gsap.fromTo(cm, { opacity:0, y:-8 }, { opacity:1, y:0, duration:.45, delay:1.2, ease:'power2.out' });
+}
+function dismissCoach(){
+  const cm = document.getElementById('coachmark');
+  if (!cm) return;
+  cm.remove();
+  lsSet('ventel-coach-done', true);
+}
+
+/* ──────── COPIABLES EN FORMAS DE PAGO (CLABE, convenio, RFC…) ──────── */
+function initCopyables(){
+  document.querySelectorAll('#sec-formaspago .data-val, #sec-formaspago .conv-num, #sec-formaspago .ref-block').forEach(el => {
+    const txt = el.textContent.trim();
+    if (!txt || txt.length > 60) return; // frases descriptivas no son "datos" copiables
+    const host = el.classList.contains('data-val') ? (el.closest('.data-item') || el) : el;
+    host.classList.add('copyable');
+    host.setAttribute('title', 'Clic para copiar');
+    host.addEventListener('click', () => copyText(txt, null));
+  });
+}
+
+/* ──────── TIENDAS AFILIADAS · ver más / menos ──────── */
+function toggleStores(){
+  const grid = document.getElementById('storeGrid');
+  const btn = document.getElementById('storesToggle');
+  if (!grid || !btn) return;
+  const collapsed = grid.classList.toggle('collapsed');
+  btn.classList.toggle('open', !collapsed);
+  btn.setAttribute('aria-expanded', String(!collapsed));
+  btn.querySelector('span').textContent = collapsed ? 'Ver las 16 tiendas' : 'Mostrar menos';
+  if (window.ScrollTrigger) ScrollTrigger.refresh();
+}
 
 /* ──────── HELPERS DE BÚSQUEDA ──────── */
 function scoreMatch(q, name, sub, extra){
@@ -1913,8 +2310,10 @@ function copyText(text, btn){
     document.body.removeChild(ta); showToast(btn);
   });
 }
-function showToast(btn){
+function showToast(btn, msg){
   const t = document.getElementById('copyToast');
+  const m = document.getElementById('copyToastMsg');
+  if (m) m.textContent = msg || 'Copiado al portapapeles';
   if (GS()) {
     gsap.timeline()
       .to(t, { opacity:1, y:0, scale:1, duration:.35, ease:'back.out(1.8)' })
@@ -1961,6 +2360,9 @@ function empty(label){ return `<div class="empty-card"><span class="big">${icon(
 function mockData(){
   return {
     status:'ok',
+    avisos:[
+      { mensaje:'Vista previa con datos de ejemplo — los avisos reales se administran desde la hoja "Avisos".', tipo:'info' }
+    ],
     herramientas:[
       { nombre:'SOMS', enlace:'', comoAcceder:'VPN requerida + usuario corporativo', descripcion:'Sistema Operativo de Manejo de Servicios. Gestiona pedidos, envíos y operaciones diarias.', claves:'' },
       { nombre:'Liverpool.com.mx', enlace:'https://www.liverpool.com.mx', comoAcceder:'Acceso público desde cualquier navegador', descripcion:'Plataforma de ventas en línea principal. Consulta de catálogo, precios y promociones vigentes.', claves:'' },
@@ -2041,26 +2443,6 @@ function mockData(){
     root.querySelectorAll(MAG_SEL).forEach(makeMagnetic);
   }
 
-  // ---- Spotlight estilo gsap.com: glow que sigue el cursor en las tarjetas ----
-  var SPOT_SEL = '.tool-card, .pres-card, .pago-card, .fmt-card, .promo-card';
-  function makeSpotlight(el) {
-    if (!el || el.__spot || REDUCE) return;
-    el.__spot = true;
-    var raf = null, nx = 50, ny = 50;
-    function apply() { raf = null; el.style.setProperty('--spot-x', nx + '%'); el.style.setProperty('--spot-y', ny + '%'); }
-    el.addEventListener('pointermove', function (e) {
-      var r = el.getBoundingClientRect();
-      nx = ((e.clientX - r.left) / r.width) * 100;
-      ny = ((e.clientY - r.top) / r.height) * 100;
-      if (!raf) raf = requestAnimationFrame(apply);
-    });
-  }
-  function spotlightWithin(root) {
-    if (!root || !root.querySelectorAll) return;
-    if (root.matches && root.matches(SPOT_SEL)) makeSpotlight(root);
-    root.querySelectorAll(SPOT_SEL).forEach(makeSpotlight);
-  }
-
   // ---- Reveal de tarjetas de promoción (llamado desde renderCards) ----
   window.__fxCardTriggers = [];
   window.fxRevealCards = function () {
@@ -2106,10 +2488,9 @@ function mockData(){
       bar.style.display = 'none';
     }
 
-    // ── Botones magnéticos + spotlight (incluye contenido renderizado dinámicamente) ──
+    // ── Botones magnéticos (incluye contenido renderizado dinámicamente) ──
     if (!REDUCE) {
       magnetizeWithin(document);
-      spotlightWithin(document);
       try {
         var mo = new MutationObserver(function (muts) {
           muts.forEach(function (m) {
@@ -2117,7 +2498,6 @@ function mockData(){
               if (n.nodeType !== 1) return;
               if (n.matches && n.matches(MAG_SEL)) makeMagnetic(n);
               magnetizeWithin(n);
-              spotlightWithin(n);
             });
           });
         });

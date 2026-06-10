@@ -7,6 +7,12 @@ El **Portal Ventel** es una plataforma centralizada diseñada para optimizar el 
 
 ## 🚀 Características Principales
 
+* **Carga Instantánea (caché en dos capas):** Los datos se cachean 10 minutos en el servidor (`CacheService`) y la última respuesta se guarda en `localStorage`; al abrir, el portal pinta de inmediato con el dato local y revalida contra Apps Script en segundo plano (*stale-while-revalidate*).
+* **Accesos Rápidos Personalizados:** El dashboard ordena las herramientas según la frecuencia de uso de cada asesor, y permite fijarlas con un pin. Todo se guarda localmente, sin configuración.
+* **Avisos del Equipo:** Una hoja `Avisos` (columnas: `Mensaje | Tipo | Hasta`) se muestra como banners descartables en el dashboard. `Tipo` acepta `info`, `warn`, `alert` u `ok`; `Hasta` (fecha) oculta el aviso automáticamente al expirar.
+* **Reporte de Enlaces Caídos:** Cada tarjeta tiene un botón de reporte que registra fecha, sección, nombre, enlace y usuario en una hoja `Reportes` (se crea sola al primer reporte).
+* **Historial Real de Navegación:** Las secciones usan `google.script.history`, por lo que el botón "atrás" del navegador funciona y se pueden compartir enlaces directos a una sección.
+* **Puente con el Monitor de Promos:** El dashboard muestra cuántas promociones están activas hoy y cuántas terminan en ≤ 3 días, con acceso directo al Monitor.
 * **Motor de Búsqueda Avanzado:** Implementación de un sistema de búsqueda potente y de alta precisión. Capaz de realizar consultas mediante coincidencias parciales, palabras clave y metadatos, garantizando que casi cualquier elemento pueda ser encontrado en milisegundos.
 * **Filtros Dinámicos:** Categorización inteligente de enlaces e interfaces para refinar los resultados de búsqueda en tiempo real, adaptándose a los distintos requerimientos operativos de los asesores.
 * **Interfaz Fluida y Animaciones (GSAP 3.13):** Integración completa de la suite *GreenSock Animation Platform (GSAP)* versión 3.13. Las transiciones de estado, la carga de elementos y las interacciones del DOM están orquestadas para ofrecer una experiencia de usuario (UX) inmersiva, sin sacrificar el rendimiento.
