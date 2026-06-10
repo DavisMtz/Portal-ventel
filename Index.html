@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promociones Liverpool · VENTEL</title>
+
+<!-- GSAP 3.13 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+
+<!-- Tipografías: Archivo (display retail), Instrument Sans (cuerpo), JetBrains Mono (reloj/datos) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ════════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════════ */
+:root{
+  --rosa:#E10098;
+  --rosa-deep:#A8006F;
+  --rosa-tint:#FDE7F4;
+  --rosa-soft:#FBD0E9;
+
+  --paper:#FAF7F9;
+  --surface:#FFFFFF;
+  --ink:#241C22;
+  --ink-soft:#7A6E76;
+  --line:#ECE2E8;
+
+  --ok:#0E7A4F;       --ok-bg:#E5F5EE;
+  --warn:#B45309;     --warn-bg:#FDF1E0;
+  --alert:#C81E3C;    --alert-bg:#FDE8EC;
+  --info:#1D4ED8;     --info-bg:#EAF0FE;
+
+  --rad:18px;
+  --rad-sm:11px;
+  --sh-sm:0 1px 3px rgba(36,28,34,.06);
+  --sh-md:0 14px 34px -14px rgba(168,0,111,.22);
+  --tr:all .28s cubic-bezier(.4,0,.2,1);
+
+  --f-display:'Archivo',sans-serif;
+  --f-body:'Instrument Sans',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font-family:var(--f-body)}
+::selection{background:var(--rosa-soft)}
+
+/* ════════════════════════════════════════════
+   HEADER · marca + reloj en vivo
+════════════════════════════════════════════ */
+header{
+  background:var(--rosa);
+  padding:.85rem 1.4rem;
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 4px 18px -8px rgba(168,0,111,.45);
+}
+.logo-container{display:flex;align-items:center;gap:.9rem;min-width:0}
+.logo-container img{height:30px;width:auto;filter:brightness(0) invert(1);display:block}
+.logo-divider{width:1px;height:22px;background:rgba(255,255,255,.4)}
+.logo-sub{
+  color:#fff;font-family:var(--f-display);font-weight:800;font-stretch:115%;
+  font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;
+}
+/* Reloj — siempre visible */
+.clock-pill{
+  display:flex;align-items:center;gap:.6rem;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.28);
+  backdrop-filter:blur(6px);
+  border-radius:999px;padding:.45rem .95rem;
+  color:#fff;
+}
+.clock-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:beat 2s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
+.clock-time{font-family:var(--f-mono);font-weight:700;font-size:1.02rem;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.clock-date{font-size:.74rem;font-weight:600;opacity:.9;letter-spacing:.03em;white-space:nowrap}
+
+/* ════════════════════════════════════════════
+   HERO · la fecha es la protagonista
+════════════════════════════════════════════ */
+.date-hero{
+  max-width:1200px;margin:0 auto;
+  padding:2.6rem 1.4rem 2.2rem;
+  display:grid;grid-template-columns:1.25fr 1fr;gap:2rem;align-items:end;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.74rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--rosa-deep);margin-bottom:.65rem;
+}
+.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--rosa);animation:beat 2s ease-in-out infinite}
+.date-hero h1{
+  font-family:var(--f-display);font-weight:900;font-stretch:118%;
+  font-size:clamp(2.6rem,6vw,4.4rem);line-height:.98;letter-spacing:-.02em;
+  text-transform:capitalize;
+}
+.date-hero h1 .day-num{color:var(--rosa)}
+.hero-sub{font-size:1.08rem;color:var(--ink-soft);font-weight:500;margin-top:.45rem}
+
+/* estadísticas vivas */
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.stat-tile{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--rad-sm);
+  padding:.9rem 1rem;box-shadow:var(--sh-sm);
+}
+.stat-num{font-family:var(--f-display);font-weight:900;font-stretch:115%;font-size:1.9rem;line-height:1;color:var(--ink)}
+.stat-num.pink{color:var(--rosa)}
+.stat-num.amber{color:var(--warn)}
+.stat-lbl{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);margin-top:.35rem}
+
+/* ════════════════════════════════════════════
+   TABS
+════════════════════════════════════════════ */
+.tabs-wrap{max-width:1200px;margin:0 auto;padding:0 1.4rem 1.4rem}
+.tabs{
+  display:flex;gap:.4rem;max-width:520px;
+  background:var(--surface);border:1px solid var(--line);
+  padding:.4rem;border-radius:999px;box-shadow:var(--sh-sm);
+}
+.tab-btn{
+  flex:1;padding:.7rem 1.2rem;border:none;background:transparent;
+  color:var(--ink-soft);font-size:.95rem;font-weight:700;border-radius:999px;
+  cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center;gap:.45rem;
+}
+.tab-btn .tab-count{
+  font-family:var(--f-mono);font-size:.72rem;font-weight:700;
+  background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);
+  border-radius:999px;padding:.05rem .5rem;
+}
+.tab-btn.active{background:var(--rosa);color:#fff;box-shadow:0 8px 18px -8px rgba(225,0,152,.55)}
+.tab-btn.active .tab-count{background:rgba(255,255,255,.2);border-color:transparent;color:#fff}
+.tab-btn:hover:not(.active){color:var(--rosa)}
+
+/* ════════════════════════════════════════════
+   VISTAS
+════════════════════════════════════════════ */
+.view-section{display:none;padding:0 1.4rem 4rem;max-width:1200px;margin:0 auto;min-height:50vh}
+.view-section.active{display:block}
+
+/* ════════════════════════════════════════════
+   BUSCADOR + FILTROS
+════════════════════════════════════════════ */
+.controls-panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);
+  box-shadow:var(--sh-sm);padding:1.2rem 1.2rem 1rem;margin-bottom:1.4rem;
+}
+.controls-row{display:grid;grid-template-columns:1fr 220px;gap:.8rem;align-items:center}
+.search-wrapper{position:relative}
+.search-wrapper input{
+  width:100%;padding:1rem 2.8rem 1rem 3rem;
+  border:2px solid var(--line);border-radius:14px;
+  font-size:1.02rem;font-family:var(--f-body);font-weight:500;
+  transition:var(--tr);outline:none;background:var(--paper);color:var(--ink);
+}
+.search-wrapper input::placeholder{color:#A99CA4}
+.search-wrapper input:focus{border-color:var(--rosa);background:#fff;box-shadow:0 0 0 4px var(--rosa-tint)}
+.search-wrapper .icon-search{
+  position:absolute;left:1rem;top:50%;transform:translateY(-50%);
+  color:var(--ink-soft);width:20px;height:20px;pointer-events:none;
+}
+.search-clear{
+  position:absolute;right:.7rem;top:50%;transform:translateY(-50%);
+  width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--line);color:var(--ink-soft);font-size:.85rem;font-weight:700;
+  display:none;align-items:center;justify-content:center;transition:var(--tr);
+}
+.search-clear:hover{background:var(--rosa-soft);color:var(--rosa-deep)}
+
+select.filter-select{
+  width:100%;padding:1rem 2.6rem 1rem 1rem;
+  border:2px solid var(--line);border-radius:14px;font-size:.95rem;font-weight:600;
+  color:var(--ink);background-color:var(--paper);cursor:pointer;outline:none;appearance:none;
+  font-family:var(--f-body);transition:var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%237A6E76'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 1rem center;background-size:1.1rem;
+}
+select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
+
+/* chips de dirección */
+.chips-row{
+  display:flex;gap:.5rem;margin-top:.9rem;overflow-x:auto;padding-bottom:.3rem;
+  scrollbar-width:thin;
+}
+.chip{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:.45rem;
+  padding:.5rem 1rem;border-radius:999px;border:1.5px solid var(--line);
+  background:var(--surface);color:var(--ink-soft);font-size:.85rem;font-weight:700;
+  cursor:pointer;transition:var(--tr);white-space:nowrap;
+}
+.chip .chip-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.8}
+.chip:hover{border-color:var(--rosa-soft);color:var(--rosa-deep)}
+.chip.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip.active .chip-dot{opacity:1}
+
+/* contador de resultados */
+.results-bar{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  margin:.2rem .2rem 1.1rem;flex-wrap:wrap;
+}
+.results-count{font-size:.92rem;color:var(--ink-soft);font-weight:600}
+.results-count strong{color:var(--rosa-deep);font-family:var(--f-mono);font-size:1rem}
+.results-hint{font-size:.8rem;color:var(--ink-soft)}
+
+/* ════════════════════════════════════════════
+   TARJETAS DE PROMOCIÓN
+════════════════════════════════════════════ */
+.promos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.3rem}
+
+.card{
+  background:var(--surface);border-radius:var(--rad);padding:1.35rem 1.35rem 1.25rem;
+  box-shadow:var(--sh-sm);border:1px solid var(--line);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--dept-color,var(--rosa))}
+.card:hover{transform:translateY(-5px);box-shadow:var(--sh-md)}
+
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.85rem}
+.dept-tag{
+  display:inline-flex;align-items:center;gap:.42rem;
+  background:var(--paper);border:1px solid var(--line);
+  padding:.32rem .8rem;border-radius:999px;font-size:.72rem;font-weight:800;
+  color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;min-width:0;
+}
+.dept-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--dept-color,var(--rosa));flex:0 0 auto}
+.origin-tag{
+  flex:0 0 auto;font-size:.68rem;font-weight:800;letter-spacing:.05em;
+  padding:.28rem .65rem;border-radius:7px;
+  background:var(--rosa-tint);color:var(--rosa-deep);text-transform:uppercase;
+}
+.origin-tag.mkp{background:#FEF3C7;color:#854D0E}
+
+.card-title{font-family:var(--f-display);font-weight:800;font-stretch:108%;font-size:1.22rem;line-height:1.22;margin-bottom:.55rem}
+
+/* fila de descuento: el % manda */
+.promo-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem;flex-wrap:wrap}
+.disc-badge{
+  display:flex;align-items:baseline;gap:.25rem;
+  background:var(--rosa-tint);border:1px solid var(--rosa-soft);
+  border-radius:var(--rad-sm);padding:.35rem .8rem;
+}
+.disc-badge .pct{font-family:var(--f-display);font-weight:900;font-stretch:118%;font-size:1.7rem;line-height:1;color:var(--rosa)}
+.disc-badge .upto{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--rosa-deep)}
+.mini-badge{
+  font-size:.72rem;font-weight:800;padding:.3rem .65rem;border-radius:7px;letter-spacing:.03em;
+}
+.mini-badge.msi{background:var(--info-bg);color:var(--info)}
+.mini-badge.sep{background:var(--ok-bg);color:var(--ok)}
+
+.card-promo{font-size:.97rem;color:var(--ink);font-weight:600;margin-bottom:.7rem;line-height:1.45}
+.card-brand{font-size:.88rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;margin-bottom:.9rem;font-weight:600}
+
+/* bloque de vigencia con barra de tiempo */
+.card-vig{margin-top:auto;border-top:1px solid var(--line);padding-top:.9rem;margin-bottom:1.05rem}
+.vig-top{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.vig-range{font-size:.82rem;color:var(--ink-soft);font-weight:600;display:flex;align-items:center;gap:5px}
+.vig-range strong{color:var(--ink)}
+.vig-pill{
+  font-size:.72rem;font-weight:800;padding:.26rem .6rem;border-radius:999px;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.vig-pill.ok{background:var(--ok-bg);color:var(--ok)}
+.vig-pill.warn{background:var(--warn-bg);color:var(--warn)}
+.vig-pill.alert{background:var(--alert-bg);color:var(--alert)}
+.vig-pill.muted{background:var(--paper);color:var(--ink-soft);border:1px solid var(--line)}
+.vig-track{height:6px;border-radius:99px;background:var(--paper);border:1px solid var(--line);overflow:hidden}
+.vig-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--rosa),var(--rosa-deep));transform-origin:left;width:0%}
+
+.card-btn{
+  text-align:center;display:block;width:100%;padding:.85rem;
+  background:transparent;color:var(--rosa);text-decoration:none;
+  border:2px solid var(--rosa);border-radius:12px;font-weight:800;font-size:.95rem;
+  transition:var(--tr);
+}
+.card-btn:hover{background:var(--rosa);color:#fff;box-shadow:0 10px 20px -10px rgba(225,0,152,.6)}
+.card-btn.disabled{opacity:.5;border-color:#CBC0C7;color:#A99CA4;cursor:not-allowed;pointer-events:none}
+
+/* ════════════════════════════════════════════
+   CALENDARIO
+════════════════════════════════════════════ */
+.calendar-controls{display:flex;justify-content:center;gap:.6rem;margin-bottom:2rem;flex-wrap:wrap}
+.cal-filter-btn{
+  padding:.65rem 1.4rem;border:1.5px solid var(--line);background:var(--surface);
+  color:var(--ink-soft);border-radius:999px;cursor:pointer;font-weight:700;font-size:.92rem;
+  transition:var(--tr);
+}
+.cal-filter-btn.active{background:var(--rosa);color:#fff;border-color:var(--rosa);box-shadow:0 8px 18px -8px rgba(225,0,152,.55)}
+.cal-filter-btn:hover:not(.active){color:var(--rosa);border-color:var(--rosa-soft)}
+
+.cal-section-title{
+  font-family:var(--f-display);font-weight:800;font-stretch:112%;font-size:1.15rem;
+  display:flex;align-items:center;gap:.6rem;margin:0 0 1rem;
+}
+.cal-section-title .badge-n{
+  font-family:var(--f-mono);font-size:.75rem;font-weight:700;color:var(--rosa-deep);
+  background:var(--rosa-tint);border-radius:999px;padding:.1rem .6rem;
+}
+.cal-section{margin-bottom:2.6rem}
+
+/* vigencias de promociones: línea de tiempo por intervalo */
+.vig-group-list{display:flex;flex-direction:column;gap:1rem}
+.vig-group{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);
+  padding:1.25rem 1.4rem;box-shadow:var(--sh-sm);
+}
+.vg-top{display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:.7rem}
+.vg-range{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:1.12rem}
+.vg-meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.vg-count{font-size:.8rem;font-weight:700;color:var(--ink-soft)}
+.vg-cats{font-size:.84rem;color:var(--ink-soft);margin-bottom:.9rem;line-height:1.5}
+.vg-cats b{color:var(--ink)}
+/* barra de intervalo */
+.tl-wrap{position:relative;padding-top:.2rem}
+.tl-track{height:10px;border-radius:99px;background:var(--paper);border:1px solid var(--line);position:relative;overflow:hidden}
+.tl-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--rosa),var(--rosa-deep));border-radius:99px;width:0%}
+.tl-fill.future{background:repeating-linear-gradient(45deg,var(--rosa-soft),var(--rosa-soft) 6px,var(--rosa-tint) 6px,var(--rosa-tint) 12px)}
+.tl-today{
+  position:absolute;top:-5px;width:2.5px;height:20px;background:var(--ink);border-radius:2px;z-index:2;
+}
+.tl-today::after{
+  content:'HOY';position:absolute;top:-16px;left:50%;transform:translateX(-50%);
+  font-family:var(--f-mono);font-size:.58rem;font-weight:700;letter-spacing:.08em;color:var(--ink);
+}
+.tl-labels{display:flex;justify-content:space-between;margin-top:.45rem;font-family:var(--f-mono);font-size:.72rem;font-weight:500;color:var(--ink-soft)}
+
+/* ── navegador de mes ── */
+.month-nav{
+  display:flex;align-items:center;justify-content:center;gap:.7rem;
+  margin-bottom:1.6rem;flex-wrap:wrap;
+}
+.month-nav .m-arrow{
+  width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);
+  background:var(--surface);color:var(--ink);font-size:1.1rem;font-weight:800;
+  cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center;
+}
+.month-nav .m-arrow:hover:not(:disabled){border-color:var(--rosa);color:var(--rosa)}
+.month-nav .m-arrow:disabled{opacity:.3;cursor:not-allowed}
+.month-label{
+  font-family:var(--f-display);font-weight:900;font-stretch:115%;
+  font-size:1.55rem;min-width:210px;text-align:center;text-transform:capitalize;
+}
+.month-nav .m-today{
+  padding:.5rem 1.1rem;border-radius:999px;border:1.5px solid var(--rosa-soft);
+  background:var(--rosa-tint);color:var(--rosa-deep);font-weight:800;font-size:.82rem;
+  cursor:pointer;transition:var(--tr);
+}
+.month-nav .m-today:hover{background:var(--rosa);border-color:var(--rosa);color:#fff}
+
+/* ── cronograma (Gantt) del mes ── */
+.gantt-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);
+  box-shadow:var(--sh-sm);padding:1.3rem 1.4rem 1.5rem;overflow:hidden;
+}
+.gantt-axis{
+  position:relative;height:22px;margin:0 0 .4rem;
+  font-family:var(--f-mono);font-size:.7rem;font-weight:700;color:var(--ink-soft);
+}
+.gantt-axis span{position:absolute;top:0;transform:translateX(-50%)}
+.gantt-axis span:first-child{transform:none}
+.gantt-axis span:last-child{transform:translateX(-100%)}
+.gantt-body{position:relative}
+/* rejilla de días detrás de las filas */
+.gantt-body::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);
+  background-size:calc(100% / var(--cols,30)) 100%;
+  opacity:.55;
+}
+.gantt-today{
+  position:absolute;top:-26px;bottom:0;width:2.5px;background:var(--ink);
+  border-radius:2px;z-index:5;pointer-events:none;
+}
+.gantt-today::before{
+  content:'HOY';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;font-family:var(--f-mono);
+  font-size:.58rem;font-weight:700;letter-spacing:.08em;
+  padding:.14rem .42rem;border-radius:5px;
+}
+.g-row{position:relative;padding:.55rem 0 .65rem;cursor:pointer;border-radius:10px;transition:background .2s ease}
+.g-row:hover{background:rgba(225,0,152,.035)}
+.g-row + .g-row{border-top:1px dashed var(--line)}
+.g-head{display:flex;justify-content:space-between;align-items:center;gap:.7rem;margin-bottom:.4rem}
+.g-title{
+  font-size:.86rem;font-weight:700;line-height:1.3;min-width:0;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.g-meta{flex:0 0 auto;display:flex;align-items:center;gap:.45rem}
+.g-chevron{font-size:.7rem;color:var(--ink-soft);transition:transform .25s ease}
+.g-row.open .g-chevron{transform:rotate(180deg)}
+.g-track{position:relative;height:20px}
+.g-bar{
+  position:absolute;top:1px;height:18px;border-radius:99px;min-width:10px;
+  background:var(--bar-color,var(--rosa));opacity:.92;
+  display:flex;align-items:center;box-shadow:0 2px 6px -2px rgba(36,28,34,.35);
+}
+.g-bar.done{opacity:.32}
+.g-bar.future-bar{
+  background:transparent;border:2px dashed var(--bar-color,var(--rosa));
+  box-shadow:none;opacity:.85;
+}
+.g-bar .g-clip{
+  font-size:.62rem;color:#fff;font-weight:800;padding:0 .35rem;line-height:1;
+}
+.g-bar.future-bar .g-clip{color:var(--bar-color,var(--rosa))}
+.g-bar .g-days{
+  font-family:var(--f-mono);font-size:.62rem;font-weight:700;color:#fff;
+  padding:0 .55rem;white-space:nowrap;overflow:hidden;
+}
+.g-bar.future-bar .g-days{color:var(--bar-color,var(--rosa))}
+/* detalle expandible */
+.g-details{display:none;margin-top:.7rem;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:.95rem 1.05rem;position:relative;z-index:6}
+.g-row.open .g-details{display:block}
+.gd-line{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;margin-bottom:.45rem;flex-wrap:wrap}
+.event-duration{
+  font-size:.72rem;font-weight:800;background:var(--info-bg);color:var(--info);
+  padding:.2rem .6rem;border-radius:999px;
+}
+.event-countdown{
+  font-size:.72rem;font-weight:800;background:var(--warn-bg);color:var(--warn);
+  padding:.2rem .6rem;border-radius:999px;
+}
+.event-location{display:flex;align-items:center;gap:5px;color:var(--ink-soft);font-size:.86rem;margin-bottom:.45rem}
+.gd-desc{font-size:.86rem;color:var(--ink);line-height:1.55;border-top:1px dashed var(--line);padding-top:.6rem;margin-top:.2rem;word-break:break-word}
+.gd-desc em{color:var(--ink-soft)}
+/* leyenda */
+.gantt-legend{
+  display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line);
+  font-size:.74rem;font-weight:600;color:var(--ink-soft);
+}
+.gantt-legend .lg{display:inline-flex;align-items:center;gap:.4rem}
+.lg-swatch{width:22px;height:9px;border-radius:99px;background:var(--rosa)}
+.lg-swatch.dash{background:transparent;border:2px dashed var(--rosa)}
+.lg-swatch.dim{background:var(--rosa);opacity:.3}
+
+/* ════════════════════════════════════════════
+   ESTADOS
+════════════════════════════════════════════ */
+.loader{text-align:center;padding:4rem;color:var(--ink-soft)}
+.spinner{
+  border:4px solid var(--rosa-tint);width:48px;height:48px;border-radius:50%;
+  border-left-color:var(--rosa);animation:spin 1s cubic-bezier(.6,.2,.4,.8) infinite;margin:0 auto 1.4rem;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{
+  text-align:center;padding:3.6rem 2rem;color:var(--ink-soft);background:var(--surface);
+  border-radius:var(--rad);border:2px dashed var(--line);grid-column:1 / -1;
+}
+.empty-state h3{color:var(--ink);font-family:var(--f-display);font-weight:800;margin-bottom:.4rem}
+.preview-banner{
+  max-width:1200px;margin:0 auto;padding:.5rem 1.4rem;display:none;
+}
+.preview-banner span{
+  display:inline-block;background:var(--warn-bg);color:var(--warn);
+  font-size:.78rem;font-weight:700;border-radius:8px;padding:.35rem .8rem;
+}
+
+/* scrollbar suave */
+::-webkit-scrollbar{width:10px;height:8px}
+::-webkit-scrollbar-track{background:var(--paper)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--rosa-soft)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width:980px){
+  .date-hero{grid-template-columns:1fr;gap:1.4rem;align-items:start}
+}
+@media (max-width:760px){
+  .controls-row{grid-template-columns:1fr}
+  .clock-date{display:none}
+  .logo-sub{display:none}
+  .logo-divider{display:none}
+}
+@media (max-width:600px){
+  .date-hero{padding:1.8rem 1.1rem 1.4rem}
+  .hero-stats{grid-template-columns:repeat(3,1fr);gap:.5rem}
+  .stat-tile{padding:.7rem .7rem}
+  .stat-num{font-size:1.45rem}
+  .view-section,.tabs-wrap{padding-left:1.1rem;padding-right:1.1rem}
+  .month-label{font-size:1.2rem;min-width:150px}
+  .gantt-card{padding:1rem .9rem 1.2rem}
+  .g-bar .g-days{display:none}
+  .tabs{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ HEADER: logo + reloj en vivo ════════ -->
+<header>
+  <div class="logo-container">
+    <img src="https://gcp-na-images.contentstack.com/v3/assets/blt339516d00dd80f86/blt8225505fe88f431b/673c926b0345b062aa3856c4/liverpool-logo-header.svg?branch=pro&format=avif&quality=80"
+         alt="Liverpool"
+         onerror="this.onerror=null; this.outerHTML='<h2 style=\'color:white;font-size:24px;font-weight:800;letter-spacing:1px;margin:0;\'>Liverpool</h2>';">
+    <span class="logo-divider"></span>
+    <span class="logo-sub">Promociones</span>
+  </div>
+  <div class="clock-pill" id="clockPill" title="Hora local en tiempo real">
+    <span class="clock-dot"></span>
+    <span class="clock-time" id="clockTime">--:--:--</span>
+    <span class="clock-date" id="clockDate"></span>
+  </div>
+</header>
+
+<div class="preview-banner" id="previewBanner"><span>⚠ Vista previa con datos de ejemplo — sin conexión a Apps Script</span></div>
+
+<!-- ════════ HERO: la fecha como ancla principal ════════ -->
+<section class="date-hero">
+  <div class="hero-left">
+    <span class="hero-eyebrow"><span class="dot"></span>Hoy · actualizado en vivo</span>
+    <h1 id="hero-day">—</h1>
+    <p class="hero-sub" id="hero-date-full">Sincronizando tiempo…</p>
+  </div>
+  <div class="hero-stats" id="heroStats" style="visibility:hidden">
+    <div class="stat-tile">
+      <div class="stat-num pink" id="statActivas">0</div>
+      <div class="stat-lbl">Promos activas hoy</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num amber" id="statTerminan">0</div>
+      <div class="stat-lbl">Terminan en ≤3 días</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" id="statDirs">0</div>
+      <div class="stat-lbl">Direcciones</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ TABS ════════ -->
+<div class="tabs-wrap">
+  <nav class="tabs">
+    <button class="tab-btn active" id="tab-promos" onclick="switchTab('promos', this)">
+      ✨ Promociones <span class="tab-count" id="tabCountPromos">…</span>
+    </button>
+    <button class="tab-btn" id="tab-calendar" onclick="switchTab('calendar', this)">
+      📅 Calendario <span class="tab-count" id="tabCountCal">…</span>
+    </button>
+  </nav>
+</div>
+
+<main>
+  <!-- ════════ VISTA: PROMOCIONES ════════ -->
+  <section id="promos-view" class="view-section active">
+
+    <div class="controls-panel" id="controls-panel" style="display:none;">
+      <div class="controls-row">
+        <div class="search-wrapper">
+          <svg class="icon-search" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input type="text" id="searchInput" placeholder="Busca: categoría, marca o promoción (ej. pantallas, Nike, 50%)…" autocomplete="off">
+          <button class="search-clear" id="searchClear" onclick="clearSearch()" title="Limpiar búsqueda (Esc)">✕</button>
+        </div>
+        <select id="filterOrigen" class="filter-select">
+          <option value="all">Cualquier origen</option>
+          <option value="Promociones">Catálogo general</option>
+          <option value="Marketplace">Marketplace (MKP)</option>
+        </select>
+      </div>
+      <!-- Chips de dirección: un toque para filtrar -->
+      <div class="chips-row" id="chipsRow"></div>
+    </div>
+
+    <div class="results-bar" id="resultsBar" style="display:none;">
+      <p class="results-count">Mostrando <strong id="countNum">0</strong> de <span id="countTotal">0</span> promociones activas hoy</p>
+      <span class="results-hint">Toca una dirección o escribe para filtrar</span>
+    </div>
+
+    <div id="promos-loader" class="loader">
+      <div class="spinner"></div>
+      <p>Procesando bases de datos de promociones…</p>
+    </div>
+
+    <div id="promos-container" class="promos-grid"></div>
+  </section>
+
+  <!-- ════════ VISTA: CALENDARIO ════════ -->
+  <section id="calendar-view" class="view-section">
+
+    <div id="calendar-loader" class="loader">
+      <div class="spinner"></div>
+      <p>Sincronizando calendario de promociones…</p>
+    </div>
+
+    <!-- Sección A: cronograma mensual de promociones (Google Calendar) -->
+    <div class="cal-section" id="ganttSection" style="display:none;">
+      <div class="month-nav">
+        <button class="m-arrow" id="monthPrev" onclick="changeMonth(-1)" title="Mes anterior">‹</button>
+        <span class="month-label" id="monthLabel">—</span>
+        <button class="m-arrow" id="monthNext" onclick="changeMonth(1)" title="Mes siguiente">›</button>
+        <button class="m-today" onclick="goToCurrentMonth()">Hoy</button>
+      </div>
+
+      <h2 class="cal-section-title">📆 Promociones del mes <span class="badge-n" id="ganttCount">0</span></h2>
+      <div class="gantt-card">
+        <div class="gantt-axis" id="ganttAxis"></div>
+        <div class="gantt-body" id="ganttBody"></div>
+        <div class="gantt-legend">
+          <span class="lg"><span class="lg-swatch"></span> En curso</span>
+          <span class="lg"><span class="lg-swatch dash"></span> Por iniciar</span>
+          <span class="lg"><span class="lg-swatch dim"></span> Finalizada</span>
+          <span class="lg" style="margin-left:auto;">Toca una promoción para ver el detalle</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección B: resumen por intervalo de vigencia (hoja de promociones) -->
+    <div class="cal-section" id="vigSection" style="display:none;">
+      <h2 class="cal-section-title">⏳ Vigencias de la hoja de promociones <span class="badge-n" id="vigCount">0</span></h2>
+      <div class="calendar-controls" style="justify-content:flex-start;margin-bottom:1.2rem;">
+        <button id="btn-cal-activos" class="cal-filter-btn active" onclick="filterCalendar('activos')">● En curso hoy</button>
+        <button id="btn-cal-proximos" class="cal-filter-btn" onclick="filterCalendar('proximos')">→ Próximas (60 días)</button>
+      </div>
+      <div class="vig-group-list" id="vigGroupList"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   LÓGICA — se preserva el flujo original de Apps Script:
+   google.script.run.fetchApplicationData() → { promociones, eventos }
+═══════════════════════════════════════════════════════════ */
+
+let globalData = null;
+let activePromosToday = [];          // promociones activas hoy (caché)
+let parsedPromos = [];               // todas las promos con vigencia parseada
+let currentCalendarFilter = 'activos';
+let currentDir = 'all';              // chip de dirección activo
+let currentNow = new Date();
+let lastDayKey = '';                 // para detectar cambio de día
+let searchTimeout;
+const RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_ABR = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DEPT_PALETTE = ['#E10098','#5B21B6','#1D4ED8','#0E7A4F','#B45309','#0E7490','#BE185D','#4338CA','#15803D','#9F1239'];
+let deptColorMap = {};
+
+/* ──────── 1. INICIALIZACIÓN ──────── */
+document.addEventListener('DOMContentLoaded', () => {
+  startClock();
+
+  document.getElementById('searchInput').addEventListener('input', handleSearchDebounce);
+  document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Escape') clearSearch(); });
+  document.getElementById('filterOrigen').addEventListener('change', applyFilters);
+
+  // Fetch al backend de Apps Script (lógica original intacta)
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(handleDataSuccess)
+      .withFailureHandler(handleDataError)
+      .fetchApplicationData();
+  } else {
+    // Fallback de vista previa: solo se usa fuera de Apps Script (abrir el archivo localmente)
+    document.getElementById('previewBanner').style.display = 'block';
+    setTimeout(() => handleDataSuccess(buildMockData()), 600);
+  }
+});
+
+/* ──────── 2. RELOJ Y FECHA EN VIVO ──────── */
+function startClock(){
+  tickClock();
+  setInterval(tickClock, 1000);
+}
+function tickClock(){
+  currentNow = new Date();
+  const h = String(currentNow.getHours()).padStart(2,'0');
+  const m = String(currentNow.getMinutes()).padStart(2,'0');
+  const s = String(currentNow.getSeconds()).padStart(2,'0');
+  document.getElementById('clockTime').textContent = `${h}:${m}:${s}`;
+  document.getElementById('clockDate').textContent = `${currentNow.getDate()} ${MESES_ABR[currentNow.getMonth()]} ${currentNow.getFullYear()}`;
+
+  const dayKey = currentNow.toDateString();
+  if (dayKey !== lastDayKey) {
+    lastDayKey = dayKey;
+    renderHeroDate();
+    // Al cambiar de día se reevalúan vigencias para mantener todo al corriente
+    if (globalData) refreshActiveData();
+  }
+}
+function renderHeroDate(){
+  document.getElementById('hero-day').innerHTML =
+    `${DIAS[currentNow.getDay()]}, <span class="day-num">${currentNow.getDate()}</span>`;
+  document.getElementById('hero-date-full').innerText =
+    `de ${MESES[currentNow.getMonth()]} de ${currentNow.getFullYear()}`;
+}
+
+/* ──────── 3. NAVEGACIÓN (TABS) ──────── */
+function switchTab(tabId, btn){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.querySelectorAll('.view-section').forEach(sec => {
+    sec.style.display = 'none';
+    sec.classList.remove('active');
+  });
+  const target = document.getElementById(`${tabId}-view`);
+  target.style.display = 'block';
+  target.classList.add('active');
+
+  if (window.gsap && !RM) {
+    gsap.fromTo(target, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: .45, ease: 'power3.out' });
+  }
+}
+
+/* ──────── 4. PROCESAMIENTO DE DATOS ──────── */
+function handleDataSuccess(data){
+  if (data.status === 'error') { handleDataError(data.error); return; }
+  globalData = data;
+  refreshActiveData();
+
+  document.getElementById('promos-loader').style.display = 'none';
+  document.getElementById('controls-panel').style.display = 'block';
+  document.getElementById('resultsBar').style.display = 'flex';
+  document.getElementById('heroStats').style.visibility = 'visible';
+
+  if (window.gsap && !RM) {
+    gsap.fromTo('#controls-panel', { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: .45 });
+    gsap.fromTo('.stat-tile', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .5, stagger: .08, ease: 'power2.out' });
+  }
+}
+
+function refreshActiveData(){
+  // Parsear vigencias de todas las promociones una sola vez por día
+  parsedPromos = globalData.promociones.map(p => {
+    const range = parseVigencia(p.vigencia);
+    return Object.assign({}, p, { _start: range ? range.start : null, _end: range ? range.end : null });
+  });
+
+  // Activas hoy (misma regla fail-safe que la versión anterior: sin vigencia válida → no se muestra)
+  activePromosToday = parsedPromos.filter(p => p._start && currentNow >= p._start && currentNow <= p._end);
+
+  buildDeptColors();
+  populateChips();
+  renderHeroStats();
+  applyFilters();
+  renderCalendar();
+
+  document.getElementById('tabCountPromos').textContent = activePromosToday.length;
+}
+
+function handleDataError(error){
+  document.getElementById('promos-loader').innerHTML =
+    `<div class="empty-state"><h3>Error de conexión</h3><p>${error}</p><p style="margin-top:.5rem;font-size:.85rem;">Recarga la página para intentarlo de nuevo.</p></div>`;
+  document.getElementById('calendar-loader').innerHTML =
+    `<div class="empty-state"><h3>Error de conexión</h3><p>No se pudo sincronizar el calendario.</p></div>`;
+}
+
+/* ──────── 5. ESTADÍSTICAS DEL HERO ──────── */
+function renderHeroStats(){
+  const dirs = new Set(activePromosToday.map(p => p.direccion).filter(d => d && d.trim() !== ''));
+  const terminanPronto = activePromosToday.filter(p => daysLeft(p._end) <= 3).length;
+
+  animateNumber('statActivas', activePromosToday.length);
+  animateNumber('statTerminan', terminanPronto);
+  animateNumber('statDirs', dirs.size);
+}
+function animateNumber(id, value){
+  const el = document.getElementById(id);
+  if (window.gsap && !RM) {
+    const obj = { v: 0 };
+    gsap.to(obj, { v: value, duration: .9, ease: 'power2.out', snap: { v: 1 },
+      onUpdate: () => el.textContent = obj.v });
+  } else { el.textContent = value; }
+}
+
+/* ──────── 6. CHIPS DE DIRECCIÓN + COLORES ──────── */
+function buildDeptColors(){
+  deptColorMap = {};
+  const dirs = Array.from(new Set(activePromosToday.map(p => p.direccion).filter(d => d && d.trim() !== ''))).sort();
+  dirs.forEach((d, i) => { deptColorMap[d] = DEPT_PALETTE[i % DEPT_PALETTE.length]; });
+}
+function populateChips(){
+  const row = document.getElementById('chipsRow');
+  row.innerHTML = '';
+  const dirs = Object.keys(deptColorMap);
+
+  const allChip = makeChip('all', 'Todas', null, activePromosToday.length);
+  row.appendChild(allChip);
+  dirs.forEach(dir => {
+    const n = activePromosToday.filter(p => p.direccion === dir).length;
+    row.appendChild(makeChip(dir, capitalize(dir), deptColorMap[dir], n));
+  });
+  syncChipState();
+}
+function makeChip(value, label, color, n){
+  const b = document.createElement('button');
+  b.className = 'chip';
+  b.dataset.value = value;
+  b.innerHTML = (color ? `<span class="chip-dot" style="color:${color}"></span>` : '🏷️ ') + `${label} <span style="opacity:.65;font-weight:600;">${n}</span>`;
+  b.onclick = () => { currentDir = (currentDir === value) ? 'all' : value; syncChipState(); applyFilters(); };
+  return b;
+}
+function syncChipState(){
+  document.querySelectorAll('.chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.value === currentDir));
+}
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+
+/* ──────── 7. BÚSQUEDA Y FILTRADO ──────── */
+function handleSearchDebounce(){
+  document.getElementById('searchClear').style.display =
+    document.getElementById('searchInput').value ? 'flex' : 'none';
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(applyFilters, 150); // debounce 150ms (original)
+}
+function clearSearch(){
+  const inp = document.getElementById('searchInput');
+  inp.value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  applyFilters();
+  inp.focus();
+}
+function applyFilters(){
+  const term = document.getElementById('searchInput').value.toLowerCase().trim();
+  const orgVal = document.getElementById('filterOrigen').value;
+
+  const results = activePromosToday.filter(p => {
+    const matchDir = currentDir === 'all' || p.direccion === currentDir;
+    const matchOrg = orgVal === 'all' || p.origen === orgVal;
+    let matchSearch = true;
+    if (term !== '') {
+      matchSearch = (p.categoria && p.categoria.toLowerCase().includes(term)) ||
+                    (p.promocion && p.promocion.toLowerCase().includes(term)) ||
+                    (p.marca && p.marca.toLowerCase().includes(term)) ||
+                    (p.direccion && p.direccion.toLowerCase().includes(term));
+    }
+    return matchDir && matchOrg && matchSearch;
+  });
+
+  document.getElementById('countNum').textContent = results.length;
+  document.getElementById('countTotal').textContent = activePromosToday.length;
+  renderCards(results);
+}
+
+/* ──────── 8. PARSER DE VIGENCIAS (mejorado, mismo fail-safe) ────────
+   Soporta: "25 de mayo al 2 de junio", "25 may al 02 jun",
+   "25 al 30 de junio", "9 de junio", abreviaturas y guiones. */
+const MONTH_MAP = {
+  'ene':0,'enero':0,'feb':1,'febrero':1,'mar':2,'marzo':2,'abr':3,'abril':3,
+  'may':4,'mayo':4,'jun':5,'junio':5,'jul':6,'julio':6,'ago':7,'agosto':7,
+  'sep':8,'sept':8,'septiembre':8,'oct':9,'octubre':9,'nov':10,'noviembre':10,'dic':11,'diciembre':11
+};
+function monthIdx(str){
+  if (!str) return undefined;
+  const k = str.toLowerCase().replace(/\./g,'').trim();
+  if (MONTH_MAP[k] !== undefined) return MONTH_MAP[k];
+  return MONTH_MAP[k.slice(0,3)];
+}
+function parseVigencia(vigenciaStr){
+  if (!vigenciaStr) return null;
+  const s = String(vigenciaStr).toLowerCase();
+  const year = currentNow.getFullYear();
+
+  // Rango completo: "D [mes]? al D mes"
+  let m = s.match(/(\d{1,2})\s*(?:de\s+)?([a-záéíóú]+)?\s*(?:al?|hasta(?:\s+el)?|[-–—])\s*(\d{1,2})\s*(?:de\s+)?([a-záéíóú]+)/i);
+  if (m) {
+    const d1 = parseInt(m[1]), d2 = parseInt(m[3]);
+    let mi2 = monthIdx(m[4]);
+    let mi1 = monthIdx(m[2]);
+    if (mi2 === undefined && mi1 !== undefined) { mi2 = mi1; }
+    if (mi1 === undefined && mi2 !== undefined) { mi1 = (d1 <= d2) ? mi2 : (mi2 + 11) % 12; }
+    if (mi1 !== undefined && mi2 !== undefined) {
+      const y2 = (mi2 < mi1) ? year + 1 : year;  // cruce de año (dic → ene)
+      return {
+        start: new Date(year, mi1, d1, 0, 0, 0),
+        end:   new Date(y2,  mi2, d2, 23, 59, 59)
+      };
+    }
+  }
+  // Fecha única: "D de mes" (regla original)
+  m = s.match(/(\d{1,2})\s*(?:de\s+)?([a-záéíóú]+)/i);
+  if (m) {
+    const mi = monthIdx(m[2]);
+    if (mi !== undefined) {
+      const d = parseInt(m[1]);
+      return { start: new Date(year, mi, d, 0,0,0), end: new Date(year, mi, d, 23,59,59) };
+    }
+  }
+  return null; // Fail-safe: igual que la versión anterior
+}
+function daysLeft(endDate){
+  return Math.max(0, Math.ceil((endDate - currentNow) / 86400000));
+}
+function daysUntil(startDate){
+  return Math.max(0, Math.ceil((startDate - currentNow) / 86400000));
+}
+function fmtShort(d){ return `${d.getDate()} ${MESES_ABR[d.getMonth()].toLowerCase()}`; }
+
+/* Extracción de señales de la promoción para los badges */
+function maxDiscount(t){
+  const nums = (String(t).match(/(\d{1,3})\s*%/g) || []).map(x => parseInt(x));
+  return nums.length ? Math.max(...nums) : 0;
+}
+function msiCount(t){
+  const m = String(t).match(/(\d{1,2})\s*msi/i);
+  if (m) return parseInt(m[1]);
+  return /\bmsi\b/i.test(String(t)) ? 1 : 0;
+}
+function pagaSep(t){ return /pag(a|ue)\s*(en|hasta)?\s*sep/i.test(String(t)); }
+
+/* ──────── 9. RENDER DE TARJETAS ──────── */
+function renderCards(promosArray){
+  const container = document.getElementById('promos-container');
+
+  if (promosArray.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 1rem;color:var(--line);">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <h3>Sin resultados</h3>
+        <p>Prueba con otra palabra, quita el filtro de dirección o cambia el origen.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = '';
+
+  promosArray.forEach(promo => {
+    const isMkp = promo.origen === 'Marketplace';
+    const color = deptColorMap[promo.direccion] || 'var(--rosa)';
+
+    const marcaHtml = (promo.marca && !isMkp)
+      ? `<div class="card-brand"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg> ${promo.marca}</div>`
+      : '';
+
+    let urlLiga = promo.liga;
+    if (urlLiga && !urlLiga.startsWith('http') && urlLiga !== '#') urlLiga = 'https://' + urlLiga;
+    const btnHtml = (urlLiga && urlLiga !== '#' && urlLiga.trim() !== '')
+      ? `<a href="${urlLiga}" target="_blank" rel="noopener" class="card-btn">Ver en Liverpool ↗</a>`
+      : `<span class="card-btn disabled">Enlace no disponible</span>`;
+
+    /* Señales de descuento y beneficios */
+    const pct = maxDiscount(promo.promocion);
+    const msi = msiCount(promo.promocion);
+    const sep = pagaSep(promo.promocion);
+    const discHtml = pct > 0
+      ? `<div class="disc-badge"><span class="upto">hasta</span><span class="pct">${pct}%</span></div>` : '';
+    const msiHtml  = msi > 0 ? `<span class="mini-badge msi">${msi > 1 ? msi + ' MSI' : 'MSI'}</span>` : '';
+    const sepHtml  = sep ? `<span class="mini-badge sep">Paga en Sep</span>` : '';
+
+    /* Vigencia: rango, urgencia y barra de tiempo restante */
+    let vigHtml = '';
+    if (promo._start && promo._end) {
+      const dl = daysLeft(promo._end);
+      const total = Math.max(1, promo._end - promo._start);
+      const progress = Math.min(100, Math.max(2, ((currentNow - promo._start) / total) * 100));
+      let pillCls = 'ok', pillTxt = `Quedan ${dl} días`;
+      if (dl <= 1)      { pillCls = 'alert'; pillTxt = '¡Termina hoy!'; }
+      else if (dl === 2){ pillCls = 'alert'; pillTxt = 'Termina mañana'; }
+      else if (dl <= 4) { pillCls = 'warn';  pillTxt = `Quedan ${dl} días`; }
+      vigHtml = `
+        <div class="card-vig">
+          <div class="vig-top">
+            <span class="vig-range">📅 <strong>${fmtShort(promo._start)} – ${fmtShort(promo._end)}</strong></span>
+            <span class="vig-pill ${pillCls}">${pillTxt}</span>
+          </div>
+          <div class="vig-track"><div class="vig-fill" data-progress="${progress.toFixed(1)}"></div></div>
+        </div>`;
+    } else {
+      vigHtml = `
+        <div class="card-vig">
+          <div class="vig-top">
+            <span class="vig-range">📅 Vigencia: <strong>${promo.vigencia || 'no especificada'}</strong></span>
+            <span class="vig-pill muted">Sin fecha</span>
+          </div>
+        </div>`;
+    }
+
+    const cardHTML = `
+      <div class="card promo-card" style="--dept-color:${color}">
+        <div class="card-header">
+          <span class="dept-tag"><span class="dot"></span>${promo.direccion}</span>
+          <span class="origin-tag ${isMkp ? 'mkp' : ''}">${isMkp ? 'MKP' : promo.origen}</span>
+        </div>
+        <h3 class="card-title">${promo.categoria}</h3>
+        ${(discHtml || msiHtml || sepHtml) ? `<div class="promo-row">${discHtml}${msiHtml}${sepHtml}</div>` : ''}
+        <div class="card-promo">${promo.promocion}</div>
+        ${marcaHtml}
+        ${vigHtml}
+        ${btnHtml}
+      </div>`;
+    container.insertAdjacentHTML('beforeend', cardHTML);
+  });
+
+  /* Animaciones estables (patrón validado: fromTo + sin opacity:0 en CSS) */
+  if (window.gsap && !RM) {
+    gsap.fromTo('.promo-card',
+      { opacity: 0, scale: .96, y: 12 },
+      { opacity: 1, scale: 1, y: 0, duration: .4, stagger: .04, ease: 'back.out(1.4)', clearProps: 'transform' });
+    document.querySelectorAll('.vig-fill').forEach(el => {
+      gsap.fromTo(el, { width: '0%' }, { width: el.dataset.progress + '%', duration: .8, ease: 'power2.out', delay: .15 });
+    });
+  } else {
+    document.querySelectorAll('.vig-fill').forEach(el => el.style.width = el.dataset.progress + '%');
+  }
+}
+
+/* ──────── 10. CALENDARIO DE PROMOCIONES ──────── */
+let viewMonth = null; // primer día del mes mostrado en el cronograma
+const GANTT_PALETTE = ['#E10098','#5B21B6','#1D4ED8','#0E7A4F','#B45309','#0E7490','#BE185D','#4338CA'];
+
+function filterCalendar(tipo){
+  currentCalendarFilter = tipo;
+  document.querySelectorAll('.cal-filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-cal-${tipo}`).classList.add('active');
+  renderVigGroups();
+}
+
+function renderCalendar(){
+  document.getElementById('calendar-loader').style.display = 'none';
+  if (!viewMonth) viewMonth = new Date(currentNow.getFullYear(), currentNow.getMonth(), 1);
+  renderGantt();
+  renderVigGroups();
+
+  // Conteo del tab: promociones del calendario aún vigentes o por iniciar
+  const evs = (globalData.eventos || []).filter(ev => ev.fin >= currentNow.getTime());
+  document.getElementById('tabCountCal').textContent = evs.length;
+}
+function endOfToday(){
+  return new Date(currentNow.getFullYear(), currentNow.getMonth(), currentNow.getDate(), 23,59,59).getTime();
+}
+
+/* — Límites de navegación según los datos disponibles — */
+function monthBounds(){
+  let min = new Date(currentNow.getFullYear(), currentNow.getMonth(), 1);
+  let max = new Date(currentNow.getFullYear(), currentNow.getMonth(), 1);
+  (globalData.eventos || []).forEach(ev => {
+    const s = new Date(ev.inicio), f = new Date(ev.fin);
+    const sM = new Date(s.getFullYear(), s.getMonth(), 1);
+    const fM = new Date(f.getFullYear(), f.getMonth(), 1);
+    if (sM < min) min = sM;
+    if (fM > max) max = fM;
+  });
+  return { min, max };
+}
+function changeMonth(delta){
+  const b = monthBounds();
+  const next = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + delta, 1);
+  if (next < b.min || next > b.max) return;
+  viewMonth = next;
+  renderGantt();
+}
+function goToCurrentMonth(){
+  viewMonth = new Date(currentNow.getFullYear(), currentNow.getMonth(), 1);
+  renderGantt();
+}
+function toggleGanttRow(row){ row.classList.toggle('open'); }
+
+/* — Cronograma mensual (Gantt): cada promoción del calendario es una barra — */
+function renderGantt(){
+  const section = document.getElementById('ganttSection');
+  const body = document.getElementById('ganttBody');
+  const axis = document.getElementById('ganttAxis');
+  section.style.display = 'block';
+
+  const mStart = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 1);
+  const mEnd = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1); // exclusivo
+  const span = mEnd - mStart;
+  const cols = Math.round(span / 86400000);
+
+  document.getElementById('monthLabel').textContent = `${MESES[mStart.getMonth()]} ${mStart.getFullYear()}`;
+
+  const b = monthBounds();
+  document.getElementById('monthPrev').disabled = (new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1) < b.min);
+  document.getElementById('monthNext').disabled = (new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1) > b.max);
+
+  // Eje superior: días de referencia
+  const marks = [1, 8, 15, 22, cols];
+  axis.innerHTML = marks.map(d => {
+    const pct = ((d - 1) / cols) * 100;
+    return `<span style="left:${pct.toFixed(2)}%">${d} ${MESES_ABR[mStart.getMonth()].toLowerCase()}</span>`;
+  }).join('');
+
+  // Promociones que tocan el mes visible
+  const eventos = (globalData.eventos || [])
+    .filter(ev => ev.inicio < mEnd.getTime() && ev.fin > mStart.getTime())
+    .sort((a, c) => a.inicio - c.inicio || a.fin - c.fin);
+
+  document.getElementById('ganttCount').textContent = eventos.length;
+  body.style.setProperty('--cols', cols);
+
+  if (eventos.length === 0) {
+    body.innerHTML = `<div class="empty-state" style="border:none;"><h3>Mes sin promociones registradas</h3><p>No hay promociones en el calendario para este mes. Usa las flechas para ver otro mes.</p></div>`;
+    return;
+  }
+
+  const ahora = currentNow.getTime();
+  let html = '';
+
+  eventos.forEach((ev, i) => {
+    const color = GANTT_PALETTE[i % GANTT_PALETTE.length];
+    const fInicio = new Date(ev.inicio);
+    const fFin = new Date(ev.fin);
+    const desc = describeEvent(ev);
+
+    /* Geometría de la barra, recortada al mes visible */
+    const visStart = Math.max(ev.inicio, mStart.getTime());
+    const visEnd = Math.min(ev.fin, mEnd.getTime());
+    const left = ((visStart - mStart.getTime()) / span) * 100;
+    const width = Math.max(1.5, ((visEnd - visStart) / span) * 100);
+    const clipL = ev.inicio < mStart.getTime();
+    const clipR = ev.fin > mEnd.getTime();
+
+    /* Estado temporal: en curso / por iniciar / finalizada */
+    let pill = '', barCls = '', countdownHtml = '';
+    if (ahora < ev.inicio) {
+      const du = daysUntil(fInicio);
+      pill = `<span class="vig-pill warn">Inicia en ${du} ${du === 1 ? 'día' : 'días'}</span>`;
+      countdownHtml = `<span class="event-countdown">⏳ Inicia en ${du} ${du === 1 ? 'día' : 'días'}</span>`;
+      barCls = 'future-bar';
+    } else if (ahora > ev.fin) {
+      pill = `<span class="vig-pill muted">Finalizó</span>`;
+      barCls = 'done';
+    } else {
+      const dl = daysLeft(fFin);
+      const cls = dl <= 2 ? 'alert' : (dl <= 4 ? 'warn' : 'ok');
+      pill = `<span class="vig-pill ${cls}">${dl <= 1 ? '¡Termina hoy!' : 'Quedan ' + dl + ' días'}</span>`;
+    }
+
+    const ubicacionHtml = ev.ubicacion
+      ? `<div class="event-location"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> ${ev.ubicacion}</div>`
+      : '';
+
+    html += `
+      <div class="g-row" onclick="toggleGanttRow(this)">
+        <div class="g-head">
+          <span class="g-title">${ev.titulo}</span>
+          <span class="g-meta">${pill}<span class="g-chevron">▼</span></span>
+        </div>
+        <div class="g-track">
+          <div class="g-bar ${barCls}" style="--bar-color:${color};left:${left.toFixed(2)}%;width:${width.toFixed(2)}%">
+            ${clipL ? '<span class="g-clip">◂</span>' : ''}
+            <span class="g-days">${desc.durStr}</span>
+            ${clipR ? '<span class="g-clip" style="margin-left:auto;">▸</span>' : ''}
+          </div>
+        </div>
+        <div class="g-details">
+          <div class="gd-line">
+            📅 ${desc.rangoStr} &nbsp;·&nbsp; 🕒 ${desc.horarioStr}
+            <span class="event-duration">Dura ${desc.durStr}</span>
+            ${countdownHtml}
+          </div>
+          ${ubicacionHtml}
+          <div class="gd-desc">${ev.descripcion ? ev.descripcion : '<em>Sin descripción detallada</em>'}</div>
+        </div>
+      </div>`;
+  });
+
+  body.innerHTML = html;
+
+  // Línea HOY si el mes visible contiene la fecha actual
+  if (ahora >= mStart.getTime() && ahora < mEnd.getTime()) {
+    const todayPct = ((ahora - mStart.getTime()) / span) * 100;
+    body.insertAdjacentHTML('beforeend', `<div class="gantt-today" style="left:${todayPct.toFixed(2)}%"></div>`);
+  }
+
+  if (window.gsap && !RM) {
+    gsap.fromTo('#ganttBody .g-row', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .35, stagger: .04, ease: 'power2.out' });
+    gsap.fromTo('#ganttBody .g-bar', { scaleX: 0, transformOrigin: 'left center' }, { scaleX: 1, duration: .55, stagger: .05, ease: 'power3.out', delay: .1 });
+  }
+}
+
+/* — Descripción de intervalos (álgebra de Allen, lógica original preservada) — */
+function describeEvent(ev){
+  const fInicio = new Date(ev.inicio);
+  const fFin = new Date(ev.fin);
+  const formatTime = d => `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  const formatDayMonth = d => `${d.getDate()} ${MESES_ABR[d.getMonth()]}`;
+  let horarioStr = '', rangoStr = '', durStr = '';
+
+  if (ev.esTodoElDia) {
+    if (fInicio.toDateString() === fFin.toDateString() || (fFin.getTime() - fInicio.getTime() <= 86400000)) {
+      horarioStr = 'Todo el día';
+      rangoStr = formatDayMonth(fInicio);
+      durStr = '1 día';
+    } else {
+      horarioStr = 'Múltiples días';
+      const fFinAjustado = new Date(fFin.getTime() - 86400000);
+      rangoStr = `${formatDayMonth(fInicio)} – ${formatDayMonth(fFinAjustado)}`;
+      const nDias = Math.round((fFinAjustado - fInicio) / 86400000) + 1;
+      durStr = `${nDias} días`;
+    }
+  } else {
+    horarioStr = `${formatTime(fInicio)} – ${formatTime(fFin)} hrs`;
+    if (fInicio.toDateString() === fFin.toDateString()) {
+      rangoStr = formatDayMonth(fInicio);
+      const hrs = ((fFin - fInicio) / 3600000);
+      durStr = hrs >= 1 ? `${Math.round(hrs * 10) / 10} h` : `${Math.round((fFin - fInicio) / 60000)} min`;
+    } else {
+      rangoStr = `${formatDayMonth(fInicio)} al ${formatDayMonth(fFin)}`;
+      durStr = `${Math.ceil((fFin - fInicio) / 86400000)} días`;
+    }
+  }
+  return { horarioStr, rangoStr, durStr };
+}
+
+/* — Sección A: vigencias de promociones agrupadas por intervalo — */
+function renderVigGroups(){
+  const section = document.getElementById('vigSection');
+  const list = document.getElementById('vigGroupList');
+  const finDeHoy = endOfToday();
+  const horizon = currentNow.getTime() + 60 * 86400000; // 60 días, igual que eventos
+
+  // Agrupar promos por intervalo exacto de vigencia
+  const groups = {};
+  parsedPromos.forEach(p => {
+    if (!p._start) return;
+    const enCurso = currentNow >= p._start && currentNow <= p._end;
+    const proxima = p._start.getTime() > finDeHoy && p._start.getTime() <= horizon;
+    if (currentCalendarFilter === 'activos' ? !enCurso : !proxima) return;
+
+    const key = p._start.getTime() + '|' + p._end.getTime();
+    if (!groups[key]) groups[key] = { start: p._start, end: p._end, promos: [] };
+    groups[key].promos.push(p);
+  });
+
+  const sorted = Object.values(groups).sort((a, b) =>
+    currentCalendarFilter === 'activos' ? (a.end - b.end) : (a.start - b.start));
+
+  document.getElementById('vigCount').textContent = sorted.length;
+  section.style.display = 'block';
+
+  if (sorted.length === 0) {
+    list.innerHTML = `<div class="empty-state"><h3>Sin vigencias ${currentCalendarFilter === 'activos' ? 'en curso' : 'próximas'}</h3><p>${currentCalendarFilter === 'activos' ? 'Hoy no hay promociones con vigencia activa.' : 'No hay promociones que inicien en los próximos 60 días.'}</p></div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  sorted.forEach(g => {
+    const totalDays = Math.max(1, Math.round((g.end - g.start) / 86400000));
+    const isActive = currentNow >= g.start && currentNow <= g.end;
+    const cats = g.promos.slice(0, 3).map(p => `<b>${p.categoria}</b>`).join(' · ')
+               + (g.promos.length > 3 ? ` · +${g.promos.length - 3} más` : '');
+
+    let pill = '', fillPct = 0, todayPct = null, fillCls = '';
+    if (isActive) {
+      const dl = daysLeft(g.end);
+      const cls = dl <= 2 ? 'alert' : (dl <= 4 ? 'warn' : 'ok');
+      pill = `<span class="vig-pill ${cls}">${dl <= 1 ? '¡Termina hoy!' : 'Quedan ' + dl + ' días'}</span>`;
+      fillPct = Math.min(100, Math.max(2, ((currentNow - g.start) / (g.end - g.start)) * 100));
+      todayPct = fillPct;
+    } else {
+      const du = daysUntil(g.start);
+      pill = `<span class="vig-pill warn">Inicia en ${du} ${du === 1 ? 'día' : 'días'}</span>`;
+      fillPct = 100; fillCls = 'future';
+    }
+
+    list.insertAdjacentHTML('beforeend', `
+      <div class="vig-group vig-item">
+        <div class="vg-top">
+          <span class="vg-range">${fmtShort(g.start)} → ${fmtShort(g.end)}</span>
+          <div class="vg-meta">
+            <span class="vg-count">${g.promos.length} ${g.promos.length === 1 ? 'promoción' : 'promociones'} · ${totalDays} días de duración</span>
+            ${pill}
+          </div>
+        </div>
+        <p class="vg-cats">${cats}</p>
+        <div class="tl-wrap">
+          <div class="tl-track">
+            <div class="tl-fill ${fillCls}" data-progress="${fillPct.toFixed(1)}"></div>
+          </div>
+          ${todayPct !== null ? `<div class="tl-today" style="left:${todayPct.toFixed(1)}%"></div>` : ''}
+          <div class="tl-labels"><span>${fmtShort(g.start)}</span><span>${fmtShort(g.end)}</span></div>
+        </div>
+      </div>`);
+  });
+
+  if (window.gsap && !RM) {
+    gsap.fromTo('.vig-item', { opacity: 0, x: -15 }, { opacity: 1, x: 0, duration: .4, stagger: .06, ease: 'power2.out' });
+    document.querySelectorAll('#vigGroupList .tl-fill').forEach(el => {
+      gsap.fromTo(el, { width: '0%' }, { width: el.dataset.progress + '%', duration: .9, ease: 'power2.out', delay: .2 });
+    });
+  } else {
+    document.querySelectorAll('#vigGroupList .tl-fill').forEach(el => el.style.width = el.dataset.progress + '%');
+  }
+}
+
+/* ──────── 11. DATOS DE EJEMPLO (solo vista previa local, nunca en Apps Script) ──────── */
+function buildMockData(){
+  const y = currentNow.getFullYear();
+  const hoy0 = new Date(currentNow.getFullYear(), currentNow.getMonth(), currentNow.getDate()).getTime();
+  const DIA = 86400000;
+  const mName = MESES[currentNow.getMonth()].toLowerCase();
+  const d = currentNow.getDate();
+  const vigActual = `${Math.max(1, d - 2)} al ${Math.min(28, d + 4)} de ${mName}`;
+  const vigCorta  = `${Math.max(1, d - 1)} al ${Math.min(28, d + 1)} de ${mName}`;
+  const mNext = MESES[(currentNow.getMonth() + 1) % 12].toLowerCase();
+  return {
+    status: 'ok',
+    promociones: [
+      { direccion:'MULTIMEDIA', categoria:'Pantallas', promocion:'Hasta 55% de descuento + 13 MSI, paga en septiembre', marca:'Samsung, LG, Hisense', vigencia: vigActual, liga:'https://www.liverpool.com.mx', origen:'Promociones' },
+      { direccion:'MULTIMEDIA', categoria:'Laptops y cómputo', promocion:'Hasta 40% de descuento ó 30% + 18 MSI', marca:'Apple, HP, Lenovo', vigencia: vigActual, liga:'https://www.liverpool.com.mx', origen:'Promociones' },
+      { direccion:'HOGAR', categoria:'Línea blanca', promocion:'Hasta 58% de descuento, paga en septiembre', marca:'Whirlpool, Mabe', vigencia: vigCorta, liga:'https://www.liverpool.com.mx', origen:'Promociones' },
+      { direccion:'DEPORTES', categoria:'Tenis y ropa deportiva', promocion:'Hasta 45% de descuento', marca:'Nike, Adidas', vigencia: vigActual, liga:'https://www.liverpool.com.mx', origen:'Promociones' },
+      { direccion:'MUJER', categoria:'Bolsas y accesorios', promocion:'30% de descuento adicional en rebajas', marca:'', vigencia: vigCorta, liga:'', origen:'Marketplace' },
+      { direccion:'BELLEZA', categoria:'Fragancias', promocion:'Hasta 35% + regalo en compras mayores a $1,500', marca:'Carolina Herrera, Dior', vigencia: vigActual, liga:'https://www.liverpool.com.mx', origen:'Promociones' },
+      { direccion:'MULTIMEDIA', categoria:'Audio y bocinas', promocion:'Hasta 50% de descuento + 12 MSI', marca:'Bose, JBL, Sony', vigencia: `1 al 15 de ${mNext}`, liga:'https://www.liverpool.com.mx', origen:'Promociones' }
+    ],
+    eventos: [
+      { titulo:'GRADUACIONES: SL 15% ME O 9 MSI DILISA / 6 MSI EXT. (OMNICANAL MONEDERO)', inicio: hoy0 - 1*DIA, fin: hoy0 + 6*DIA, esTodoElDia:true, ubicacion:'', descripcion:'' },
+      { titulo:'LIFESTYLE (2): HL HASTA 20% DE DESC. Y PAGUE EN SEPTIEMBRE 3 A 48 MPF (DILISA)', inicio: hoy0 - 1*DIA, fin: hoy0 + 13*DIA, esTodoElDia:true, ubicacion:'', descripcion:'' },
+      { titulo:'DÍA DEL PADRE: SL 20% EN ME Y HASTA 9 MSI DILISA / 6 MSI EXT.', inicio: hoy0 + 1*DIA, fin: hoy0 + 13*DIA, esTodoElDia:true, ubicacion:'', descripcion:'' },
+      { titulo:'VENTA NOCTURNA PAPÁS — 30% DE DESC.', inicio: hoy0 - 4*DIA, fin: hoy0 - 2*DIA, esTodoElDia:true, ubicacion:'', descripcion:'' },
+      { titulo:'GRAN BARATA DE VERANO: HASTA 40% DE DESC (DILISA) Y 9 MSI', inicio: hoy0 + 13*DIA, fin: hoy0 + 28*DIA, esTodoElDia:true, ubicacion:'', descripcion:'Preventa los primeros 4 días.' },
+      { titulo:'FERIA DEL LAVADO: LB 30% DE DTO + ADICIONAL', inicio: hoy0 + 17*DIA, fin: hoy0 + 31*DIA, esTodoElDia:true, ubicacion:'', descripcion:'' }
+    ]
+  };
+}
+</script>
+</body>
+</html>
