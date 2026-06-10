@@ -715,12 +715,12 @@ function switchSec(id, btn) {
 }
 function handlePromoNav(e, link) {
   const href = link.getAttribute('href') || '';
-  // Si la plantilla GAS no procesó la variable, el href contendrá "<?="
-  if (href.indexOf('<?') > -1 || !href.startsWith('http')) {
+  // Si la plantilla GAS no inyectó la URL (preview local), el href no es una URL absoluta
+  if (!href.startsWith('http')) {
     e.preventDefault();
     window.location.href = '?page=promociones';
   }
-  // Si GAS inyectó la URL correcta, target="_top" del <a> se encarga de la navegación
+  // Con URL absoluta inyectada, target="_top" del <a> navega el frame superior
 }
 
 /* ── DATA ── */
