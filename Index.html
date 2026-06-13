@@ -741,6 +741,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .mkp-note{background:#F5F3FF;border-color:rgba(124,58,237,.18) !important;color:#5B21B6 !important}
 .mkp-note strong{color:#5B21B6 !important}
 .mkp-badge{display:inline-flex;align-items:center;padding:.08rem .46rem;border-radius:100px;background:rgba(255,255,255,.28);color:#fff;font-size:.64rem;font-weight:800;letter-spacing:.04em;margin-left:.25rem}
+/* Tienda Física – emerald */
+.tda-block{border-left-color:#059669}
+.tda-block .bt-obs-list li::before{color:#059669}
+.tda-block .bt-quote{background:#D1FAE5;border-left-color:#059669;color:#064E3B}
+.tda-num{background:linear-gradient(135deg,#059669,#34D399) !important;box-shadow:0 8px 16px -8px rgba(5,150,105,.55) !important}
+.tda-plat{background:#D1FAE5 !important;color:#065F46 !important}
+.tda-note{background:#ECFDF5;border-color:rgba(5,150,105,.18) !important;color:#065F46 !important}
+.tda-note strong{color:#065F46 !important}
+.tda-badge{display:inline-flex;align-items:center;padding:.08rem .46rem;border-radius:100px;background:rgba(255,255,255,.28);color:#fff;font-size:.64rem;font-weight:800;letter-spacing:.04em;margin-left:.25rem}
 .bt-head{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem}
 .bt-title{font-family:var(--f-display);font-size:1.08rem;font-weight:800;color:var(--ink);margin:0;padding-top:.25rem}
 .bt-times{display:flex;gap:.6rem;flex-wrap:wrap;margin-left:auto}
@@ -885,6 +894,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   <button class="side-link" data-sec="softline" onclick="switchSec('softline',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 12h9M5 16h6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg> Soft Line <span class="sl-badge">SF</span></button>
   <button class="side-link" data-sec="slmensajerias" onclick="switchSec('slmensajerias',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5v9l-9 5-9-5V8z"/><path d="M12 3v14M3 8l9 5 9-5"/></svg> SL Mensajerías <span class="slm-badge">SF</span></button>
   <button class="side-link" data-sec="mkp" onclick="switchSec('mkp',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg> MarketPlace <span class="mkp-badge">MKP</span></button>
+  <button class="side-link" data-sec="tienda" onclick="switchSec('tienda',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21H3V9.5z"/><path d="M9 21V12h6v9"/></svg> Tienda <span class="tda-badge">TDA</span></button>
 
   <span class="side-label">Recursos</span>
   <button class="side-link" data-sec="formatos" onclick="switchSec('formatos',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg> Formatos <span class="side-count" id="n-formatos">·</span></button>
@@ -2769,6 +2779,263 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 
   </section>
 
+  <section id="sec-tienda" class="view-section">
+    <div class="sec-head">
+      <span class="sec-eyebrow"><span class="dot"></span>Homologación de procesos 2026</span>
+      <h1 class="sec-title">Procesos <em>Tienda Física</em></h1>
+      <p class="sec-sub">Los 10 procesos de Tienda Física — tiempos, plataformas y observaciones clave. Usa el buscador o los chips para ir directo al proceso.</p>
+    </div>
+
+    <nav class="fp-nav" aria-label="Procesos Tienda Física">
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-1')">1 · Recogidos BT</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-2')">2 · Recogidos SL</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-3')">3 · Resurtido BT</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-4')">4 · Resurtido SL</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-5')">5 · ENR / Caja vacía</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-6')">6 · Cancelaciones BT</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-7')">7 · Cancelaciones SL</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-8')">8 · Cambio domicilio</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-9')">9 · Sustituto APV/POS</button>
+      <button class="fp-nav-chip" onclick="jumpToTda('tda-10')">10 · Devoluciones APV/POS</button>
+    </nav>
+
+    <!-- 1 · Recogidos por satisfacción / mercancía dañada BT -->
+    <div class="bt-block tda-block" id="tda-1">
+      <div class="bt-head">
+        <span class="fp-num tda-num">1</span>
+        <div>
+          <h2 class="bt-title">Recogidos por satisfacción / mercancía dañada BT</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">PAO</span><span class="bt-plat tda-plat">Salesforce</span><span class="bt-plat tda-plat">Bodega destino</span><span class="bt-plat tda-plat">PostVenta</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val info">Fecha calendario PAO</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>El recogido lo genera el asesor de <strong>1er nivel en PAO</strong>; se asigna la fecha más cercana y se le brinda al cliente. El caso se escala con el equipo resolutor de <strong>PostVenta</strong>.</li>
+          <li>2do contacto → sumar <strong>72h</strong> a la fecha de la llamada y seguir escalando.</li>
+          <li>3er contacto o recogido con <strong>15 días de vencimiento</strong> (zona quincenal/mensual) → solicitar devolución en <strong>formulario Incidencias Trazabilidad</strong>.</li>
+          <li>Si está fuera de los tiempos de <strong>7 días (SEPRO)</strong> o <strong>30 días (satisfacción)</strong> → solicitar autorización a través del <strong>formulario Incidencias Trazabilidad</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2 · Recogidos por satisfacción / mercancía dañada SL -->
+    <div class="bt-block tda-block" id="tda-2">
+      <div class="bt-head">
+        <span class="fp-num tda-num">2</span>
+        <div>
+          <h2 class="bt-title">Recogidos por satisfacción / mercancía dañada SL</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">PAO</span><span class="bt-plat tda-plat">SOMS</span><span class="bt-plat tda-plat">Salesforce</span><span class="bt-plat tda-plat">Bodega destino</span><span class="bt-plat tda-plat">PostVenta</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val info">Fecha calendario PAO</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>La solicitud de recogido se escala por <strong>Salesforce a PostVenta</strong>, quien llevará el seguimiento. *Consulta la tabla actualizada para validar si procede por <em>Servicio SL</em> o <em>Satisfacción SL</em>.</li>
+          <li>El recogido lo genera el asesor de <strong>1er nivel/cabeceras en SOMS</strong>; al cliente se le brinda la fecha que arroja el sistema.</li>
+          <li>2do contacto → sumar <strong>72h</strong> a la fecha de la llamada y seguir escalando.</li>
+          <li>3er contacto o recogido con <strong>15 días de vencimiento</strong> (zona quincenal/mensual) → solicitar devolución en <strong>formulario Incidencias Trazabilidad</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3 · Resurtido BT -->
+    <div class="bt-block tda-block" id="tda-3">
+      <div class="bt-head">
+        <span class="fp-num tda-num">3</span>
+        <div>
+          <h2 class="bt-title">Resurtido BT</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">Salesforce</span><span class="bt-plat tda-plat">PAO</span><span class="bt-plat tda-plat">PostVenta</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">Depende del inventario</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>Revisar condición de inventario en PAO; si <strong>no hay disponibilidad</strong> → ofrecer la recolección.</li>
+          <li>Si es mercancía de <strong>importación</strong>, el cliente tiene <strong>6 meses</strong> para reportar un defecto.</li>
+          <li>En <strong>cunas</strong>, el cliente tiene <strong>24h posteriores al armado</strong> para solicitar el resurtido BT. Se asigna al equipo resolutor de <strong>PostVenta</strong>.</li>
+          <li>Si está fuera de los tiempos (<strong>7 días SEPRO / 30 días satisfacción</strong>) → solicitar autorización a <strong>Supervisión</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4 · Resurtido SL equivocada / incompleto / dañada -->
+    <div class="bt-block tda-block" id="tda-4">
+      <div class="bt-head">
+        <span class="fp-num tda-num">4</span>
+        <div>
+          <h2 class="bt-title">Resurtido SL equivocada / incompleto / dañada</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">SOMS</span><span class="bt-plat tda-plat">Salesforce ENR</span><span class="bt-plat tda-plat">SIMPLIROUTE</span><span class="bt-plat tda-plat">4PL</span><span class="bt-plat tda-plat">MDA</span><span class="bt-plat tda-plat">PAO</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10 días hábiles</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>Solo aplica para pedidos <strong>APV o PoS con domicilio particular</strong>.</li>
+          <li>Si hay inventario → solicitar resurtido a través del <strong>formulario Incidencias Trazabilidad</strong>.</li>
+          <li>Si <strong>no hay inventario</strong> → registrar a la par: <span class="bt-quote">formulario Incidencias Trazabilidad (Autorización)</span> + <span class="bt-quote">formulario de cancelaciones de tienda</span>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5 · Entrega no reconocida / Caja Vacía -->
+    <div class="bt-block tda-block" id="tda-5">
+      <div class="bt-head">
+        <span class="fp-num tda-num">5</span>
+        <div>
+          <h2 class="bt-title">Entrega no reconocida / Caja Vacía</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">SOMS</span><span class="bt-plat tda-plat">Salesforce ENR</span><span class="bt-plat tda-plat">SIMPLIROUTE</span><span class="bt-plat tda-plat">4PL</span><span class="bt-plat tda-plat">PAO</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10 días hábiles</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>Solo aplica para pedidos <strong>APV o PoS con domicilio particular</strong>.</li>
+          <li>Si hay inventario → solicitar resurtido a través del <strong>formulario Incidencias Trazabilidad</strong>.</li>
+          <li>Si <strong>no hay inventario</strong> → solicitar devolución en <strong>MDA OPC 8</strong> con previa autorización de Supervisión. <em>No aplica en mercancía de alto valor, electrónica, cómputo, joyería fina, audio y video</em> — se asigna caso al equipo resolutor para investigación.</li>
+          <li>Si es <strong>C&amp;C</strong> → no aplica, canalizar a <strong>TDA</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6 · Cancelaciones BT -->
+    <div class="bt-block tda-block" id="tda-6">
+      <div class="bt-head">
+        <span class="fp-num tda-num">6</span>
+        <div>
+          <h2 class="bt-title">Cancelaciones BT</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">Salesforce</span><span class="bt-plat tda-plat">MDA</span><span class="bt-plat tda-plat">PAO</span><span class="bt-plat tda-plat">Formulario cambio estatus</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">7 días hábiles</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>Depende si el estatus es <strong>permisible para pausar la línea</strong> y solicitar el reembolso en el <strong>formulario Incidencias Trazabilidad</strong>.</li>
+          <li>Si no procede → solicitar el cambio al equipo correspondiente: <strong>CR / Supervisión</strong>.</li>
+          <li><strong>Inbound:</strong> Validar con <strong>OTP</strong>; si no se vincula en Salesforce → realizar <strong>validación tradicional</strong> (SKU y motivo).</li>
+          <li><strong>WhatsApp:</strong> Utilizar la plantilla <span class="bt-quote">Datos para cancelación</span>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 7 · Cancelaciones SL -->
+    <div class="bt-block tda-block" id="tda-7">
+      <div class="bt-head">
+        <span class="fp-num tda-num">7</span>
+        <div>
+          <h2 class="bt-title">Cancelaciones SL</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">Salesforce</span><span class="bt-plat tda-plat">SOMS</span><span class="bt-plat tda-plat">Formulario Incidencias Trazabilidad</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">7 días hábiles</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>Si procede → subir la solicitud en el <strong>formulario de Incidencias Trazabilidad</strong>. <em>Nota: la cancelación se debe pedir en los grupos.</em></li>
+          <li><strong>No aplica</strong> en estatus CONF que surte la locación <strong>125 / VCTE / Viaja con mensajería</strong>.</li>
+          <li>Si <em>viaja con mensajería</em> → asignar al equipo resolutor con la leyenda <span class="bt-quote">VENCIDA SL</span> y subirlo al formulario Incidencias Trazabilidad.</li>
+          <li><strong>Inbound:</strong> Validar con <strong>OTP</strong>; si no se vincula → validación tradicional (SKU y motivo).</li>
+          <li><strong>WhatsApp:</strong> Utilizar plantilla <span class="bt-quote">Datos para cancelación</span>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 8 · Cambios de domicilio -->
+    <div class="bt-block tda-block" id="tda-8">
+      <div class="bt-head">
+        <span class="fp-num tda-num">8</span>
+        <div>
+          <h2 class="bt-title">Cambios de domicilio</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">Salesforce</span><span class="bt-plat tda-plat">PAO</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val info">Depende del estatus</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li><strong>Inbound:</strong> Validar con <strong>OTP</strong>; si no se vincula → validación tradicional con: <em>domicilio actual, domicilio nuevo y SKU</em>.</li>
+          <li>Datos requeridos: <strong>CP · Colonia · Calle · Número interior o exterior</strong>.</li>
+          <li><strong>WhatsApp:</strong> Utilizar plantilla <span class="bt-quote">Datos</span>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 9 · Sustituto APV / POS -->
+    <div class="bt-block tda-block" id="tda-9">
+      <div class="bt-head">
+        <span class="fp-num tda-num">9</span>
+        <div>
+          <h2 class="bt-title">Sustituto APV / POS</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">N/A</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val">N/A</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li><strong>No procede</strong> — se canaliza directamente a la <strong>sucursal</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 10 · Devoluciones APV / POS -->
+    <div class="bt-block tda-block" id="tda-10">
+      <div class="bt-head">
+        <span class="fp-num tda-num">10</span>
+        <div>
+          <h2 class="bt-title">Devoluciones APV / POS</h2>
+          <div class="bt-plats"><span class="bt-plat tda-plat">SOMS</span><span class="bt-plat tda-plat">PAO</span><span class="bt-plat tda-plat">Formulario Incidencias 2026</span></div>
+        </div>
+        <div class="bt-times">
+          <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">7 días hábiles</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li>Si la mercancía está en estatus <strong>CANC</strong> → registrar la solicitud de devolución en el formulario de incidencias 2026, categoría <span class="bt-quote">Cancelaciones De Tienda</span>.</li>
+          <li>Si el pedido SL <strong>no está cancelado</strong> pero tiene estatus permisible para la cancelación → solicitar apoyo para realizar el proceso y subir al formulario, categoría <span class="bt-quote">Cancelaciones De Tienda</span>.</li>
+          <li>Cuando la OV esté en <strong>semáforo verde</strong> → solicitar pausar el trazo logístico y subir al formulario, categoría <span class="bt-quote">Cancelaciones De Tienda</span>.</li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+
   </main>
 </div>
 </div>
@@ -2859,7 +3126,8 @@ const SECTION_META = {
   bigticket:      { icon:'truck',        label:'Big Ticket' },
   softline:       { icon:'package',      label:'Soft Line' },
   slmensajerias:  { icon:'package',      label:'SL Mensajerías' },
-  mkp:            { icon:'package',      label:'MarketPlace' }
+  mkp:            { icon:'package',      label:'MarketPlace' },
+  tienda:         { icon:'package',      label:'Tienda Física' }
 };
 
 /* Índice estático de Formas de Pago (sección sin datos de backend) para el buscador */
@@ -2940,6 +3208,20 @@ const MKP_INDEX = [
   { name:'Joyería fina Amore Mío — MKP', sub:'MarketPlace · 12 días · Entrada única · solo tienda física', target:'mkp-16', kw:'joyeria fina amore mio modificacion personalizacion tienda fisica entrada unica 12 dias marketplace mkp' },
 ];
 
+/* Índice estático de Tienda Física para el buscador */
+const TDA_INDEX = [
+  { name:'Recogidos por satisfacción / mercancía dañada BT — Tienda', sub:'Tienda · 1 año · Fecha calendario PAO · PAO/Salesforce/PostVenta', target:'tda-1', kw:'recogidos satisfaccion mercancia danada bt big ticket pao salesforce postventa bodega destino 72 horas 15 dias vencimiento incidencias trazabilidad sepro tienda fisica' },
+  { name:'Recogidos por satisfacción / mercancía dañada SL — Tienda', sub:'Tienda · 1 año · Fecha calendario PAO · PAO/SOMS/Salesforce/PostVenta', target:'tda-2', kw:'recogidos satisfaccion mercancia danada sl softline pao soms salesforce postventa bodega destino 72 horas 15 dias vencimiento incidencias trazabilidad tienda fisica' },
+  { name:'Resurtido BT — Tienda', sub:'Tienda · 1 año · inventario PAO · Salesforce/PostVenta · importación/cunas', target:'tda-3', kw:'resurtido bt big ticket inventario pao salesforce postventa importacion defecto cunas 24h armado sepro satisfaccion supervisión tienda fisica' },
+  { name:'Resurtido SL equivocada / incompleto / dañada — Tienda', sub:'Tienda · 1 año · 10 días · formulario Incidencias Trazabilidad · APV/PoS', target:'tda-4', kw:'resurtido sl softline equivocada incompleto danada formulario incidencias trazabilidad apv pos domicilio particular inventario cancelaciones tienda soms salesforce enr simpliroute 4pl mda pao' },
+  { name:'Entrega no reconocida / Caja Vacía — Tienda', sub:'Tienda · 1 año · 10 días · APV/PoS domicilio · MDA OPC 8 autorización', target:'tda-5', kw:'entrega no reconocida caja vacia inventario apv pos domicilio particular mda opc 8 autorizacion supervisión alto valor electronica computo joyeria audio video cc candc tienda fisica' },
+  { name:'Cancelaciones BT — Tienda', sub:'Tienda · N/A · 7 días · Salesforce/MDA/PAO · OTP · formulario cambio estatus', target:'tda-6', kw:'cancelaciones bt big ticket estatus permisible pausar linea reembolso formulario incidencias trazabilidad cr supervision otp validacion tradicional sku motivo whatsapp plantilla tienda fisica' },
+  { name:'Cancelaciones SL — Tienda', sub:'Tienda · N/A · 7 días · Salesforce/SOMS · CONF/VCTE/mensajería', target:'tda-7', kw:'cancelaciones sl softline formulario incidencias trazabilidad grupos conf locacion 125 vcte viaja mensajeria vencida sl otp validacion tradicional whatsapp plantilla tienda fisica' },
+  { name:'Cambios de domicilio — Tienda', sub:'Tienda · N/A · depende estatus · Salesforce/PAO · OTP/CP/Colonia', target:'tda-8', kw:'cambio domicilio salesforce pao otp validacion tradicional cp colonia calle numero interior exterior whatsapp plantilla datos tienda fisica' },
+  { name:'Sustituto APV / POS — Tienda', sub:'Tienda · N/A · no procede · canalizar sucursal', target:'tda-9', kw:'sustituto apv pos no procede canaliza sucursal tienda fisica' },
+  { name:'Devoluciones APV / POS — Tienda', sub:'Tienda · N/A · 7 días · SOMS/PAO · formulario Cancelaciones De Tienda 2026', target:'tda-10', kw:'devoluciones apv pos canc cancelado estatus permisible semaforo verde pausar trazo logistico formulario incidencias 2026 cancelaciones de tienda soms pao tienda fisica' },
+];
+
 let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[], avisos:[] };
 let searchTimer;
 let fpRevealsReady = false;
@@ -2947,6 +3229,7 @@ let btRevealsReady = false;
 let slRevealsReady = false;
 let slmRevealsReady = false;
 let mkpRevealsReady = false;
+let tdaRevealsReady = false;
 
 /* ── PERSISTENCIA LOCAL (preferencias y caché del asesor) ── */
 function lsGet(key, fallback){ try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e){ return fallback; } }
@@ -3157,6 +3440,7 @@ function switchSec(id, btn){
   if (id === 'softline') initSlReveals();
   if (id === 'slmensajerias') initSlmReveals();
   if (id === 'mkp') initMkpReveals();
+  if (id === 'tienda') initTdaReveals();
   closeSidebar();
   document.querySelector('main').scrollTo?.(0,0);
   window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
@@ -3586,6 +3870,13 @@ function doGlobalSearch(){
     .slice(0, 5);
   if (mkpMatches.length) results.push({ key: 'mkp', matches: mkpMatches });
 
+  const tdaMatches = TDA_INDEX
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+  if (tdaMatches.length) results.push({ key: 'tienda', matches: tdaMatches });
+
   const wasOpen = drop.classList.contains('open');
   if (!results.length) {
     drop.innerHTML = `<div class="sd-empty"><span class="big">${icon('search')}</span>Sin resultados para <strong>"${esc(q)}"</strong><br>Intenta con otras palabras.</div>`;
@@ -3857,6 +4148,18 @@ function initSlReveals(){
 }
 function jumpToSlm(blockId){ const el = document.getElementById(blockId); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior:'smooth' }); }
 function jumpToMkp(blockId){ const el = document.getElementById(blockId); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior:'smooth' }); }
+function jumpToTda(blockId){ const el = document.getElementById(blockId); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior:'smooth' }); }
+function initTdaReveals(){
+  if (tdaRevealsReady){ if (window.ScrollTrigger) ScrollTrigger.refresh(); return; }
+  tdaRevealsReady = true;
+  if (!GS() || !window.ScrollTrigger) return;
+  document.querySelectorAll('#sec-tienda .bt-block').forEach(block => {
+    gsap.fromTo(block, { opacity:0, y:28 }, { opacity:1, y:0, duration:.58, ease:'power3.out', scrollTrigger:{ trigger:block, start:'top 88%' } });
+    const chips = block.querySelectorAll('.bt-time-chip, .bt-dev-item, .bt-sku');
+    if (chips.length) gsap.fromTo(chips, { opacity:0, scale:.88 }, { opacity:1, scale:1, duration:.32, stagger:.05, ease:'back.out(1.6)', scrollTrigger:{ trigger:block, start:'top 82%' }, clearProps:'transform' });
+  });
+  ScrollTrigger.refresh();
+}
 function initMkpReveals(){
   if (mkpRevealsReady){ if (window.ScrollTrigger) ScrollTrigger.refresh(); return; }
   mkpRevealsReady = true;
