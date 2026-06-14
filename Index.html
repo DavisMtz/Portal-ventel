@@ -233,6 +233,21 @@ a{text-decoration:none;color:inherit}
 @keyframes searchFlash{0%{box-shadow:0 0 0 0 rgba(225,0,152,0)}14%{box-shadow:0 0 0 4px rgba(225,0,152,.42)}100%{box-shadow:0 0 0 0 rgba(225,0,152,0)}}
 mark{background:var(--brand-soft);color:var(--brand-deep);border-radius:3px;padding:0 2px}
 
+/* — Encabezado, contadores y pie del dropdown de búsqueda — */
+.sd-head{position:sticky;top:0;z-index:3;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:.7rem 1.15rem .58rem;font-size:.74rem;font-weight:600;color:var(--ink-soft);border-bottom:1px solid var(--line)}
+.sd-head strong{color:var(--ink);font-weight:700}
+.sd-head-n{display:inline-flex;align-items:center;justify-content:center;min-width:1.25rem;height:1.25rem;padding:0 .35rem;margin-right:.15rem;border-radius:999px;background:var(--brand);color:#fff;font-size:.7rem;font-weight:800;vertical-align:middle}
+.sd-count{margin-left:.55rem;font-size:.62rem;font-weight:800;color:var(--brand-deep);background:var(--brand-tint);border:1px solid var(--brand-soft);border-radius:999px;padding:.04rem .42rem;line-height:1.5}
+.sd-item.sd-top{background:linear-gradient(90deg,var(--brand-tint),transparent 70%)}
+.sd-item.sd-top .sd-emoji{border-color:var(--brand-soft);color:var(--brand)}
+.sd-foot{position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;justify-content:center;padding:.55rem .7rem;margin-top:.35rem;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-top:1px solid var(--line);font-size:.68rem;color:var(--ink-faint);font-weight:600}
+.sd-foot span{display:inline-flex;align-items:center;gap:.28rem}
+.sd-foot kbd{font-family:var(--f-mono);font-size:.92em;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:.02rem .34rem;color:var(--ink-soft)}
+.sd-empty-sub{margin:.55rem 0 .85rem;font-size:.78rem;color:var(--ink-faint)}
+.sd-sugg-row{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}
+.sd-sugg{cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);border-radius:999px;padding:.32rem .82rem;font-size:.78rem;font-weight:600;font-family:inherit;transition:var(--tr)}
+.sd-sugg:hover{border-color:var(--brand-soft);background:var(--brand-tint);color:var(--brand-deep);transform:translateY(-1px)}
+
 /* — Letrero: segundo Enter abre el enlace — */
 #kbOpenHint{
   position:fixed;left:50%;bottom:2rem;transform:translateX(-50%) translateY(12px);
@@ -3571,6 +3586,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const sdrop = document.getElementById('searchDrop');
   sdrop.addEventListener('click', e => {
+    const sug = e.target.closest('.sd-sugg');
+    if (sug) {
+      gs.value = sug.dataset.q || '';
+      document.getElementById('hsClear').style.display = 'flex';
+      gs.focus(); doGlobalSearch();
+      return;
+    }
     const it = e.target.closest('.sd-item');
     if (!it) return;
     if (it.classList.contains('sd-recent')) {
@@ -4051,6 +4073,7 @@ function doGlobalSearch(){
   const q = document.getElementById('globalSearch').value.trim();
   const drop = document.getElementById('searchDrop');
   if (!q) { closeDrop(); return; }
+  const Q = buildQuery(q);
   const results = [];
   const specs = [
     { key:'herramientas',   nameF:'nombre', subF:'descripcion',   extraF:['comoAcceder','claves'] },
@@ -4065,7 +4088,7 @@ function doGlobalSearch(){
         const name = String(item[nameF] || '');
         const sub = String(item[subF] || '');
         const extra = extraF.map(f => String(item[f] || '')).join(' ');
-        return { name, sub, score: scoreMatch(norm(q), norm(name), norm(sub), norm(extra)) };
+        return { name, sub, score: scoreMatch(Q, norm(name), norm(sub), norm(extra)) };
       })
       .filter(r => r.score > 0)
       .sort((a, b) => b.score - a.score)
@@ -4074,63 +4097,73 @@ function doGlobalSearch(){
   });
 
   const fpMatches = FP_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 6);
   if (fpMatches.length) results.push({ key: 'formaspago', matches: fpMatches });
 
   const btMatches = BT_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   if (btMatches.length) results.push({ key: 'bigticket', matches: btMatches });
 
   const sfMatches = SF_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   if (sfMatches.length) results.push({ key: 'softline', matches: sfMatches });
 
   const sfmMatches = SFM_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   if (sfmMatches.length) results.push({ key: 'slmensajerias', matches: sfmMatches });
 
   const mkpMatches = MKP_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   if (mkpMatches.length) results.push({ key: 'mkp', matches: mkpMatches });
 
   const tdaMatches = TDA_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   if (tdaMatches.length) results.push({ key: 'tienda', matches: tdaMatches });
 
   const genMatches = GEN_INDEX
-    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(norm(q), norm(it.name), norm(it.sub), norm(it.kw || '')) }))
+    .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   if (genMatches.length) results.push({ key: 'generales', matches: genMatches });
 
+  // Ordena los grupos por su mejor coincidencia → la sección más relevante aparece primero
+  results.sort((a, b) => b.matches[0].score - a.matches[0].score);
+  const total = results.reduce((n, r) => n + r.matches.length, 0);
+
   const wasOpen = drop.classList.contains('open');
   if (!results.length) {
-    drop.innerHTML = `<div class="sd-empty"><span class="big">${icon('search')}</span>Sin resultados para <strong>"${esc(q)}"</strong><br>Intenta con otras palabras.</div>`;
+    const sugg = ['Transferencia','Guía','Devolución','RFC','Monedero','Cancelación'];
+    drop.innerHTML = `<div class="sd-empty"><span class="big">${icon('search')}</span>
+      Sin resultados para <strong>"${esc(q)}"</strong>
+      <div class="sd-empty-sub">Revisa la ortografía o prueba con una de estas búsquedas:</div>
+      <div class="sd-sugg-row">${sugg.map(s => `<button class="sd-sugg" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+    </div>`;
   } else {
-    drop.innerHTML = results.map(({ key, matches }) => {
+    const header = `<div class="sd-head"><span class="sd-head-n">${total}</span> resultado${total !== 1 ? 's' : ''} para <strong>"${esc(q)}"</strong></div>`;
+    const body = results.map(({ key, matches }, gi) => {
       const meta = SECTION_META[key] || { icon:'document', label:key };
-      return `<div class="sd-group-label">${icon(meta.icon)} ${meta.label}</div>` +
+      return `<div class="sd-group-label">${icon(meta.icon)} ${meta.label}<span class="sd-count">${matches.length}</span></div>` +
         matches.map(r => `
-        <div class="sd-item" data-key="${key}" data-name="${esc(r.name)}" data-target="${r.target || ''}" role="option">
+        <div class="sd-item${gi === 0 && r === matches[0] ? ' sd-top' : ''}" data-key="${key}" data-name="${esc(r.name)}" data-target="${r.target || ''}" role="option">
           <div class="sd-emoji">${icon(meta.icon)}</div>
           <div style="min-width:0;">
             <div class="sd-name">${hilite(r.name, q)}</div>
@@ -4139,6 +4172,8 @@ function doGlobalSearch(){
           <span class="sd-go">${icon('arrow')}</span>
         </div>`).join('');
     }).join('');
+    const footer = `<div class="sd-foot"><span><kbd>↑</kbd><kbd>↓</kbd> Navegar</span><span><kbd>↵</kbd> Abrir</span><span><kbd>esc</kbd> Cerrar</span></div>`;
+    drop.innerHTML = header + body + footer;
   }
   drop.classList.add('open');
   if (GS() && !wasOpen) gsap.fromTo(drop, { opacity:0, y:-10, scale:.98 }, { opacity:1, y:0, scale:1, duration:.32, ease:'power3.out' });
@@ -4300,14 +4335,84 @@ function toggleStores(){
 }
 
 /* ──────── HELPERS DE BÚSQUEDA ──────── */
-function scoreMatch(q, name, sub, extra){
-  const words = q.split(/\s+/).filter(Boolean);
-  let s = 0;
+/* Sinónimos / alias del dominio: la palabra escrita expande a términos relacionados
+   para que, p. ej., "clabe" encuentre "Transferencia" o "guia" encuentre "rastreo". */
+const SEARCH_SYNONYMS = {
+  clabe:'transferencia bbva bancomer spei convenio', spei:'transferencia bbva', cie:'convenio transferencia',
+  transferencia:'bbva bancomer spei clabe openpay', openpay:'transferencia pago',
+  rfc:'datos fiscales factura facturacion cfdi', factura:'fiscal cfdi facturacion datos',
+  facturacion:'factura fiscal cfdi', fiscal:'rfc factura cfdi razon social',
+  efectivo:'paynet referencia ficha cajero', paynet:'efectivo referencia ficha',
+  med:'monedero electronico digital traspaso saldo', monedero:'med electronico digital traspaso saldo ewallet',
+  bin:'bines certificado monedero', fraude:'fraudes cybersource prevencion saf svl fms',
+  fbl5n:'sap partidas cuenta deudor', sap:'ecc fbl5n partidas',
+  guia:'rastreo paqueteria tracking envio mensajeria', envio:'guia paqueteria rastreo tracking',
+  rastreo:'guia tracking paqueteria envio', tracking:'guia rastreo paqueteria',
+  paqueteria:'guia envio mensajeria soms', mensajeria:'paqueteria guia logistica softline',
+  devolucion:'reembolso dilisa procede', reembolso:'devolucion dilisa', dilisa:'devolucion reembolso lpc',
+  cancelacion:'cancelar conf retorno', cancelar:'cancelacion',
+  correo:'mail gmail outlook', mail:'correo gmail outlook',
+  clave:'password acceso credencial contrasena llave', password:'clave acceso credencial contrasena',
+  acceso:'clave credencial como acceder ingresar',
+  big:'bigticket bt', bt:'bigticket big ticket', soft:'softline sl', sl:'softline mensajerias',
+  mkp:'marketplace', marketplace:'mkp', tienda:'tienda fisica tda', otp:'validacion manual codigo',
+  domicilio:'cambio direccion', resurtido:'resurtir inventario reposicion',
+  vencida:'vencido caducada atrasada', presentacion:'capacitacion guia formato',
+  formato:'documento plantilla formulario', herramienta:'plataforma sistema acceso'
+};
+/* Construye el objeto de consulta: palabras escritas + términos suaves (sinónimos). */
+function buildQuery(q){
+  const raw = norm(q);
+  const words = raw.split(/\s+/).filter(Boolean);
+  const soft = new Set();
+  words.forEach(w => { const syn = SEARCH_SYNONYMS[w]; if (syn) norm(syn).split(/\s+/).forEach(t => soft.add(t)); });
+  words.forEach(w => soft.delete(w));
+  return { raw, words, soft:[...soft] };
+}
+/* ¿distancia de edición ≤ 1 entre dos palabras? (tolerancia a errores de tipeo) */
+function lev1(a, b){
+  if (a === b) return true;
+  const la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  let i = 0, j = 0, edits = 0;
+  while (i < la && j < lb){
+    if (a[i] === b[j]) { i++; j++; continue; }
+    if (++edits > 1) return false;
+    if (la > lb) i++; else if (lb > la) j++; else { i++; j++; }
+  }
+  if (i < la || j < lb) edits++;
+  return edits <= 1;
+}
+/* ¿alguna palabra de `hay` está a ≤1 edición de `w`? */
+function fuzzyHit(hay, w){
+  if (w.length < 4 || !hay) return false;
+  const toks = hay.split(' ');
+  for (let i = 0; i < toks.length; i++){
+    const t = toks[i];
+    if (t.length >= 3 && Math.abs(t.length - w.length) <= 1 && lev1(t, w)) return true;
+  }
+  return false;
+}
+function scoreMatch(Q, name, sub, extra){
+  const { raw, words, soft } = Q;
+  if (!words.length) return 0;
+  let s = 0, matched = 0;
+  if (raw.length >= 3 && name.includes(raw)) s += 16;                 // frase completa en el nombre
   words.forEach(w => {
-    if (name.includes(w)) s += name.startsWith(w) ? 12 : 7;
-    if (sub.includes(w)) s += 4;
-    if (extra.includes(w)) s += 2;
+    let hit = false;
+    if (name.includes(w)) { s += name.startsWith(w) ? 12 : 7; hit = true; }
+    else if (fuzzyHit(name, w)) { s += 5; hit = true; }
+    if (sub.includes(w)) { s += 4; hit = true; }
+    else if (fuzzyHit(sub, w)) { s += 2; hit = true; }
+    if (extra.includes(w)) { s += 2; hit = true; }
+    else if (fuzzyHit(extra, w)) { s += 1; hit = true; }
+    if (hit) matched++;
   });
+  soft.forEach(w => {                                                 // sinónimos: aporte ligero
+    if (name.includes(w)) s += 3;
+    else if (sub.includes(w) || extra.includes(w)) s += 1.5;
+  });
+  if (words.length > 1 && matched < words.length) s *= (matched / words.length) * 0.6; // prioriza coincidir todas las palabras
   return s;
 }
 function norm(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' '); }
