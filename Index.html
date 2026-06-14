@@ -217,7 +217,7 @@ a{text-decoration:none;color:inherit}
 .sd-group-label .ic{width:14px;height:14px;color:var(--brand)}
 .sd-group-label::after{content:'';flex:1;height:1px;background:var(--line)}
 .sd-item{display:flex;align-items:flex-start;gap:.8rem;padding:.65rem 1rem;cursor:pointer;border-radius:12px;margin:.1rem .55rem;transition:background .14s,transform .14s}
-.sd-item:hover{background:var(--brand-tint);transform:translateX(3px)}
+.sd-item:hover{background:var(--brand-tint)}
 .sd-emoji{width:34px;height:34px;border-radius:10px;flex-shrink:0;background:var(--surface-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--brand-deep)}
 .sd-emoji .ic{width:17px;height:17px}
 .sd-item:hover .sd-emoji{border-color:var(--brand-soft)}
@@ -253,12 +253,12 @@ mark{background:var(--brand-soft);color:var(--brand-deep);border-radius:3px;padd
 .sd-item:hover .sd-actions,.sd-item.sd-active .sd-actions{opacity:1;transform:none}
 .sd-act{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tr)}
 .sd-act .ic{width:15px;height:15px}
-.sd-act:hover{border-color:var(--brand-soft);background:var(--brand-tint);color:var(--brand-deep);transform:translateY(-1px)}
+.sd-act:hover{border-color:var(--brand-soft);background:var(--brand-tint);color:var(--brand-deep)}
 @media (hover:none){.sd-actions{opacity:1;transform:none}}
 .sd-empty-sub{margin:.55rem 0 .85rem;font-size:.78rem;color:var(--ink-faint)}
 .sd-sugg-row{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}
 .sd-sugg{cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);border-radius:999px;padding:.32rem .82rem;font-size:.78rem;font-weight:600;font-family:inherit;transition:var(--tr)}
-.sd-sugg:hover{border-color:var(--brand-soft);background:var(--brand-tint);color:var(--brand-deep);transform:translateY(-1px)}
+.sd-sugg:hover{border-color:var(--brand-soft);background:var(--brand-tint);color:var(--brand-deep)}
 
 /* — Letrero: segundo Enter abre el enlace — */
 #kbOpenHint{
@@ -331,7 +331,7 @@ main{flex:1}
   background:linear-gradient(90deg,var(--accent,var(--brand)),color-mix(in srgb,var(--accent,var(--brand)) 45%,var(--brand-bright)));
   transform:scaleX(.34);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .tool-card:hover::before{transform:scaleX(1)}
-.tool-card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--accent,var(--brand)) 55%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 42%,var(--line))}
+.tool-card:hover{box-shadow:0 26px 48px -22px color-mix(in srgb,var(--accent,var(--brand)) 55%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 42%,var(--line))}
 .tc-top{display:flex;align-items:center;gap:.8rem}
 .tc-icon{
   width:48px;height:48px;border-radius:14px;flex-shrink:0;color:#fff;
@@ -351,17 +351,17 @@ main{flex:1}
 .tc-footer{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:auto}
 .btn-go{flex:1;text-align:center;padding:.7rem .9rem;background:var(--grad-brand);color:#fff;border:none;border-radius:11px;font-weight:800;font-size:.86rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:var(--tr);box-shadow:0 6px 14px -8px rgba(225,0,152,.55)}
 .btn-go .ic{width:16px;height:16px}
-.btn-go:hover{transform:translateY(-2px);box-shadow:0 12px 22px -8px rgba(225,0,152,.55);filter:brightness(1.06)}
+.btn-go:hover{box-shadow:0 12px 22px -8px rgba(225,0,152,.55);filter:brightness(1.06)}
 .btn-go:active{transform:translateY(0)}
 .btn-go.disabled{background:var(--surface-2);color:var(--ink-faint);cursor:default;box-shadow:none;transform:none;filter:none;border:1px solid var(--line)}
 .btn-copy{padding:.7rem .85rem;background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);border-radius:11px;font-weight:700;font-size:.82rem;cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:var(--tr);white-space:nowrap}
 .btn-copy .ic{width:15px;height:15px}
-.btn-copy:hover{border-color:var(--brand-soft);color:var(--brand);background:var(--brand-tint);transform:translateY(-2px)}
+.btn-copy:hover{border-color:var(--brand-soft);color:var(--brand);background:var(--brand-tint)}
 
 /* — Presentación — */
 .pres-card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:20px;padding:1.4rem;box-shadow:var(--sh-sm);display:flex;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;will-change:transform;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),border-color .4s ease}
 .pres-card::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--violet) 16%,transparent),transparent 70%);z-index:0}
-.pres-card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--violet) 50%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--violet) 38%,var(--line))}
+.pres-card:hover{box-shadow:0 26px 48px -22px color-mix(in srgb,var(--violet) 50%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--violet) 38%,var(--line))}
 .pres-top{display:flex;align-items:center;gap:.8rem}
 .pres-icon{width:48px;height:48px;border-radius:14px;flex-shrink:0;color:#fff;background:linear-gradient(145deg,#8B5CF6,#6D28D9);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px -8px rgba(91,33,182,.6),inset 0 1px 0 rgba(255,255,255,.35)}
 .pres-icon .ic{width:22px;height:22px}
@@ -369,7 +369,7 @@ main{flex:1}
 .pres-desc{font-size:.86rem;color:var(--ink-soft);line-height:1.55;flex:1}
 .btn-violet{text-align:center;padding:.7rem .9rem;border-radius:11px;border:none;cursor:pointer;background:#6D28D9;color:#fff;font-weight:800;font-size:.86rem;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:var(--tr);box-shadow:0 6px 14px -8px rgba(91,33,182,.55)}
 .btn-violet .ic{width:16px;height:16px}
-.btn-violet:hover{transform:translateY(-2px);box-shadow:0 12px 22px -8px rgba(91,33,182,.55);filter:brightness(1.07)}
+.btn-violet:hover{box-shadow:0 12px 22px -8px rgba(91,33,182,.55);filter:brightness(1.07)}
 .btn-violet.disabled{background:var(--surface-2);color:var(--ink-faint);box-shadow:none;cursor:default;transform:none;border:1px solid var(--line)}
 
 /* — Tabla paqueterías — */
@@ -393,7 +393,7 @@ main{flex:1}
 .fmt-card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:18px;padding:1.25rem 1.35rem;box-shadow:var(--sh-sm);display:flex;flex-direction:column;gap:.7rem;position:relative;overflow:hidden;will-change:transform;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),border-color .4s ease}
 .fmt-card::before{content:'';position:absolute;left:0;top:0;width:4px;height:100%;z-index:2;background:linear-gradient(180deg,var(--accent,var(--brand)),color-mix(in srgb,var(--accent,var(--brand)) 40%,transparent));transform:scaleY(.4);transform-origin:top;transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .fmt-card:hover::before{transform:scaleY(1)}
-.fmt-card:hover{transform:translateY(-5px);box-shadow:0 24px 44px -22px color-mix(in srgb,var(--accent,var(--brand)) 52%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 38%,var(--line))}
+.fmt-card:hover{box-shadow:0 24px 44px -22px color-mix(in srgb,var(--accent,var(--brand)) 52%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 38%,var(--line))}
 .fmt-head{display:flex;align-items:center;gap:.7rem}
 .fmt-emoji{width:38px;height:38px;border-radius:11px;flex-shrink:0;color:var(--accent,var(--brand));background:color-mix(in srgb,var(--accent,var(--brand)) 12%,var(--surface));display:flex;align-items:center;justify-content:center}
 .fmt-emoji .ic{width:19px;height:19px}
@@ -410,7 +410,7 @@ main{flex:1}
 .pago-card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:20px;padding:1.4rem;box-shadow:var(--sh-sm);display:flex;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;will-change:transform;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),border-color .4s ease}
 .pago-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;z-index:2;background:linear-gradient(90deg,var(--accent,var(--brand)),color-mix(in srgb,var(--accent,var(--brand)) 45%,var(--brand-bright)));transform:scaleX(.34);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .pago-card:hover::before{transform:scaleX(1)}
-.pago-card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--accent,var(--brand)) 52%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 40%,var(--line))}
+.pago-card:hover{box-shadow:0 26px 48px -22px color-mix(in srgb,var(--accent,var(--brand)) 52%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--accent,var(--brand)) 40%,var(--line))}
 .pago-head{display:flex;align-items:center;gap:.8rem}
 .pago-icon{width:46px;height:46px;border-radius:13px;flex-shrink:0;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--accent,var(--brand)) 88%,#fff),var(--accent,var(--brand)));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px -8px color-mix(in srgb,var(--accent,var(--brand)) 72%,transparent),inset 0 1px 0 rgba(255,255,255,.35)}
 .pago-icon .ic{width:21px;height:21px}
@@ -450,13 +450,13 @@ main{flex:1}
   position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.34,1.3,.64,1),box-shadow .28s ease,border-color .28s ease;
   display:flex;flex-direction:column;gap:.7rem;
 }
-.stat-card:hover{transform:translateY(-5px);box-shadow:var(--sh-md);border-color:color-mix(in srgb,var(--accent,var(--brand)) 35%,var(--line))}
+.stat-card:hover{box-shadow:var(--sh-md);border-color:color-mix(in srgb,var(--accent,var(--brand)) 35%,var(--line))}
 .stat-top{display:flex;align-items:center;justify-content:space-between}
 .stat-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;background:var(--accent,var(--brand));box-shadow:0 8px 16px -9px color-mix(in srgb,var(--accent,var(--brand)) 70%,transparent)}
 .stat-ic .ic{width:20px;height:20px}
 .stat-card .go{color:var(--ink-faint);transition:var(--tr)}
 .stat-card .go .ic{width:18px;height:18px}
-.stat-card:hover .go{color:var(--accent,var(--brand));transform:translateX(3px)}
+.stat-card:hover .go{color:var(--accent,var(--brand))}
 .stat-num{font-family:var(--f-display);font-weight:900;font-stretch:115%;font-size:2.1rem;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
 .stat-name{font-size:.86rem;font-weight:600;color:var(--ink-soft)}
 
@@ -466,7 +466,7 @@ main{flex:1}
   padding:1.05rem 1.1rem;box-shadow:var(--sh-sm);display:flex;align-items:center;gap:.85rem;
   cursor:pointer;transition:transform .26s cubic-bezier(.34,1.3,.64,1),box-shadow .26s ease,border-color .26s ease;position:relative;overflow:hidden;
 }
-.qa-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);border-color:color-mix(in srgb,var(--accent,var(--brand)) 35%,var(--line))}
+.qa-card:hover{box-shadow:var(--sh-md);border-color:color-mix(in srgb,var(--accent,var(--brand)) 35%,var(--line))}
 .qa-ic{width:42px;height:42px;border-radius:12px;flex-shrink:0;color:#fff;background:var(--accent,var(--brand));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 16px -9px color-mix(in srgb,var(--accent,var(--brand)) 70%,transparent)}
 .qa-ic .ic{width:20px;height:20px}
 .qa-body{min-width:0;flex:1}
@@ -474,7 +474,7 @@ main{flex:1}
 .qa-sub{display:block;font-size:.74rem;color:var(--ink-soft);margin-top:.12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qa-arrow{color:var(--ink-faint);flex-shrink:0;transition:var(--tr)}
 .qa-arrow .ic{width:17px;height:17px}
-.qa-card:hover .qa-arrow{color:var(--accent,var(--brand));transform:translateX(3px)}
+.qa-card:hover .qa-arrow{color:var(--accent,var(--brand))}
 
 .guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:1rem}
 .guide-card{
@@ -483,14 +483,14 @@ main{flex:1}
   transition:transform .26s cubic-bezier(.34,1.3,.64,1),box-shadow .26s ease,border-color .26s ease;position:relative;overflow:hidden;
 }
 .guide-card::after{content:'';position:absolute;bottom:-30px;right:-30px;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent,var(--brand)) 12%,transparent),transparent 70%)}
-.guide-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);border-color:color-mix(in srgb,var(--accent,var(--brand)) 35%,var(--line))}
+.guide-card:hover{box-shadow:var(--sh-md);border-color:color-mix(in srgb,var(--accent,var(--brand)) 35%,var(--line))}
 .guide-ic{width:40px;height:40px;border-radius:11px;color:var(--accent,var(--brand));background:color-mix(in srgb,var(--accent,var(--brand)) 13%,var(--surface));display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
 .guide-ic .ic{width:20px;height:20px}
 .guide-name{font-weight:800;font-size:.97rem;line-height:1.25;position:relative;z-index:1}
 .guide-sub{font-size:.81rem;color:var(--ink-soft);line-height:1.45;position:relative;z-index:1;flex:1}
 .guide-go{display:inline-flex;align-items:center;gap:.35rem;font-size:.8rem;font-weight:800;color:var(--accent,var(--brand));position:relative;z-index:1}
 .guide-go .ic{width:15px;height:15px;transition:var(--tr)}
-.guide-card:hover .guide-go .ic{transform:translateX(3px)}
+.guide-card:hover .guide-go{color:var(--accent,var(--brand))}
 
 /* ════════════════════════════════════════════════════════════
    FORMAS DE PAGO (guía estática)
@@ -506,7 +506,7 @@ main{flex:1}
 .badge-pill.green{background:#0E7A4F}
 .fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.1rem}
 .fp-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);padding:1.35rem;box-shadow:var(--sh-sm);transition:transform .28s ease,box-shadow .28s ease}
-.fp-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.fp-card:hover{box-shadow:var(--sh-md)}
 .fp-card-title{font-weight:800;font-size:.98rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.55rem}
 .fp-card-title .ic{width:17px;height:17px;color:var(--brand)}
 .step-list{list-style:none;display:flex;flex-direction:column;gap:.65rem}
@@ -536,7 +536,7 @@ main{flex:1}
 .store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:.85rem}
 .store-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rad-sm);padding:1rem 1.05rem 1.05rem;box-shadow:var(--sh-xs);display:flex;flex-direction:column;gap:.45rem;position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.34,1.3,.64,1),box-shadow .25s ease,border-color .25s ease}
 .store-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--brand)}
-.store-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);border-color:var(--brand-soft)}
+.store-card:hover{box-shadow:var(--sh-md);border-color:var(--brand-soft)}
 .store-name{font-family:var(--f-display);font-weight:800;font-stretch:106%;font-size:1.02rem;line-height:1.15;color:var(--ink)}
 .store-amt-lbl{font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
 .store-amount{font-family:var(--f-mono);font-weight:700;font-size:1.16rem;line-height:1;color:var(--brand-deep);font-variant-numeric:tabular-nums}
@@ -586,7 +586,7 @@ main{flex:1}
 
 /* tarjetas */
 .fm-card{border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:.8rem .95rem;box-shadow:var(--sh-xs);transition:transform .2s,box-shadow .2s}
-.fm-card:hover{transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.fm-card:hover{box-shadow:var(--sh-sm)}
 .fm-card.cyber{border-color:color-mix(in srgb,var(--fc) 35%,var(--line))}
 .fm-card.ok{border-color:color-mix(in srgb,var(--ok) 38%,var(--line));background:var(--ok-bg)}
 .fm-card.bad{border-color:color-mix(in srgb,var(--alert) 38%,var(--line));background:var(--alert-bg)}
@@ -882,6 +882,42 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   .data-table th,.data-table td{padding:.7rem .8rem;font-size:.8rem}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ── Píldora efímera "ir a sección" (atajo g) ── */
+.goto-pill{position:fixed;left:50%;bottom:1.7rem;transform:translateX(-50%) translateY(12px);display:flex;align-items:center;gap:.5rem;background:var(--grad-ink);color:#fff;border-radius:11px;padding:.55rem .9rem;font-size:.8rem;font-weight:600;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;z-index:9998;transition:opacity .2s,transform .2s}
+.goto-pill.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.goto-pill kbd{font-family:var(--f-mono);font-size:.82em;font-weight:700;background:rgba(255,255,255,.18);border-radius:5px;padding:.06rem .42rem}
+
+/* ── Item "Ir a sección" dentro del buscador ── */
+.sd-navkey{margin-left:auto;display:inline-flex;gap:.2rem;align-items:center;flex-shrink:0}
+.sd-navkey kbd{font-family:var(--f-mono);font-size:.66rem;font-weight:700;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:.04rem .34rem;color:var(--ink-soft)}
+
+/* ── Guía de atajos de teclado (modal "?") ── */
+.kb-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:1.2rem}
+.kb-modal.show{display:flex}
+.kb-backdrop{position:absolute;inset:0;background:rgba(36,28,34,.46);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.kb-card{position:relative;width:min(640px,100%);max-height:86vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh-lg);padding:1.3rem 1.4rem 1.1rem}
+.kb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.kb-head h3{margin:0;font-size:1.05rem;font-weight:800;color:var(--ink)}
+.kb-x{display:flex;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);cursor:pointer;align-items:center;justify-content:center;transition:background .15s,color .15s,border-color .15s}
+.kb-x:hover{background:var(--brand-tint);color:var(--brand);border-color:var(--brand-soft)}
+.kb-x .ic{width:17px;height:17px}
+.kb-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 1.6rem}
+.kb-col-t{display:block;font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.6rem}
+.kb-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.36rem 0;border-bottom:1px solid var(--line-soft);font-size:.85rem;color:var(--ink)}
+.kb-row:last-child{border-bottom:0}
+.kb-keys{display:inline-flex;align-items:center;gap:.25rem;flex-shrink:0}
+.kb-keys i{font-style:normal;font-size:.72rem;color:var(--ink-faint);margin:0 .1rem}
+.kb-col-t kbd,.kb-row kbd,.kb-keys kbd,.kb-foot kbd{font-family:var(--f-mono);font-size:.74rem;font-weight:700;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:.04rem .4rem;color:var(--ink-soft);line-height:1.7}
+.kb-secs{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.kb-sec{display:flex;align-items:center;gap:.5rem;padding:.4rem .5rem;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;text-align:left;color:var(--ink);transition:background .14s,border-color .14s}
+.kb-sec:hover{background:var(--brand-tint);border-color:var(--brand-soft)}
+.kb-sec-k kbd{font-family:var(--f-mono);font-size:.72rem;font-weight:700;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:.04rem .42rem;color:var(--brand-deep)}
+.kb-sec-i{display:inline-flex;color:var(--ink-soft)}
+.kb-sec-i .ic{width:16px;height:16px}
+.kb-sec-l{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kb-foot{margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--line);text-align:center;font-size:.74rem;color:var(--ink-faint);font-weight:600}
+@media(max-width:560px){.kb-grid{grid-template-columns:1fr}}
 </style>
 <link id="gfont-Open-Sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&amp;display=swap">
 <link id="gfont-Roboto" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&amp;display=swap">
@@ -3299,6 +3335,36 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 
 <div class="copy-toast" id="copyToast"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span id="copyToastMsg">Copiado al portapapeles</span></div>
 
+<!-- Píldora efímera al pulsar "g" (ir a sección) -->
+<div class="goto-pill" id="gotoPill" aria-hidden="true"><kbd>g</kbd> <span>luego una tecla para ir a la sección…</span></div>
+
+<!-- Guía de atajos de teclado (se abre con ?) -->
+<div class="kb-modal" id="kbModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Atajos de teclado">
+  <div class="kb-backdrop" onclick="toggleShortcuts(false)"></div>
+  <div class="kb-card" role="document">
+    <div class="kb-head">
+      <h3>Atajos de teclado</h3>
+      <button class="kb-x" onclick="toggleShortcuts(false)" aria-label="Cerrar">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="kb-grid">
+      <div class="kb-col">
+        <span class="kb-col-t">Búsqueda</span>
+        <div class="kb-row"><span>Abrir el buscador</span><span class="kb-keys"><kbd>/</kbd><i>o</i><kbd>Ctrl</kbd><kbd>K</kbd></span></div>
+        <div class="kb-row"><span>Navegar resultados</span><span class="kb-keys"><kbd>↑</kbd><kbd>↓</kbd></span></div>
+        <div class="kb-row"><span>Abrir / ir al resultado</span><span class="kb-keys"><kbd>↵</kbd></span></div>
+        <div class="kb-row"><span>Cerrar</span><span class="kb-keys"><kbd>esc</kbd></span></div>
+      </div>
+      <div class="kb-col">
+        <span class="kb-col-t">Ir a sección · pulsa <kbd>g</kbd> y luego</span>
+        <div class="kb-secs" id="kbSecs"></div>
+      </div>
+    </div>
+    <div class="kb-foot"><span>Pulsa <kbd>?</kbd> en cualquier momento para abrir esta ayuda</span></div>
+  </div>
+</div>
+
 <script>
 /* ══════════════════════════════════════════════════════════════
    PORTAL VENTEL · JS  (lógica GAS intacta)
@@ -3344,6 +3410,8 @@ const ICONS = {
   megaphone:'<path d="M3 11v3a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M14 7.5a5 5 0 0 1 0 7M17.5 5a9 9 0 0 1 0 12"/>',
   history:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   close:'<path d="M6 6l12 12M18 6 6 18"/>',
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.4V21h5v-6h4v6h5V9.4"/>',
+  keyboard:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 9.5h.01M9.5 9.5h.01M13 9.5h.01M16.5 9.5h.01M6 13h.01M16.5 13h.01M9 13h6"/>',
   sparkle:'<path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/>'
 };
 function icon(name, cls){
@@ -3379,6 +3447,24 @@ const SECTION_META = {
   tienda:         { icon:'package',      label:'Tienda Física' },
   generales:      { icon:'tools',        label:'Generales' }
 };
+
+/* Secciones navegables desde el buscador ("Ir a sección") y atajos de teclado (g + tecla).
+   El orden sigue al del menú lateral. 'key' vacía = sólo accesible por buscador/menú. */
+const SECTIONS_NAV = [
+  { id:'inicio',         label:'Inicio',         key:'i', icon:'home',         kw:'dashboard panel principal accesos rapidos avisos' },
+  { id:'herramientas',   label:'Herramientas',   key:'h', icon:'tools',        kw:'apps sistemas enlaces accesos' },
+  { id:'paqueterias',    label:'Paqueterías',    key:'p', icon:'package',      kw:'guias mensajeria envios soms rastreo' },
+  { id:'formaspago',     label:'Formas de Pago', key:'f', icon:'card',         kw:'efectivo transferencia bbva fiscal monedero fraudes clabe' },
+  { id:'pdepago',        label:'Pago Web',       key:'w', icon:'card',         kw:'pago web simulador liga pdepago' },
+  { id:'bigticket',      label:'Big Ticket',     key:'b', icon:'truck',        kw:'bt seguimientos trazabilidad muebles linea blanca' },
+  { id:'softline',       label:'Soft Line',      key:'s', icon:'package',      kw:'sf ropa moda seguimientos' },
+  { id:'slmensajerias',  label:'SL Mensajerías', key:'',  icon:'package',      kw:'mensajeria interna logistica softline' },
+  { id:'mkp',            label:'MarketPlace',    key:'m', icon:'package',      kw:'marketplace mkp vendedores' },
+  { id:'tienda',         label:'Tienda',         key:'t', icon:'home',         kw:'tienda fisica tda sucursal' },
+  { id:'generales',      label:'Generales',      key:'g', icon:'tools',        kw:'gen general otros' },
+  { id:'formatos',       label:'Formatos',       key:'o', icon:'document',     kw:'documentos plantillas archivos formato' },
+  { id:'presentaciones', label:'Presentaciones', key:'r', icon:'presentation', kw:'recursos diapositivas slides capacitacion' }
+];
 
 /* Índice estático de Formas de Pago (sección sin datos de backend) para el buscador */
 const FP_INDEX = [
@@ -3570,10 +3656,26 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (e.key === 'Enter') { if (activateSd()) e.preventDefault(); }
   });
   document.addEventListener('keydown', e => {
-    const typing = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA';
+    const typing = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.isContentEditable;
     if ((e.key === '/' && !typing) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
-      e.preventDefault(); gs.focus();
+      e.preventDefault(); gs.focus(); return;
     }
+    // Cerrar la guía de atajos con Esc (aunque se esté escribiendo)
+    if (e.key === 'Escape' && isShortcutsOpen()) { toggleShortcuts(false); return; }
+    if (typing || e.ctrlKey || e.metaKey || e.altKey) { disarmGoto(); return; }
+
+    // ? → guía de atajos
+    if (e.key === '?') { e.preventDefault(); toggleShortcuts(); return; }
+
+    // g + tecla → ir a sección (estilo GitHub/Gmail)
+    if (gotoArmed) {
+      const sec = SECTIONS_NAV.find(s => s.key && s.key === e.key.toLowerCase());
+      disarmGoto();
+      if (sec) { e.preventDefault(); switchSec(sec.id, document.querySelector('.side-link[data-sec="'+sec.id+'"]')); return; }
+      if (e.key.toLowerCase() === 'g') { e.preventDefault(); armGoto(); return; } // permite "g g" → Generales
+      return;
+    }
+    if (e.key.toLowerCase() === 'g') { e.preventDefault(); armGoto(); }
   });
   document.addEventListener('click', e => { if (!e.target.closest('.search')) closeDrop(); });
 
@@ -3618,6 +3720,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const it = e.target.closest('.sd-item');
     if (!it) return;
+    if (it.dataset.nav) { jumpToSec(it.dataset.nav); return; }
     if (it.classList.contains('sd-recent')) {
       gs.value = it.dataset.q || '';
       document.getElementById('hsClear').style.display = 'flex';
@@ -4171,6 +4274,16 @@ function doGlobalSearch(){
     .slice(0, 5);
   if (genMatches.length) results.push({ key: 'generales', matches: genMatches });
 
+  // "Ir a sección": el buscador también navega. Compite por relevancia con los
+  // resultados de datos, así no le roba el foco a una coincidencia más fuerte.
+  const navMatches = SECTIONS_NAV
+    .map(s => ({ id:s.id, label:s.label, icon:s.icon, navkey:s.key,
+                 score: scoreMatch(Q, norm(s.label), '', norm(s.kw || '')) }))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4);
+  if (navMatches.length) results.push({ key:'__nav', matches: navMatches });
+
   // Ordena los grupos por su mejor coincidencia → la sección más relevante aparece primero
   results.sort((a, b) => b.matches[0].score - a.matches[0].score);
   const total = results.reduce((n, r) => n + r.matches.length, 0);
@@ -4186,6 +4299,18 @@ function doGlobalSearch(){
   } else {
     const header = `<div class="sd-head"><span class="sd-head-n">${total}</span> resultado${total !== 1 ? 's' : ''} para <strong>"${esc(q)}"</strong></div>`;
     const body = results.map(({ key, matches }, gi) => {
+      if (key === '__nav') {
+        return `<div class="sd-group-label">${icon('arrow')} Ir a sección<span class="sd-count">${matches.length}</span></div>` +
+          matches.map((r, ri) => `
+        <div class="sd-item sd-nav${gi === 0 && ri === 0 ? ' sd-top' : ''}" data-nav="${esc(r.id)}" role="option">
+          <div class="sd-emoji">${icon(r.icon)}</div>
+          <div style="min-width:0;">
+            <div class="sd-name">${hilite(r.label, q)}</div>
+            <div class="sd-sub">Abrir la sección</div>
+          </div>
+          ${r.navkey ? `<span class="sd-navkey"><kbd>g</kbd><kbd>${esc(r.navkey)}</kbd></span>` : `<span class="sd-go">${icon('arrow')}</span>`}
+        </div>`).join('');
+      }
       const meta = SECTION_META[key] || { icon:'document', label:key };
       return `<div class="sd-group-label">${icon(meta.icon)} ${meta.label}<span class="sd-count">${matches.length}</span></div>` +
         matches.map(r => {
@@ -4204,7 +4329,7 @@ function doGlobalSearch(){
         </div>`;
         }).join('');
     }).join('');
-    const footer = `<div class="sd-foot"><span><kbd>↑</kbd><kbd>↓</kbd> Navegar</span><span><kbd>↵</kbd> Abrir</span><span><kbd>esc</kbd> Cerrar</span></div>`;
+    const footer = `<div class="sd-foot"><span><kbd>↑</kbd><kbd>↓</kbd> Navegar</span><span><kbd>↵</kbd> Abrir</span><span><kbd>esc</kbd> Cerrar</span><span><kbd>?</kbd> Atajos</span></div>`;
     drop.innerHTML = header + body + footer;
   }
   drop.classList.add('open');
@@ -4217,6 +4342,47 @@ function jumpToSec(key){
   const tab = document.querySelector(`.side-link[data-sec="${secId}"]`);
   if (tab) switchSec(secId, tab);
   clearGlobalSearch();
+}
+
+/* ──────── ATAJOS DE TECLADO: "g + tecla" (ir a sección) y guía con "?" ──────── */
+let gotoArmed = false, gotoTimer = null;
+function armGoto(){
+  gotoArmed = true;
+  const pill = document.getElementById('gotoPill');
+  if (pill){ pill.classList.add('show'); pill.setAttribute('aria-hidden','false'); }
+  clearTimeout(gotoTimer);
+  gotoTimer = setTimeout(disarmGoto, 1500);
+}
+function disarmGoto(){
+  if (!gotoArmed && !document.getElementById('gotoPill')?.classList.contains('show')) return;
+  gotoArmed = false;
+  clearTimeout(gotoTimer);
+  const pill = document.getElementById('gotoPill');
+  if (pill){ pill.classList.remove('show'); pill.setAttribute('aria-hidden','true'); }
+}
+function isShortcutsOpen(){ const m = document.getElementById('kbModal'); return !!m && m.classList.contains('show'); }
+function toggleShortcuts(force){
+  const m = document.getElementById('kbModal');
+  if (!m) return;
+  const show = (force === undefined) ? !m.classList.contains('show') : force;
+  if (show) buildShortcutsList();
+  m.classList.toggle('show', show);
+  m.setAttribute('aria-hidden', show ? 'false' : 'true');
+  if (show && GS()) gsap.fromTo('#kbModal .kb-card', { opacity:0, y:12, scale:.98 }, { opacity:1, y:0, scale:1, duration:.32, ease:'power3.out' });
+}
+function buildShortcutsList(){
+  const box = document.getElementById('kbSecs');
+  if (!box) return;
+  box.innerHTML = SECTIONS_NAV.filter(s => s.key).map(s =>
+    `<button class="kb-sec" onclick="jumpFromHelp('${s.id}')">
+       <span class="kb-sec-k"><kbd>${esc(s.key)}</kbd></span>
+       <span class="kb-sec-i">${icon(s.icon)}</span>
+       <span class="kb-sec-l">${esc(s.label)}</span>
+     </button>`).join('');
+}
+function jumpFromHelp(id){
+  toggleShortcuts(false);
+  switchSec(id, document.querySelector('.side-link[data-sec="'+id+'"]'));
 }
 function clearGlobalSearch(){
   clearPendingOpen();
@@ -4695,26 +4861,10 @@ function mockData(){
 
   // ---- Magnetic helper (definido fuera del ready para reusar) ----
   var MAG_SEL = '.btn-go, .card-btn:not(.disabled), .back-link, .tab-btn, .m-today, .cal-filter-btn, .link-sm, .menu-btn';
+  // UX: el hover solo debe resaltar (borde/sombra/color), nunca desplazar el
+  // elemento. El efecto "magnético" que seguía al cursor queda desactivado.
   function makeMagnetic(el) {
-    if (!el || el.__mag || REDUCE || !window.gsap) return;
-    el.__mag = true;
-    var strength = 0.28, max = 6;
-    el.addEventListener('mousemove', function (e) {
-      var r = el.getBoundingClientRect();
-      var mx = (e.clientX - (r.left + r.width / 2)) * strength;
-      var my = (e.clientY - (r.top + r.height / 2)) * strength;
-      gsap.to(el, {
-        x: Math.max(-max, Math.min(max, mx)),
-        y: Math.max(-max, Math.min(max, my)),
-        duration: 0.4, ease: 'power3.out', overwrite: 'auto'
-      });
-    });
-    el.addEventListener('mouseleave', function () {
-      gsap.to(el, {
-        x: 0, y: 0, duration: 0.65, ease: 'elastic.out(1, 0.45)',
-        onComplete: function () { el.style.transform = ''; }
-      });
-    });
+    return;
   }
   function magnetizeWithin(root) {
     if (!root || !root.querySelectorAll) return;
