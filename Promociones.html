@@ -158,6 +158,18 @@ main{flex:1}
 }
 .date-hero h1 .day-num{color:var(--rosa)}
 .hero-sub{font-size:var(--fs-lg);color:var(--ink-soft);font-weight:500;margin-top:.45rem}
+.hero-sync{display:inline-flex;align-items:center;gap:.55rem;margin-top:1rem;padding:.34rem .42rem .34rem .8rem;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:var(--sh-xs)}
+.hero-sync .hs-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0}
+.hero-sync.is-stale .hs-dot{background:var(--warn)}
+.hero-sync.is-loading .hs-dot{background:var(--brand);animation:beat 1.1s ease-in-out infinite}
+.hero-sync .hs-text{font-size:var(--fs-xs);font-weight:600;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hero-sync .hs-refresh{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border:none;border-radius:50%;background:var(--brand-tint);color:var(--brand);cursor:pointer;flex-shrink:0;transition:var(--tr)}
+.hero-sync .hs-refresh:hover{background:var(--brand-soft)}
+.hero-sync .hs-refresh:active{transform:scale(.9)}
+.hero-sync .hs-refresh .ic{width:15px;height:15px}
+.hero-sync.is-loading .hs-refresh{pointer-events:none;opacity:.85}
+.hero-sync.is-loading .hs-refresh .ic{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
 .stat-tile{
@@ -628,6 +640,13 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
     <span class="hero-eyebrow">Hoy · actualizado en vivo</span>
     <h1 id="hero-day">—</h1>
     <p class="hero-sub" id="hero-date-full">Sincronizando tiempo…</p>
+    <div class="hero-sync" id="heroSync" title="Última actualización de las promociones">
+      <span class="hs-dot"></span>
+      <span class="hs-text" id="syncText">Cargando datos…</span>
+      <button class="hs-refresh" id="syncBtn" type="button" onclick="refreshData(this)" title="Actualizar datos" aria-label="Actualizar datos">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      </button>
+    </div>
   </div>
   <div class="hero-stats" id="heroStats" style="visibility:hidden">
     <div class="stat-tile">
@@ -896,6 +915,8 @@ function handlePortalNav(e, link) {
 
 let globalData = null;
 let promosFresh = false; // true cuando ya respondió Apps Script (no el caché local)
+let lastUpdated = null;  // timestamp (ms) de la última carga de promociones mostrada
+let syncTimer = null;    // intervalo que refresca el texto "hace X"
 let activePromosToday = [];
 let parsedPromos = [];
 let currentCalendarFilter = 'activos';
@@ -923,19 +944,69 @@ document.addEventListener('DOMContentLoaded', () => {
   // SWR: pinta al instante con el último dato local y revalida contra Apps Script
   try {
     const cached = JSON.parse(localStorage.getItem('ventel-promos-v1') || 'null');
-    if (cached && cached.data) handleDataSuccess(cached.data, true);
+    if (cached && cached.data) { lastUpdated = cached.t || null; handleDataSuccess(cached.data, true); }
   } catch(e){}
+  renderSyncStatus();
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(renderSyncStatus, 30000); // mantiene el "hace X" al día
 
+  requestData(false);
+});
+
+/* ──────── CARGA / ACTUALIZACIÓN DE DATOS ──────── */
+function requestData(manual){
+  const sync = document.getElementById('heroSync');
+  if (manual && sync) { sync.classList.add('is-loading'); sync.classList.remove('is-stale'); setSyncText('Actualizando…'); }
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
-      .withSuccessHandler(d => handleDataSuccess(d, false))
-      .withFailureHandler(handleDataError)
+      .withSuccessHandler(d => { handleDataSuccess(d, false); finishRefresh(true); })
+      .withFailureHandler(e => { handleDataError(e); finishRefresh(false); })
       .fetchApplicationData();
   } else {
     document.getElementById('previewBanner').style.display = 'block';
-    setTimeout(() => handleDataSuccess(buildMockData(), false), 600);
+    setTimeout(() => { handleDataSuccess(buildMockData(), false); finishRefresh(true); }, manual ? 700 : 600);
   }
-});
+}
+
+/* Botón "Actualizar datos" del hero */
+function refreshData(btn){
+  const sync = document.getElementById('heroSync');
+  if (sync && sync.classList.contains('is-loading')) return; // evita dobles clics
+  requestData(true);
+}
+
+function finishRefresh(ok){
+  const sync = document.getElementById('heroSync');
+  if (sync) sync.classList.remove('is-loading');
+  if (ok) { renderSyncStatus(); }
+  else { if (sync) sync.classList.add('is-stale'); setSyncText('No se pudo actualizar'); }
+}
+
+function setSyncText(txt){ const el = document.getElementById('syncText'); if (el) el.textContent = txt; }
+
+/* Tiempo relativo legible: "hace un momento", "hace 5 min", "hace 2 h"… */
+function relTime(ts){
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (s < 10)  return 'hace un momento';
+  if (s < 60)  return `hace ${s} s`;
+  const m = Math.floor(s / 60);
+  if (m < 60)  return `hace ${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24)  return `hace ${h} h`;
+  const d = Math.floor(h / 24);
+  return d === 1 ? 'hace 1 día' : `hace ${d} días`;
+}
+
+/* Pinta el estado del indicador "Actualizado hace X" */
+function renderSyncStatus(){
+  const sync = document.getElementById('heroSync');
+  if (!sync) return;
+  if (sync.classList.contains('is-loading')) return; // no pisar el "Actualizando…"
+  if (!lastUpdated){ setSyncText('Sin datos aún'); sync.classList.add('is-stale'); return; }
+  setSyncText('Actualizado ' + relTime(lastUpdated));
+  // marca como "obsoleto" si pasaron más de 15 minutos desde la última carga
+  sync.classList.toggle('is-stale', (Date.now() - lastUpdated) > 15 * 60 * 1000);
+}
 
 function startClock(){
   tickClock();
@@ -974,7 +1045,9 @@ function handleDataSuccess(data, fromCache){
   if (fromCache && promosFresh) return; // ya están pintados los datos frescos
   if (!fromCache) {
     promosFresh = true;
-    try { localStorage.setItem('ventel-promos-v1', JSON.stringify({ t: Date.now(), data: data })); } catch(e){}
+    lastUpdated = Date.now();
+    try { localStorage.setItem('ventel-promos-v1', JSON.stringify({ t: lastUpdated, data: data })); } catch(e){}
+    renderSyncStatus();
   }
   globalData = data;
   refreshActiveData();
