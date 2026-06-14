@@ -229,8 +229,14 @@ a{text-decoration:none;color:inherit}
 .sd-item.sd-active{background:var(--brand-tint);transform:translateX(3px)}
 .sd-item.sd-active .sd-emoji{border-color:var(--brand-soft)}
 .sd-item.sd-active .sd-go{opacity:1}
-.search-flash{animation:searchFlash 1.6s ease;border-radius:var(--rad)}
-@keyframes searchFlash{0%{box-shadow:0 0 0 0 rgba(225,0,152,0)}14%{box-shadow:0 0 0 4px rgba(225,0,152,.42)}100%{box-shadow:0 0 0 0 rgba(225,0,152,0)}}
+.search-flash{animation:searchFlash 2.2s cubic-bezier(.4,0,.2,1);border-radius:var(--rad);position:relative;z-index:1}
+@keyframes searchFlash{
+  0%{box-shadow:0 0 0 0 rgba(225,0,152,0)}
+  9%{box-shadow:0 0 0 5px rgba(225,0,152,.5)}
+  20%{box-shadow:0 0 0 4px rgba(225,0,152,.42)}
+  60%{box-shadow:0 0 0 4px rgba(225,0,152,.3)}
+  100%{box-shadow:0 0 0 0 rgba(225,0,152,0)}
+}
 mark{background:var(--brand-soft);color:var(--brand-deep);border-radius:3px;padding:0 2px}
 
 /* — Encabezado, contadores y pie del dropdown de búsqueda — */
@@ -243,6 +249,12 @@ mark{background:var(--brand-soft);color:var(--brand-deep);border-radius:3px;padd
 .sd-foot{position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;justify-content:center;padding:.55rem .7rem;margin-top:.35rem;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-top:1px solid var(--line);font-size:.68rem;color:var(--ink-faint);font-weight:600}
 .sd-foot span{display:inline-flex;align-items:center;gap:.28rem}
 .sd-foot kbd{font-family:var(--f-mono);font-size:.92em;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:.02rem .34rem;color:var(--ink-soft)}
+.sd-actions{margin-left:auto;display:flex;align-items:center;gap:.32rem;flex-shrink:0;opacity:0;transform:translateX(5px);transition:opacity .15s,transform .15s}
+.sd-item:hover .sd-actions,.sd-item.sd-active .sd-actions{opacity:1;transform:none}
+.sd-act{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tr)}
+.sd-act .ic{width:15px;height:15px}
+.sd-act:hover{border-color:var(--brand-soft);background:var(--brand-tint);color:var(--brand-deep);transform:translateY(-1px)}
+@media (hover:none){.sd-actions{opacity:1;transform:none}}
 .sd-empty-sub{margin:.55rem 0 .85rem;font-size:.78rem;color:var(--ink-faint)}
 .sd-sugg-row{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}
 .sd-sugg{cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);border-radius:999px;padding:.32rem .82rem;font-size:.78rem;font-weight:600;font-family:inherit;transition:var(--tr)}
@@ -3586,6 +3598,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const sdrop = document.getElementById('searchDrop');
   sdrop.addEventListener('click', e => {
+    const actBtn = e.target.closest('.sd-act');
+    if (actBtn) {
+      e.stopPropagation();
+      if (actBtn.dataset.act === 'open' && actBtn.dataset.href) {
+        window.open(actBtn.dataset.href, '_blank', 'noopener');
+        saveRecent(gs.value); clearGlobalSearch();
+      } else if (actBtn.dataset.act === 'copy') {
+        copyText(actBtn.dataset.copy || '', null);
+      }
+      return;
+    }
     const sug = e.target.closest('.sd-sugg');
     if (sug) {
       gs.value = sug.dataset.q || '';
@@ -4076,19 +4099,22 @@ function doGlobalSearch(){
   const Q = buildQuery(q);
   const results = [];
   const specs = [
-    { key:'herramientas',   nameF:'nombre', subF:'descripcion',   extraF:['comoAcceder','claves'] },
-    { key:'presentaciones', nameF:'nombre', subF:'descripcion',   extraF:['liga'] },
-    { key:'paqueterias',    nameF:'nombre', subF:'soms',          extraF:['liga'] },
-    { key:'formatos',       nameF:'acceso', subF:'observaciones', extraF:['liga'] },
-    { key:'pdePago',        nameF:'nombre', subF:'detalles',      extraF:['liga'] }
+    { key:'herramientas',   nameF:'nombre', subF:'descripcion',   extraF:['comoAcceder','claves'], linkF:'enlace', copyF:'claves', copyLbl:'clave' },
+    { key:'presentaciones', nameF:'nombre', subF:'descripcion',   extraF:['liga'], linkF:'liga' },
+    { key:'paqueterias',    nameF:'nombre', subF:'soms',          extraF:['liga'], linkF:'liga' },
+    { key:'formatos',       nameF:'acceso', subF:'observaciones', extraF:['liga'], linkF:'liga' },
+    { key:'pdePago',        nameF:'nombre', subF:'detalles',      extraF:['liga'], linkF:'liga' }
   ];
-  specs.forEach(({ key, nameF, subF, extraF }) => {
+  specs.forEach(({ key, nameF, subF, extraF, linkF, copyF, copyLbl }) => {
     const matches = (store[key] || [])
       .map(item => {
         const name = String(item[nameF] || '');
         const sub = String(item[subF] || '');
         const extra = extraF.map(f => String(item[f] || '')).join(' ');
-        return { name, sub, score: scoreMatch(Q, norm(name), norm(sub), norm(extra)) };
+        const href = linkF ? linkHref(item[linkF]) : null;
+        const cv = copyF ? String(item[copyF] || '').trim() : '';
+        const copy = cv ? { val: cv, lbl: copyLbl || 'dato' } : null;
+        return { name, sub, href, copy, score: scoreMatch(Q, norm(name), norm(sub), norm(extra)) };
       })
       .filter(r => r.score > 0)
       .sort((a, b) => b.score - a.score)
@@ -4162,15 +4188,21 @@ function doGlobalSearch(){
     const body = results.map(({ key, matches }, gi) => {
       const meta = SECTION_META[key] || { icon:'document', label:key };
       return `<div class="sd-group-label">${icon(meta.icon)} ${meta.label}<span class="sd-count">${matches.length}</span></div>` +
-        matches.map(r => `
+        matches.map(r => {
+          const acts = [];
+          if (r.href) acts.push(`<button class="sd-act" data-act="open" data-href="${esc(r.href)}" title="Abrir enlace" aria-label="Abrir enlace">${icon('external')}</button>`);
+          if (r.copy) acts.push(`<button class="sd-act" data-act="copy" data-copy="${esc(r.copy.val)}" title="Copiar ${esc(r.copy.lbl)}" aria-label="Copiar ${esc(r.copy.lbl)}">${icon('copy')}</button>`);
+          const tail = acts.length ? `<div class="sd-actions">${acts.join('')}</div>` : `<span class="sd-go">${icon('arrow')}</span>`;
+          return `
         <div class="sd-item${gi === 0 && r === matches[0] ? ' sd-top' : ''}" data-key="${key}" data-name="${esc(r.name)}" data-target="${r.target || ''}" role="option">
           <div class="sd-emoji">${icon(meta.icon)}</div>
           <div style="min-width:0;">
             <div class="sd-name">${hilite(r.name, q)}</div>
             ${r.sub ? `<div class="sd-sub">${hilite(r.sub.substring(0,90) + (r.sub.length > 90 ? '…' : ''), q)}</div>` : ''}
           </div>
-          <span class="sd-go">${icon('arrow')}</span>
-        </div>`).join('');
+          ${tail}
+        </div>`;
+        }).join('');
     }).join('');
     const footer = `<div class="sd-foot"><span><kbd>↑</kbd><kbd>↓</kbd> Navegar</span><span><kbd>↵</kbd> Abrir</span><span><kbd>esc</kbd> Cerrar</span></div>`;
     drop.innerHTML = header + body + footer;
@@ -4237,34 +4269,55 @@ function jumpToExact(key, name, targetId){
   document.getElementById('globalSearch').value = '';
   document.getElementById('hsClear').style.display = 'none';
   closeDrop();
-  setTimeout(() => {
+
+  const want = norm(name);
+  const findEl = () => {
     const sec = document.getElementById('sec-' + secId);
-    if (!sec) return;
-    let scrollEl = null;
-    if (targetId) scrollEl = document.getElementById(targetId);
+    if (!sec) return null;
+    if (targetId){ const t = document.getElementById(targetId); if (t) return t; }
+    const nameEls = sec.querySelectorAll('.tc-name,.fmt-name,.paq-name,.pago-name,.pres-name');
+    let target = null;
+    nameEls.forEach(el => { if (!target && norm(el.textContent) === want) target = el; });
+    if (!target) nameEls.forEach(el => { if (!target && norm(el.textContent).includes(want)) target = el; });
+    return (target ? target.closest('.tool-card,.fmt-card,.pago-card,.pres-card,tr') : null) || target;
+  };
+
+  // Espera con reintentos (rAF) a que la sección termine de renderizar antes de saltar —
+  // más robusto que un setTimeout fijo cuando el render o la animación tardan.
+  const started = performance.now();
+  (function attempt(){
+    const scrollEl = findEl();
     if (!scrollEl){
-      const want = norm(name);
-      const nameEls = sec.querySelectorAll('.tc-name,.fmt-name,.paq-name,.pago-name,.pres-name');
-      let target = null;
-      nameEls.forEach(el => { if (!target && norm(el.textContent) === want) target = el; });
-      if (!target) nameEls.forEach(el => { if (!target && norm(el.textContent).includes(want)) target = el; });
-      scrollEl = (target ? target.closest('.tool-card,.fmt-card,.pago-card,.pres-card,tr') : null) || target;
+      if (performance.now() - started < 1200) requestAnimationFrame(attempt);
+      else clearPendingOpen();
+      return;
     }
-    if (scrollEl){
-      const y = scrollEl.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-      flashEl(scrollEl);
-      // Preparar "segundo Enter abre el enlace"
-      const link = scrollEl.querySelector ? scrollEl.querySelector('a.btn-go, a.btn-violet, a.link-sm') : null;
-      pendingOpenEl = (link && link.href) ? link : null;
-      try { document.getElementById('globalSearch').focus({ preventScroll:true }); } catch(e){}
-      showKbHint(!!pendingOpenEl);
-    } else {
-      clearPendingOpen();
-    }
-  }, 400);
+    revealTarget(scrollEl);
+  })();
 }
-function flashEl(el){ el.classList.add('search-flash'); setTimeout(() => el.classList.remove('search-flash'), 1600); }
+/* Lleva el foco visual al resultado: abre la tarjeta si está colapsada, la centra
+   respetando las barras fijas y la resalta con claridad. */
+function revealTarget(scrollEl){
+  // Si es una tarjeta de herramienta con panel colapsado, ábrelo para mostrar el dato al instante
+  if (scrollEl.classList && scrollEl.classList.contains('tool-card') && !scrollEl.classList.contains('expanded')){
+    const tg = scrollEl.querySelector('.tc-toggle');
+    if (tg){ scrollEl.classList.add('expanded'); const lbl = tg.querySelector('span'); if (lbl) lbl.textContent = 'Ocultar acceso'; }
+  }
+  const OFFSET = 140; // deja espacio para topbar + nav de procesos fijos
+  const doScroll = () => {
+    const y = scrollEl.getBoundingClientRect().top + window.scrollY - OFFSET;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  };
+  doScroll();
+  setTimeout(doScroll, 280); // reajusta tras la expansión/animación para clavar la posición
+  flashEl(scrollEl);
+  // Preparar "segundo Enter abre el enlace" (también tras clic de ratón)
+  const link = scrollEl.querySelector ? scrollEl.querySelector('a.btn-go, a.btn-violet, a.link-sm') : null;
+  pendingOpenEl = (link && link.href) ? link : null;
+  try { document.getElementById('globalSearch').focus({ preventScroll:true }); } catch(e){}
+  showKbHint(!!pendingOpenEl);
+}
+function flashEl(el){ el.classList.remove('search-flash'); void el.offsetWidth; el.classList.add('search-flash'); setTimeout(() => el.classList.remove('search-flash'), 2200); }
 
 /* ──────── BÚSQUEDAS RECIENTES ──────── */
 function saveRecent(q){
@@ -4358,7 +4411,25 @@ const SEARCH_SYNONYMS = {
   mkp:'marketplace', marketplace:'mkp', tienda:'tienda fisica tda', otp:'validacion manual codigo',
   domicilio:'cambio direccion', resurtido:'resurtir inventario reposicion',
   vencida:'vencido caducada atrasada', presentacion:'capacitacion guia formato',
-  formato:'documento plantilla formulario', herramienta:'plataforma sistema acceso'
+  formato:'documento plantilla formulario', herramienta:'plataforma sistema acceso',
+  tarjeta:'credito debito 3ds dilisa lpc pago', credito:'tarjeta 3ds', debito:'tarjeta 3ds',
+  paypal:'pago devolucion reembolso', lpc:'liverpool credito dilisa tarjeta',
+  saldo:'monedero traspaso med boleta', certificado:'monedero fisico bin apartado',
+  reembolso:'devolucion dilisa procede', semaforo:'verde rojo estatus',
+  incidencias:'trazabilidad formulario postventa', trazabilidad:'incidencias salesforce formulario',
+  salesforce:'pao trazabilidad estatus', soms:'pantalla salesforce paqueteria estatus',
+  simpliroute:'evidencia entrega ruta tracking', pao:'salesforce fecha sap',
+  ecc:'sap partidas fbl5n', armado:'mda oms surtido', surtido:'disponibilidad sku armado',
+  disponibilidad:'sku inventario surtido escaso', sku:'articulo producto disponibilidad',
+  inventario:'resurtido disponibilidad existencia', escalacion:'cr bodega destino caso',
+  regalo:'mesa regalos digital wallet', mesa:'regalo regalos', digitales:'digital sterling',
+  sterling:'digitales pedido', metodos:'pago formas tarjeta efectivo', metodo:'pago formas',
+  pago:'tarjeta efectivo transferencia monedero', validacion:'otp manual codigo',
+  estatus:'conf nmen vmen forzado semaforo', forzado:'nmen vmen movimiento estatus',
+  liverpool:'liverpool tienda ventel distribuidora', suburbia:'efectivo sbb tienda',
+  cancelar:'cancelacion conf retorno', recogidos:'satisfaccion danada postventa devolucion',
+  danada:'danado defecto incompleto equivocada resurtido', equivocada:'incompleto danada resurtido',
+  reporte:'tiempo reportar dias avance solucion', proceso:'flujo procedimiento paso bt sl'
 };
 /* Construye el objeto de consulta: palabras escritas + términos suaves (sinónimos). */
 function buildQuery(q){
@@ -4369,27 +4440,33 @@ function buildQuery(q){
   words.forEach(w => soft.delete(w));
   return { raw, words, soft:[...soft] };
 }
-/* ¿distancia de edición ≤ 1 entre dos palabras? (tolerancia a errores de tipeo) */
-function lev1(a, b){
-  if (a === b) return true;
+/* Distancia de edición acotada (Levenshtein con poda): ¿a y b difieren en ≤ max ediciones? */
+function levLE(a, b, max){
   const la = a.length, lb = b.length;
-  if (Math.abs(la - lb) > 1) return false;
-  let i = 0, j = 0, edits = 0;
-  while (i < la && j < lb){
-    if (a[i] === b[j]) { i++; j++; continue; }
-    if (++edits > 1) return false;
-    if (la > lb) i++; else if (lb > la) j++; else { i++; j++; }
+  if (Math.abs(la - lb) > max) return false;
+  let prev = new Array(lb + 1);
+  for (let j = 0; j <= lb; j++) prev[j] = j;
+  for (let i = 1; i <= la; i++){
+    const cur = new Array(lb + 1); cur[0] = i; let best = cur[0];
+    for (let j = 1; j <= lb; j++){
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+      if (cur[j] < best) best = cur[j];
+    }
+    if (best > max) return false; // poda: si toda la fila supera el umbral, no hay solución
+    prev = cur;
   }
-  if (i < la || j < lb) edits++;
-  return edits <= 1;
+  return prev[lb] <= max;
 }
-/* ¿alguna palabra de `hay` está a ≤1 edición de `w`? */
+/* ¿alguna palabra de `hay` está dentro de la tolerancia de typos de `w`?
+   1 error para palabras de 4-6 letras, 2 errores para palabras de 7+ letras. */
 function fuzzyHit(hay, w){
   if (w.length < 4 || !hay) return false;
+  const max = w.length >= 7 ? 2 : 1;
   const toks = hay.split(' ');
   for (let i = 0; i < toks.length; i++){
     const t = toks[i];
-    if (t.length >= 3 && Math.abs(t.length - w.length) <= 1 && lev1(t, w)) return true;
+    if (t.length >= 3 && Math.abs(t.length - w.length) <= max && levLE(t, w, max)) return true;
   }
   return false;
 }
