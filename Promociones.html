@@ -97,6 +97,10 @@ input:focus-visible,select:focus-visible{outline:none}
 .side-link.active .ic{color:var(--side-active-ink)}
 .side-link.active::before{content:'';position:absolute;left:-1rem;top:50%;transform:translateY(-50%);width:4px;height:21px;border-radius:0 4px 4px 0;background:#fff}
 .side-link.ext .ic{color:#fff}
+.side-link.ext{color:var(--side-ink);margin-top:.15rem}
+.side-link .side-count{margin-left:auto;background:rgba(255,255,255,.16);color:var(--side-ink);font-size:.66rem;font-weight:800;min-width:20px;height:20px;border-radius:100px;display:inline-flex;align-items:center;justify-content:center;padding:0 .4rem}
+.side-link.active .side-count{background:rgba(255,255,255,.28)}
+.bt-badge,.sl-badge,.slm-badge,.mkp-badge,.tda-badge,.gen-badge{display:inline-flex;align-items:center;padding:.08rem .46rem;border-radius:100px;background:rgba(255,255,255,.28);color:#fff;font-size:.64rem;font-weight:800;letter-spacing:.04em;margin-left:.25rem}
 .side-foot{margin-top:auto;padding-top:.8rem;border-top:1px solid var(--side-line);display:flex;flex-direction:column;gap:.6rem}
 .theme-switch{display:flex;gap:.3rem;background:rgba(0,0,0,.18);border-radius:12px;padding:.28rem}
 .theme-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:.25rem;border:none;background:transparent;cursor:pointer;border-radius:9px;padding:.42rem .2rem;color:var(--side-faint);font-size:.58rem;font-weight:700;letter-spacing:.04em;transition:var(--tr)}
@@ -272,8 +276,9 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .card:hover::before{transform:scaleY(1)}
 .card::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(360px circle at var(--spot-x) var(--spot-y),color-mix(in srgb,var(--dept-color,var(--rosa)) 14%,transparent),transparent 60%);opacity:0;transition:opacity .45s ease}
 .card:hover::after{opacity:1}
-.card:hover{transform:translateY(-6px);box-shadow:0 26px 48px -22px color-mix(in srgb,var(--dept-color,var(--rosa)) 48%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--dept-color,var(--rosa)) 36%,var(--line))}
-.promo-card.kb-focus{outline:3px solid var(--rosa);outline-offset:3px;box-shadow:var(--sh-md);transform:translateY(-3px)}
+/* UX: el hover sólo resalta (borde/sombra), nunca desplaza la tarjeta. */
+.card:hover{box-shadow:0 26px 48px -22px color-mix(in srgb,var(--dept-color,var(--rosa)) 48%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--dept-color,var(--rosa)) 36%,var(--line))}
+.promo-card.kb-focus{outline:3px solid var(--rosa);outline-offset:3px;box-shadow:var(--sh-md)}
 .kb-open-hint{
   margin-top:.75rem;display:flex;align-items:center;gap:.5rem;
   font-size:var(--fs-xs);font-weight:700;color:var(--rosa-deep);
@@ -309,7 +314,6 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .card-title{font-family:var(--f-display);font-weight:800;font-stretch:108%;font-size:var(--fs-lg);line-height:1.22;margin-bottom:.55rem;transition:color .35s ease}
 .card:hover .card-title{color:var(--dept-color,var(--rosa))}
 .card .disc-badge{transition:transform .45s cubic-bezier(.34,1.4,.5,1)}
-.card:hover .disc-badge{transform:scale(1.05) rotate(-1.5deg)}
 
 .promo-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem;flex-wrap:wrap}
 .disc-badge{
@@ -581,6 +585,14 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
   <a class="side-link" data-sec="formaspago" href="<?= APP_URL ?>#formaspago" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5h.5M18 14.5h-.5"/></svg> Formas de Pago</a>
   <a class="side-link" data-sec="pdepago" href="<?= APP_URL ?>#pdepago" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/></svg> Pago Web</a>
 
+  <span class="side-label">Trazabilidad (Antes seguimientos)</span>
+  <a class="side-link" data-sec="bigticket" href="<?= APP_URL ?>#bigticket" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v9H3zM14 9h3.2L21 12.5V15h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg> Big Ticket <span class="bt-badge">BT</span></a>
+  <a class="side-link" data-sec="softline" href="<?= APP_URL ?>#softline" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 12h9M5 16h6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg> Soft Line <span class="sl-badge">SF</span></a>
+  <a class="side-link" data-sec="slmensajerias" href="<?= APP_URL ?>#slmensajerias" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5v9l-9 5-9-5V8z"/><path d="M12 3v14M3 8l9 5 9-5"/></svg> SL Mensajerías <span class="slm-badge">SF</span></a>
+  <a class="side-link" data-sec="mkp" href="<?= APP_URL ?>#mkp" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg> MarketPlace <span class="mkp-badge">MKP</span></a>
+  <a class="side-link" data-sec="tienda" href="<?= APP_URL ?>#tienda" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21H3V9.5z"/><path d="M9 21V12h6v9"/></svg> Tienda <span class="tda-badge">TDA</span></a>
+  <a class="side-link" data-sec="generales" href="<?= APP_URL ?>#generales" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg> Generales <span class="gen-badge">GEN</span></a>
+
   <span class="side-label">Recursos</span>
   <a class="side-link" data-sec="formatos" href="<?= APP_URL ?>#formatos" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg> Formatos</a>
   <a class="side-link" data-sec="presentaciones" href="<?= APP_URL ?>#presentaciones" target="_top" onclick="handleSideNav(event,this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.6"/><path d="M12 16v4M8.5 20h7"/></svg> Presentaciones</a>
@@ -737,26 +749,10 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 
   // ---- Magnetic helper (definido fuera del ready para reusar) ----
   var MAG_SEL = '.btn-go, .card-btn:not(.disabled), .back-link, .tab-btn, .m-today, .cal-filter-btn, .link-sm, .menu-btn';
+  // UX: el hover sólo debe resaltar (borde/sombra/color), nunca desplazar el
+  // elemento. El efecto "magnético" que seguía al cursor queda desactivado.
   function makeMagnetic(el) {
-    if (!el || el.__mag || REDUCE || !window.gsap) return;
-    el.__mag = true;
-    var strength = 0.28, max = 6;
-    el.addEventListener('mousemove', function (e) {
-      var r = el.getBoundingClientRect();
-      var mx = (e.clientX - (r.left + r.width / 2)) * strength;
-      var my = (e.clientY - (r.top + r.height / 2)) * strength;
-      gsap.to(el, {
-        x: Math.max(-max, Math.min(max, mx)),
-        y: Math.max(-max, Math.min(max, my)),
-        duration: 0.4, ease: 'power3.out', overwrite: 'auto'
-      });
-    });
-    el.addEventListener('mouseleave', function () {
-      gsap.to(el, {
-        x: 0, y: 0, duration: 0.65, ease: 'elastic.out(1, 0.45)',
-        onComplete: function () { el.style.transform = ''; }
-      });
-    });
+    return;
   }
   function magnetizeWithin(root) {
     if (!root || !root.querySelectorAll) return;

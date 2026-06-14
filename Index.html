@@ -3720,6 +3720,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const it = e.target.closest('.sd-item');
     if (!it) return;
+    if (it.dataset.promo) {
+      saveRecent(gs.value); clearGlobalSearch();
+      const pl = document.getElementById('promoNavLink');
+      const href = pl ? pl.getAttribute('href') : '';
+      window.location.href = (href && href.startsWith('http')) ? href : 'Promociones.html';
+      return;
+    }
     if (it.dataset.nav) { jumpToSec(it.dataset.nav); return; }
     if (it.classList.contains('sd-recent')) {
       gs.value = it.dataset.q || '';
@@ -4284,8 +4291,23 @@ function doGlobalSearch(){
     .slice(0, 4);
   if (navMatches.length) results.push({ key:'__nav', matches: navMatches });
 
+  // Promociones es una página aparte (Promociones.html). Aparece como resultado
+  // directo del buscador cuando la consulta apunta al monitor de promociones.
+  const promoScore = scoreMatch(Q, norm('Promociones'),
+    norm('Monitor de promociones y descuentos'),
+    norm('promos promo monitor ofertas descuentos vigencias calendario rebajas liverpool'));
+  if (promoScore > 0) {
+    results.push({ key:'__promo', matches:[{ name:'Promociones', sub:'Abrir el monitor de promociones', score: promoScore }] });
+  }
+
   // Ordena los grupos por su mejor coincidencia → la sección más relevante aparece primero
   results.sort((a, b) => b.matches[0].score - a.matches[0].score);
+  // Si la búsqueda apunta claramente a "promociones", el monitor encabeza los resultados
+  const qn = norm(q);
+  if (/^promo|promocion|^promos$|monitor/.test(qn)) {
+    const pi = results.findIndex(r => r.key === '__promo');
+    if (pi > 0) { const [pg] = results.splice(pi, 1); results.unshift(pg); }
+  }
   const total = results.reduce((n, r) => n + r.matches.length, 0);
 
   const wasOpen = drop.classList.contains('open');
@@ -4299,6 +4321,18 @@ function doGlobalSearch(){
   } else {
     const header = `<div class="sd-head"><span class="sd-head-n">${total}</span> resultado${total !== 1 ? 's' : ''} para <strong>"${esc(q)}"</strong></div>`;
     const body = results.map(({ key, matches }, gi) => {
+      if (key === '__promo') {
+        return `<div class="sd-group-label">${icon('sparkle')} Promociones<span class="sd-count">1</span></div>` +
+          matches.map((r, ri) => `
+        <div class="sd-item sd-nav${gi === 0 && ri === 0 ? ' sd-top' : ''}" data-promo="1" role="option">
+          <div class="sd-emoji">${icon('sparkle')}</div>
+          <div style="min-width:0;">
+            <div class="sd-name">${hilite(r.name, q)}</div>
+            <div class="sd-sub">${esc(r.sub)}</div>
+          </div>
+          <span class="sd-go">${icon('external')}</span>
+        </div>`).join('');
+      }
       if (key === '__nav') {
         return `<div class="sd-group-label">${icon('arrow')} Ir a sección<span class="sd-count">${matches.length}</span></div>` +
           matches.map((r, ri) => `
