@@ -504,6 +504,8 @@ main{flex:1}
 .badge-pill .ic{width:13px;height:13px}
 .badge-pill.blue{background:#1D4ED8}
 .badge-pill.green{background:#0E7A4F}
+.badge-pill.red{background:#991B1B}
+.badge-pill.teal{background:#0F766E}
 .fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.1rem}
 .fp-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);padding:1.35rem;box-shadow:var(--sh-sm);transition:transform .28s ease,box-shadow .28s ease}
 .fp-card:hover{box-shadow:var(--sh-md)}
@@ -1271,28 +1273,28 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       </button>
     </div>
 
-    <!-- 2. Transferencia BBVA -->
+    <!-- 2. Transferencia / Pago en efectivo -->
     <div class="fp-block" id="fp-transfer">
-      <h2 class="fp-block-title"><span class="fp-num">2</span><span class="fp-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9.5 21v-5h5v5"/></svg></span>Transferencia de Pago <span class="badge-pill blue">BBVA Bancomer</span></h2>
+      <h2 class="fp-block-title"><span class="fp-num">2</span><span class="fp-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9.5 21v-5h5v5"/></svg></span>Transferencia de Pago <span style="font-weight:400;opacity:.55">|</span> Pago en efectivo <span class="badge-pill blue">BBVA Bancomer</span> <span class="badge-pill red">Liverpool</span> <span class="badge-pill teal">OpenPay</span></h2>
       <div class="fp-grid">
         <div class="fp-card">
           <div class="fp-card-title"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/></svg>Desde BBVA Bancomer</div>
           <ol class="step-list">
-            <li><span class="step-n">1</span>En el menú selecciona <strong>"Pagar"</strong> → <strong>"De Servicios"</strong></li>
-            <li><span class="step-n">2</span>Elige <strong>"Pagar nuevo servicio"</strong> — <em>NO</em> elijas la opción directa de Liverpool</li>
+            <li><span class="step-n">1</span>En el menú, selecciona <strong>"Pagar"</strong> → <strong>"De Servicios"</strong></li>
+            <li><span class="step-n">2</span>Elige <strong>"Pagar nuevo servicio"</strong> — <em>NO</em> selecciones la opción directa de Liverpool</li>
             <li><span class="step-n">3</span>Ingresa el número de convenio:</li>
           </ol>
           <div style="margin:.55rem 0 .55rem 2rem;"><span class="conv-num">1422286</span></div>
           <ol class="step-list">
-            <li><span class="step-n">4</span>Se abre la ventana para transferencia</li>
-            <li><span class="step-n">5</span>Ingresa tu <strong>referencia de 20 dígitos</strong> (la del pedido) → Continuar</li>
-            <li><span class="step-n">6</span>Monto exacto · Concepto: <strong>compra de producto</strong></li>
+            <li><span class="step-n">4</span>Se abre la ventana para realizar la transferencia</li>
+            <li><span class="step-n">5</span>Ingresa tu <strong>referencia de 20 dígitos</strong> (número de pedido) y continúa</li>
+            <li><span class="step-n">6</span>Ingresa el monto exacto · Concepto: <strong>compra de producto</strong></li>
           </ol>
           <div class="info-note note-ok"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg><span>Debe aparecer <strong>"pago a Openpay"</strong> como destinatario</span></div>
         </div>
         <div class="fp-card">
           <div class="fp-card-title"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9.5 21v-5h5v5"/></svg>Desde Cualquier Otro Banco</div>
-          <p style="font-size:.83rem;color:var(--ink-soft);margin-bottom:.75rem;">Ve a la sección de transferencias o pagos a otros bancos e ingresa:</p>
+          <p style="font-size:.83rem;color:var(--ink-soft);margin-bottom:.75rem;">Ve a la sección de transferencias o pagos interbancarios e ingresa los siguientes datos:</p>
           <div class="data-row">
             <div class="data-item"><div class="data-lbl">Beneficiario</div><div class="data-val" style="font-size:.82rem;">Distribuidora Liverpool S.A. de C.V.</div></div>
             <div class="data-item"><div class="data-lbl">Banco destino</div><div class="data-val">BBVA Bancomer</div></div>
