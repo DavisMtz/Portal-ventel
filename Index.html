@@ -3722,9 +3722,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!it) return;
     if (it.dataset.promo) {
       saveRecent(gs.value); clearGlobalSearch();
+      // En Apps Script la app vive en un iframe sandbox: navegar con
+      // window.location no cambia la ventana superior. Reutilizamos el enlace
+      // del menú (<a target="_top"> + handlePromoNav), que sí navega el top.
       const pl = document.getElementById('promoNavLink');
-      const href = pl ? pl.getAttribute('href') : '';
-      window.location.href = (href && href.startsWith('http')) ? href : 'Promociones.html';
+      if (pl) pl.click();
+      else window.location.href = 'Promociones.html';
       return;
     }
     if (it.dataset.nav) { jumpToSec(it.dataset.nav); return; }
