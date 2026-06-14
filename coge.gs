@@ -54,6 +54,44 @@ function fetchToolsData() {
   return data;
 }
 
+/**
+ * Lee una hoja con encabezados en la primera fila y devuelve un arreglo de objetos.
+ *
+ * @param {Spreadsheet} ss        Hoja de cálculo activa.
+ * @param {string} sheetName      Nombre de la hoja a leer.
+ * @param {Object<string,string[]>} fields  Mapa campoSalida → lista de alias de encabezado.
+ *                                  Se asigna la primera columna cuyo encabezado contenga
+ *                                  cualquiera de los alias (mismo criterio que el código previo).
+ * @param {string} requiredKey    Campo cuyo valor vacío hace que la fila se omita.
+ * @return {Object[]}             Filas como objetos de strings recortados ('' si falta la columna).
+ */
+function readSheet_(ss, sheetName, fields, requiredKey) {
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return [];
+
+  const data = sheet.getDataRange().getValues();
+  if (!data.length) return [];
+
+  const hdr = data[0].map(h => h.toString().toLowerCase().trim());
+  const idx = {};
+  Object.keys(fields).forEach(key => {
+    idx[key] = hdr.findIndex(h => fields[key].some(alias => h.includes(alias)));
+  });
+
+  const reqIdx = idx[requiredKey];
+  const out = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (reqIdx < 0 || !row[reqIdx] || !row[reqIdx].toString().trim()) continue;
+    const obj = {};
+    Object.keys(fields).forEach(key => {
+      obj[key] = idx[key] > -1 ? String(row[idx[key]] || '').trim() : '';
+    });
+    out.push(obj);
+  }
+  return out;
+}
+
 function buildToolsData_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const response = {
@@ -71,112 +109,45 @@ function buildToolsData_() {
 
     // ── Hoja: Herramientas ──
     // Columnas: Nombre | Enlace | Como acceder | Descripcion | Claves
-    const sheetH = ss.getSheetByName('Herramientas');
-    if (sheetH) {
-      const data = sheetH.getDataRange().getValues();
-      const hdr = data[0].map(h => h.toString().toLowerCase().trim());
-      const iNombre   = hdr.findIndex(h => h.includes('nombre'));
-      const iEnlace   = hdr.findIndex(h => h.includes('enlace') || h.includes('liga') || h.includes('link') || h.includes('url'));
-      const iAcceder  = hdr.findIndex(h => h.includes('acceder') || h.includes('acceso') || h.includes('como'));
-      const iDesc     = hdr.findIndex(h => h.includes('descrip'));
-      const iClaves   = hdr.findIndex(h => h.includes('clave'));
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row[iNombre] || !row[iNombre].toString().trim()) continue;
-        response.herramientas.push({
-          nombre:     String(row[iNombre]  || '').trim(),
-          enlace:     iEnlace  > -1 ? String(row[iEnlace]  || '').trim() : '',
-          comoAcceder:iAcceder > -1 ? String(row[iAcceder] || '').trim() : '',
-          descripcion:iDesc    > -1 ? String(row[iDesc]    || '').trim() : '',
-          claves:     iClaves  > -1 ? String(row[iClaves]  || '').trim() : ''
-        });
-      }
-    }
+    response.herramientas = readSheet_(ss, 'Herramientas', {
+      nombre:      ['nombre'],
+      enlace:      ['enlace', 'liga', 'link', 'url'],
+      comoAcceder: ['acceder', 'acceso', 'como'],
+      descripcion: ['descrip'],
+      claves:      ['clave']
+    }, 'nombre');
 
     // ── Hoja: Presentaciones ──
     // Columnas: Nombre | LIGA | DESCRIPCION
-    const sheetP = ss.getSheetByName('Presentaciones');
-    if (sheetP) {
-      const data = sheetP.getDataRange().getValues();
-      const hdr = data[0].map(h => h.toString().toLowerCase().trim());
-      const iNombre = hdr.findIndex(h => h.includes('nombre'));
-      const iLiga   = hdr.findIndex(h => h.includes('liga') || h.includes('enlace') || h.includes('link') || h.includes('url'));
-      const iDesc   = hdr.findIndex(h => h.includes('descrip'));
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row[iNombre] || !row[iNombre].toString().trim()) continue;
-        response.presentaciones.push({
-          nombre:      String(row[iNombre] || '').trim(),
-          liga:        iLiga > -1 ? String(row[iLiga] || '').trim() : '',
-          descripcion: iDesc > -1 ? String(row[iDesc] || '').trim() : ''
-        });
-      }
-    }
+    response.presentaciones = readSheet_(ss, 'Presentaciones', {
+      nombre:      ['nombre'],
+      liga:        ['liga', 'enlace', 'link', 'url'],
+      descripcion: ['descrip']
+    }, 'nombre');
 
     // ── Hoja: Paqueterias ──
     // Columnas: Nombre | Liga | Soms
-    const sheetPaq = ss.getSheetByName('Paqueterias');
-    if (sheetPaq) {
-      const data = sheetPaq.getDataRange().getValues();
-      const hdr = data[0].map(h => h.toString().toLowerCase().trim());
-      const iNombre = hdr.findIndex(h => h.includes('nombre'));
-      const iLiga   = hdr.findIndex(h => h.includes('liga') || h.includes('enlace') || h.includes('link') || h.includes('url'));
-      const iSoms   = hdr.findIndex(h => h.includes('soms') || h.includes('sistema'));
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row[iNombre] || !row[iNombre].toString().trim()) continue;
-        response.paqueterias.push({
-          nombre: String(row[iNombre] || '').trim(),
-          liga:   iLiga > -1 ? String(row[iLiga] || '').trim() : '',
-          soms:   iSoms > -1 ? String(row[iSoms] || '').trim() : ''
-        });
-      }
-    }
+    response.paqueterias = readSheet_(ss, 'Paqueterias', {
+      nombre: ['nombre'],
+      liga:   ['liga', 'enlace', 'link', 'url'],
+      soms:   ['soms', 'sistema']
+    }, 'nombre');
 
     // ── Hoja: Formatos ──
     // Columnas: ACCESO | OBSERVACIONES | LIGA
-    const sheetF = ss.getSheetByName('Formatos');
-    if (sheetF) {
-      const data = sheetF.getDataRange().getValues();
-      const hdr = data[0].map(h => h.toString().toLowerCase().trim());
-      const iAcceso = hdr.findIndex(h => h.includes('acceso') || h.includes('nombre') || h.includes('formato'));
-      const iObs    = hdr.findIndex(h => h.includes('observ') || h.includes('nota'));
-      const iLiga   = hdr.findIndex(h => h.includes('liga') || h.includes('enlace') || h.includes('link'));
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row[iAcceso] || !row[iAcceso].toString().trim()) continue;
-        response.formatos.push({
-          acceso:        String(row[iAcceso] || '').trim(),
-          observaciones: iObs  > -1 ? String(row[iObs]  || '').trim() : '',
-          liga:          iLiga > -1 ? String(row[iLiga] || '').trim() : ''
-        });
-      }
-    }
+    response.formatos = readSheet_(ss, 'Formatos', {
+      acceso:        ['acceso', 'nombre', 'formato'],
+      observaciones: ['observ', 'nota'],
+      liga:          ['liga', 'enlace', 'link']
+    }, 'acceso');
 
     // ── Hoja: PdePago ──
     // Columnas: Nombre | Detalles | Liga
-    const sheetPP = ss.getSheetByName('PdePago');
-    if (sheetPP) {
-      const data = sheetPP.getDataRange().getValues();
-      const hdr = data[0].map(h => h.toString().toLowerCase().trim());
-      const iNombre   = hdr.findIndex(h => h.includes('nombre'));
-      const iDetalles = hdr.findIndex(h => h.includes('detalle') || h.includes('descrip') || h.includes('info'));
-      const iLiga     = hdr.findIndex(h => h.includes('liga') || h.includes('enlace') || h.includes('link') || h.includes('simulad'));
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row[iNombre] || !row[iNombre].toString().trim()) continue;
-        response.pdePago.push({
-          nombre:   String(row[iNombre]   || '').trim(),
-          detalles: iDetalles > -1 ? String(row[iDetalles] || '').trim() : '',
-          liga:     iLiga     > -1 ? String(row[iLiga]     || '').trim() : ''
-        });
-      }
-    }
+    response.pdePago = readSheet_(ss, 'PdePago', {
+      nombre:   ['nombre'],
+      detalles: ['detalle', 'descrip', 'info'],
+      liga:     ['liga', 'enlace', 'link', 'url', 'simulad']
+    }, 'nombre');
 
     // ── Hoja: Avisos (opcional) ──
     // Columnas: Mensaje | Tipo (info/warn/alert/ok) | Hasta (fecha opcional)
