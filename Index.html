@@ -437,6 +437,18 @@ main{flex:1}
 .hero-clock{position:relative;z-index:1;text-align:right;flex-shrink:0}
 .hero-clock .hc-time{font-family:var(--f-mono);font-weight:700;font-size:2.5rem;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums}
 .hero-clock .hc-date{font-size:.9rem;font-weight:600;color:rgba(255,255,255,.88);margin-top:.4rem;text-transform:capitalize}
+.hero-sync{display:inline-flex;align-items:center;gap:.5rem;margin-top:.85rem;padding:.32rem .4rem .32rem .7rem;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;backdrop-filter:blur(4px)}
+.hero-sync .hs-dot{width:7px;height:7px;border-radius:50%;background:#7CF0B5;box-shadow:0 0 0 0 rgba(124,240,181,.6);flex-shrink:0}
+.hero-sync.is-stale .hs-dot{background:#FFD166}
+.hero-sync.is-loading .hs-dot{background:#9ED0FF;animation:beat 1.1s ease-in-out infinite}
+.hero-sync .hs-text{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.92);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hero-sync .hs-refresh{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:none;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;cursor:pointer;flex-shrink:0;transition:background .2s,transform .2s}
+.hero-sync .hs-refresh:hover{background:rgba(255,255,255,.32)}
+.hero-sync .hs-refresh:active{transform:scale(.9)}
+.hero-sync .hs-refresh .ic{width:15px;height:15px}
+.hero-sync.is-loading .hs-refresh{pointer-events:none;opacity:.85}
+.hero-sync.is-loading .hs-refresh .ic{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 .dash-label{display:flex;align-items:center;gap:.6rem;font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:1.12rem;margin:2rem 0 1.05rem}
 .dash-label:first-of-type{margin-top:.3rem}
@@ -1021,6 +1033,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <div class="hero-clock">
         <div class="hc-time" id="heroTime">--:--</div>
         <div class="hc-date" id="heroDate"></div>
+        <div class="hero-sync" id="heroSync" title="Última actualización de los datos">
+          <span class="hs-dot"></span>
+          <span class="hs-text" id="syncText">Cargando datos…</span>
+          <button class="hs-refresh" id="syncBtn" type="button" onclick="refreshData(this)" title="Actualizar datos" aria-label="Actualizar datos">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -3609,6 +3628,8 @@ let pins    = lsGet('ventel-pins', []);        // herramientas fijadas con el pi
 let recents = lsGet('ventel-recent', []);      // últimas búsquedas (máx. 5)
 let dismissedAvisos = lsGet('ventel-avisos-out', []);
 let dataIsFresh = false;                       // true cuando ya respondió Apps Script (no el caché)
+let lastUpdated = null;                         // timestamp (ms) de la última carga de datos mostrada
+let syncTimer = null;                           // intervalo que refresca el texto "hace X"
 
 /* ──────── TEMA ──────── */
 function setTheme(name){
@@ -3767,13 +3788,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // SWR: pinta al instante con el último dato guardado localmente…
   const cached = lsGet('ventel-data-v1', null);
-  if (cached && cached.data) onToolsData(cached.data, true);
+  if (cached && cached.data) { lastUpdated = cached.t || null; onToolsData(cached.data, true); }
+  renderSyncStatus();
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(renderSyncStatus, 30000); // mantiene el "hace X" al día
 
   // …y revalida contra Apps Script en segundo plano (lógica original intacta)
+  requestData(false);
+});
+
+/* ──────── CARGA / ACTUALIZACIÓN DE DATOS ──────── */
+function requestData(manual){
+  const sync = document.getElementById('heroSync');
+  if (manual && sync) { sync.classList.add('is-loading'); sync.classList.remove('is-stale'); setSyncText('Actualizando…'); }
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
-      .withSuccessHandler(d => onToolsData(d, false))
-      .withFailureHandler(onToolsError)
+      .withSuccessHandler(d => { onToolsData(d, false); finishRefresh(true, manual); })
+      .withFailureHandler(e => { onToolsError(e); finishRefresh(false, manual); })
       .fetchToolsData();
     google.script.run
       .withSuccessHandler(renderPromoStrip)
@@ -3783,9 +3814,50 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       onToolsData(mockData(), false);
       renderPromoStrip({ status:'ok', activas:12, porTerminar:3 });
-    }, 380);
+      finishRefresh(true, manual);
+    }, manual ? 700 : 380);
   }
-});
+}
+
+/* Botón "Actualizar datos" del hero */
+function refreshData(btn){
+  const sync = document.getElementById('heroSync');
+  if (sync && sync.classList.contains('is-loading')) return; // evita dobles clics
+  requestData(true);
+}
+
+function finishRefresh(ok, manual){
+  const sync = document.getElementById('heroSync');
+  if (sync) sync.classList.remove('is-loading');
+  if (ok) { renderSyncStatus(); if (manual) showToast(null, 'Datos actualizados'); }
+  else { if (sync) sync.classList.add('is-stale'); setSyncText('No se pudo actualizar'); }
+}
+
+function setSyncText(txt){ const el = document.getElementById('syncText'); if (el) el.textContent = txt; }
+
+/* Tiempo relativo legible: "hace un momento", "hace 5 min", "hace 2 h"… */
+function relTime(ts){
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (s < 10)  return 'hace un momento';
+  if (s < 60)  return `hace ${s} s`;
+  const m = Math.floor(s / 60);
+  if (m < 60)  return `hace ${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24)  return `hace ${h} h`;
+  const d = Math.floor(h / 24);
+  return d === 1 ? 'hace 1 día' : `hace ${d} días`;
+}
+
+/* Pinta el estado del indicador "Actualizado hace X" */
+function renderSyncStatus(){
+  const sync = document.getElementById('heroSync');
+  if (!sync) return;
+  if (sync.classList.contains('is-loading')) return; // no pisar el "Actualizando…"
+  if (!lastUpdated){ setSyncText('Sin datos aún'); sync.classList.add('is-stale'); return; }
+  setSyncText('Actualizado ' + relTime(lastUpdated));
+  // marca como "obsoleto" si pasaron más de 15 minutos desde la última carga
+  sync.classList.toggle('is-stale', (Date.now() - lastUpdated) > 15 * 60 * 1000);
+}
 
 /* ──────── NAVEGACIÓN CON HISTORIAL (botón atrás + enlaces a secciones) ──────── */
 let suppressHistory = false;
@@ -3904,7 +3976,7 @@ function jumpToSl(blockId){
 function onToolsData(data, fromCache){
   if (!data || data.status === 'error') { if (!fromCache) onToolsError(data && data.error); return; }
   if (fromCache && dataIsFresh) return; // ya están pintados los datos frescos
-  if (!fromCache){ dataIsFresh = true; lsSet('ventel-data-v1', { t: Date.now(), data: data }); }
+  if (!fromCache){ dataIsFresh = true; lastUpdated = Date.now(); lsSet('ventel-data-v1', { t: lastUpdated, data: data }); renderSyncStatus(); }
   store = {
     herramientas:   data.herramientas   || [],
     presentaciones: data.presentaciones || [],
