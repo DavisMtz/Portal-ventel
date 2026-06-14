@@ -1491,7 +1491,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     <div class="sec-head">
       <span class="sec-eyebrow"><span class="dot"></span>Guía de procesos</span>
       <h1 class="sec-title">Procesos <em>Big Ticket</em></h1>
-      <p class="sec-sub">Los 15 procesos BT con tiempos de reporte, solución, plataformas y observaciones clave. Usa el buscador o los chips de navegación para ir directo al proceso que necesitas.</p>
+      <p class="sec-sub">Los 15 procesos BT con tiempos de reporte, avance, solución, plataformas y observaciones clave. Usa el buscador o los chips de navegación para ir directo al proceso que necesitas.</p>
     </div>
 
     <nav class="fp-nav" aria-label="Procesos Big Ticket">
@@ -1537,6 +1537,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Avance (L-V)</span><span class="bt-time-val warn">3 días (escalación Salesforce)</span></div>
           <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5 días hábiles</span></div>
         </div>
       </div>
@@ -1639,6 +1640,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Avance (L-V)</span><span class="bt-time-val warn">3 días</span></div>
           <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val info">Fecha calendario PAO</span></div>
         </div>
       </div>
@@ -1719,6 +1721,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Avance (L-V)</span><span class="bt-time-val warn">3 días</span></div>
           <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val">N/A</span></div>
         </div>
       </div>
@@ -1816,6 +1819,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">1 año</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Avance (L-V)</span><span class="bt-time-val warn">5 días</span></div>
           <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val info">Según inventario</span></div>
         </div>
       </div>
@@ -1869,6 +1873,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Avance (L-V)</span><span class="bt-time-val warn">30 días</span></div>
           <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10 días hábiles</span></div>
         </div>
       </div>
@@ -2215,7 +2220,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <div class="bt-obs">
         <span class="bt-obs-lbl">Observaciones</span>
         <ul class="bt-obs-list">
-          <li>Si el estatus <strong>NMEN, VMEN</strong> no tiene movimiento mayor a <strong>10 días</strong> → escalar con <strong>Supervisión</strong> para solicitar el <strong>forzado del estatus</strong> para devolución.</li>
+          <li>Revisar la pantalla de <strong>SOMS 6.7.15</strong>.</li>
+          <li>El tiempo incluye la <strong>escalación</strong> y el <strong>tiempo de entrega</strong>.</li>
+          <li>Si el estatus <strong>NMEN, VMEN</strong>, etc. no tiene movimiento mayor a <strong>10 días</strong> → escalar con <strong>Supervisión</strong> para solicitar el <strong>forzado del estatus</strong> para devolución.</li>
         </ul>
       </div>
     </div>
@@ -2348,12 +2355,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
       </div>
       <div class="bt-obs">
-        <span class="bt-obs-lbl">Observaciones</span>
+        <span class="bt-obs-lbl">Tiempos por método de pago <span style="color:var(--info);font-size:.68rem;font-weight:700;text-transform:none;letter-spacing:0">(fechas estimadas)</span></span>
+        <div class="bt-dev-grid">
+          <div class="bt-dev-item"><div class="bt-dev-item-name">Tarjeta Liverpool DILISA / LPC</div><div class="bt-dev-item-time">24 horas</div></div>
+          <div class="bt-dev-item"><div class="bt-dev-item-name">Crédito/débito externas 3DS (nacionales y extranjeras)</div><div class="bt-dev-item-time">72 hrs hábiles</div><div class="bt-dev-item-note">Débito → intenta a tarjeta; si no pasa → MED. Crédito → mismo método de pago.</div></div>
+          <div class="bt-dev-item"><div class="bt-dev-item-name">PayPal</div><div class="bt-dev-item-time">48 horas</div></div>
+          <div class="bt-dev-item"><div class="bt-dev-item-name">Pagos referenciados (conveniencia / transferencias)</div><div class="bt-dev-item-time">MED — 24 horas</div><div class="bt-dev-item-note">Sin MED: acudir a Crédito/C&amp;C de la tienda en 5–7 días hábiles (partida).</div></div>
+        </div>
+        <span class="bt-obs-lbl" style="margin-top:.65rem">Validaciones por método</span>
         <ul class="bt-obs-list">
-          <li>Realizar <strong>validación OTP</strong>.</li>
-          <li>Llenar el <strong>Formulario Incidencias Trazabilidad</strong>.</li>
-          <li>Si han pasado <strong>+45 días</strong> con pago en débito → escalar a <strong>MED</strong>.</li>
+          <li><strong>OpenPay:</strong> Revisar partida en SAP ECC.</li>
+          <li><strong>Tarjetas internas/externas:</strong> Revisar SAP ECC y CTE.</li>
+          <li><strong>PayPal:</strong> —</li>
+          <li><strong>MED:</strong> Revisar en SAP ECC que cuente con monedero y coincida con el del cliente en FMS.</li>
         </ul>
+        <div class="bt-note slm-note"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex-shrink:0;margin-top:2px"><path d="M12 3 22 20H2Z"/><path d="M12 10v4M12 17v.4"/></svg><span><strong>Notas:</strong> Validación OTP (hasta 3 veces); si no es exitoso → validación manual. Tienes la opción de subir al formulario <strong>Incidencias Trazabilidad</strong>; caso contrario, solicitar la devolución al día siguiente. Débito +45 días naturales desde compra → aplica al MED. En 3DS débito → intenta a la tarjeta; si no pasa → MED; crédito → mismo método. Tarjetas extranjeras → misma tarjeta; si no pasa → MED.</span></div>
       </div>
     </div>
 
