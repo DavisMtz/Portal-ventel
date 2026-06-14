@@ -19,9 +19,9 @@
 :root{
   --brand:#E10098; --brand-deep:#A8006F; --brand-bright:#EE2BAB;
   --brand-tint:#FDE7F4; --brand-soft:#FBD0E9;
-  --app-bg:#F4EEF2; --content-bg:#FAF7F9; --surface:#FFFFFF; --surface-2:#FBF7FA;
-  --ink:#241C22; --ink-soft:#7A6E76; --ink-faint:#A99FA6;
-  --line:#ECE2E8; --line-soft:#F4ECF1;
+  --app-bg:#EEF1F5; --content-bg:#F7F9FB; --surface:#FFFFFF; --surface-2:#F4F7FA;
+  --ink:#1B2330; --ink-soft:#5C6B7E; --ink-faint:#94A1B2;
+  --line:#E4E9F0; --line-soft:#EEF2F7;
   --side-bg:#E10098;
   --side-ink:#FFFFFF; --side-ink-soft:rgba(255,255,255,.88); --side-faint:rgba(255,255,255,.66);
   --side-active-bg:rgba(255,255,255,.22); --side-active-ink:#FFFFFF; --side-line:rgba(255,255,255,.14);
@@ -31,18 +31,16 @@
   --alert:#C81E3C; --alert-bg:#FDE8EC; --info:#1D4ED8; --info-bg:#EAF0FE;
   --rosa:var(--brand); --rosa-deep:var(--brand-deep); --rosa-tint:var(--brand-tint); --rosa-soft:var(--brand-soft);
   --paper:var(--content-bg);
-  --rad:20px; --rad-md:14px; --rad-sm:12px; --rad-lg:24px;
-  --sh-xs:0 1px 2px rgba(36,28,34,.06);
-  --sh-sm:0 2px 8px -2px rgba(36,28,34,.08), 0 1px 2px rgba(36,28,34,.05);
-  --sh-md:0 18px 40px -16px rgba(168,0,111,.28);
-  --sh-lg:0 30px 60px -20px rgba(36,28,34,.25);
+  --rad:12px; --rad-md:10px; --rad-sm:8px; --rad-lg:14px;
+  --sh-xs:0 1px 2px rgba(27,35,48,.06);
+  --sh-sm:0 2px 8px -2px rgba(27,35,48,.08), 0 1px 2px rgba(27,35,48,.05);
+  --sh-md:0 18px 40px -16px rgba(27,35,48,.22);
+  --sh-lg:0 30px 60px -20px rgba(27,35,48,.25);
   --sh-rosa:0 6px 14px -7px rgba(225,0,152,.5);
   --sh-rosa-lg:0 12px 24px -8px rgba(225,0,152,.55);
   --ring:0 0 0 4px var(--brand-tint);
   --tr:all .28s cubic-bezier(.4,0,.2,1);
-  --app-glow:
-    radial-gradient(1100px 480px at 92% -8%, rgba(225,0,152,.08), transparent 60%),
-    radial-gradient(820px 420px at -6% 28%, rgba(109,40,217,.05), transparent 55%);
+  --app-glow:none;
   --fs-2xs:.68rem; --fs-xs:.75rem; --fs-sm:.85rem; --fs-md:.92rem;
   --fs-base:1rem; --fs-lg:1.15rem; --fs-xl:1.45rem; --fs-2xl:1.9rem;
   --card-pad:1.4rem; --grid-gap:1.3rem;
@@ -150,9 +148,9 @@ main{flex:1}
   font-size:var(--fs-xs);font-weight:700;letter-spacing:.2em;text-transform:uppercase;
   color:var(--rosa-deep);margin-bottom:.65rem;
 }
-.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--rosa);animation:beat 2s ease-in-out infinite}
+.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--rosa)}
 .date-hero h1{
-  font-family:var(--f-display);font-weight:900;font-stretch:118%;
+  font-family:var(--f-display);font-weight:900;font-stretch:104%;
   font-size:clamp(2.6rem,6vw,4.4rem);line-height:.98;letter-spacing:-.02em;
   text-transform:capitalize;
 }
@@ -176,7 +174,7 @@ main{flex:1}
   background:var(--surface);border:1px solid var(--line);border-radius:var(--rad-sm);
   padding:.9rem 1rem;box-shadow:var(--sh-sm);
 }
-.stat-num{font-family:var(--f-display);font-weight:900;font-stretch:115%;font-size:var(--fs-2xl);line-height:1;color:var(--ink)}
+.stat-num{font-family:var(--f-display);font-weight:900;font-stretch:104%;font-size:var(--fs-2xl);line-height:1;color:var(--ink)}
 .stat-num.pink{color:var(--rosa)}
 .stat-num.amber{color:var(--warn)}
 .stat-lbl{font-size:var(--fs-xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);margin-top:.35rem}
@@ -278,7 +276,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .promos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:var(--grid-gap)}
 
 .card{
-  background:linear-gradient(180deg,var(--surface),color-mix(in srgb,var(--surface) 90%,var(--paper)));border-radius:20px;padding:var(--card-pad);
+  background:var(--surface);border-radius:12px;padding:var(--card-pad);
   box-shadow:var(--sh-sm);border:1px solid var(--line);
   display:flex;flex-direction:column;position:relative;overflow:hidden;
   transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),border-color .4s ease;will-change:transform;--spot-x:50%;--spot-y:50%;
@@ -289,7 +287,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .card::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(360px circle at var(--spot-x) var(--spot-y),color-mix(in srgb,var(--dept-color,var(--rosa)) 14%,transparent),transparent 60%);opacity:0;transition:opacity .45s ease}
 .card:hover::after{opacity:1}
 /* UX: el hover sólo resalta (borde/sombra), nunca desplaza la tarjeta. */
-.card:hover{box-shadow:0 26px 48px -22px color-mix(in srgb,var(--dept-color,var(--rosa)) 48%,transparent),var(--sh-sm);border-color:color-mix(in srgb,var(--dept-color,var(--rosa)) 36%,var(--line))}
+.card:hover{box-shadow:0 10px 24px -14px rgba(27,35,48,.20),var(--sh-sm);border-color:color-mix(in srgb,var(--dept-color,var(--rosa)) 36%,var(--line))}
 .promo-card.kb-focus{outline:3px solid var(--rosa);outline-offset:3px;box-shadow:var(--sh-md)}
 .kb-open-hint{
   margin-top:.75rem;display:flex;align-items:center;gap:.5rem;
@@ -333,7 +331,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
   background:var(--rosa-tint);border:1px solid var(--rosa-soft);
   border-radius:var(--rad-sm);padding:.35rem .8rem;
 }
-.disc-badge .pct{font-family:var(--f-display);font-weight:900;font-stretch:118%;font-size:1.7rem;line-height:1;color:var(--rosa)}
+.disc-badge .pct{font-family:var(--f-display);font-weight:900;font-stretch:104%;font-size:1.7rem;line-height:1;color:var(--rosa)}
 .disc-badge .upto{font-size:var(--fs-2xs);font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--rosa-deep)}
 .mini-badge{
   font-size:var(--fs-xs);font-weight:800;padding:.3rem .65rem;border-radius:7px;letter-spacing:.03em;
@@ -381,7 +379,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .cal-filter-btn:hover:not(.active){color:var(--rosa);border-color:var(--rosa-soft)}
 
 .cal-section-title{
-  font-family:var(--f-display);font-weight:800;font-stretch:112%;font-size:var(--fs-lg);
+  font-family:var(--f-display);font-weight:800;font-stretch:104%;font-size:var(--fs-lg);
   display:flex;align-items:center;gap:.6rem;margin:0 0 1rem;
 }
 .cal-section-title .badge-n{
@@ -426,7 +424,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .month-nav .m-arrow:hover:not(:disabled){border-color:var(--rosa);color:var(--rosa)}
 .month-nav .m-arrow:disabled{opacity:.3;cursor:not-allowed}
 .month-label{
-  font-family:var(--f-display);font-weight:900;font-stretch:115%;
+  font-family:var(--f-display);font-weight:900;font-stretch:104%;
   font-size:var(--fs-xl);min-width:210px;text-align:center;text-transform:capitalize;
 }
 .month-nav .m-today{
@@ -437,7 +435,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .month-nav .m-today:hover{background:var(--rosa);border-color:var(--rosa);color:#fff}
 
 .gantt-card{
-  background:linear-gradient(180deg,var(--surface),color-mix(in srgb,var(--surface) 92%,var(--paper)));border:1px solid var(--line);border-radius:18px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
   box-shadow:var(--sh-sm);padding:1.4rem 1.5rem 1.6rem;overflow:hidden;
 }
 .gantt-axis{
@@ -481,11 +479,11 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 .g-track{position:relative;height:20px}
 .g-bar{
   position:absolute;top:1px;height:18px;border-radius:99px;min-width:10px;
-  background:linear-gradient(180deg,color-mix(in srgb,var(--bar-color,var(--rosa)) 82%,#fff),var(--bar-color,var(--rosa)));
-  display:flex;align-items:center;box-shadow:0 3px 9px -3px color-mix(in srgb,var(--bar-color,var(--rosa)) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.4);
+  background:var(--bar-color,var(--rosa));
+  display:flex;align-items:center;box-shadow:0 2px 6px -3px color-mix(in srgb,var(--bar-color,var(--rosa)) 55%,transparent);
   transition:filter .3s ease,box-shadow .3s ease;
 }
-.g-row:hover .g-bar{filter:brightness(1.05) saturate(1.06);box-shadow:0 6px 15px -4px color-mix(in srgb,var(--bar-color,var(--rosa)) 78%,transparent),inset 0 1px 0 rgba(255,255,255,.5)}
+.g-row:hover .g-bar{filter:brightness(1.04);box-shadow:0 4px 10px -4px color-mix(in srgb,var(--bar-color,var(--rosa)) 60%,transparent)}
 .g-bar.done{filter:saturate(.45);opacity:.4}
 .g-bar.future-bar{
   background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--bar-color,var(--rosa)) 16%,transparent),color-mix(in srgb,var(--bar-color,var(--rosa)) 16%,transparent) 5px,transparent 5px,transparent 10px);border:2px dashed var(--bar-color,var(--rosa));
