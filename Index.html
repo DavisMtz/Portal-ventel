@@ -229,8 +229,14 @@ a{text-decoration:none;color:inherit}
 .sd-item.sd-active{background:var(--brand-tint);transform:translateX(3px)}
 .sd-item.sd-active .sd-emoji{border-color:var(--brand-soft)}
 .sd-item.sd-active .sd-go{opacity:1}
-.search-flash{animation:searchFlash 1.6s ease;border-radius:var(--rad)}
-@keyframes searchFlash{0%{box-shadow:0 0 0 0 rgba(225,0,152,0)}14%{box-shadow:0 0 0 4px rgba(225,0,152,.42)}100%{box-shadow:0 0 0 0 rgba(225,0,152,0)}}
+.search-flash{animation:searchFlash 2.2s cubic-bezier(.4,0,.2,1);border-radius:var(--rad);position:relative;z-index:1}
+@keyframes searchFlash{
+  0%{box-shadow:0 0 0 0 rgba(225,0,152,0)}
+  9%{box-shadow:0 0 0 5px rgba(225,0,152,.5)}
+  20%{box-shadow:0 0 0 4px rgba(225,0,152,.42)}
+  60%{box-shadow:0 0 0 4px rgba(225,0,152,.3)}
+  100%{box-shadow:0 0 0 0 rgba(225,0,152,0)}
+}
 mark{background:var(--brand-soft);color:var(--brand-deep);border-radius:3px;padding:0 2px}
 
 /* — Encabezado, contadores y pie del dropdown de búsqueda — */
@@ -4237,34 +4243,55 @@ function jumpToExact(key, name, targetId){
   document.getElementById('globalSearch').value = '';
   document.getElementById('hsClear').style.display = 'none';
   closeDrop();
-  setTimeout(() => {
+
+  const want = norm(name);
+  const findEl = () => {
     const sec = document.getElementById('sec-' + secId);
-    if (!sec) return;
-    let scrollEl = null;
-    if (targetId) scrollEl = document.getElementById(targetId);
+    if (!sec) return null;
+    if (targetId){ const t = document.getElementById(targetId); if (t) return t; }
+    const nameEls = sec.querySelectorAll('.tc-name,.fmt-name,.paq-name,.pago-name,.pres-name');
+    let target = null;
+    nameEls.forEach(el => { if (!target && norm(el.textContent) === want) target = el; });
+    if (!target) nameEls.forEach(el => { if (!target && norm(el.textContent).includes(want)) target = el; });
+    return (target ? target.closest('.tool-card,.fmt-card,.pago-card,.pres-card,tr') : null) || target;
+  };
+
+  // Espera con reintentos (rAF) a que la sección termine de renderizar antes de saltar —
+  // más robusto que un setTimeout fijo cuando el render o la animación tardan.
+  const started = performance.now();
+  (function attempt(){
+    const scrollEl = findEl();
     if (!scrollEl){
-      const want = norm(name);
-      const nameEls = sec.querySelectorAll('.tc-name,.fmt-name,.paq-name,.pago-name,.pres-name');
-      let target = null;
-      nameEls.forEach(el => { if (!target && norm(el.textContent) === want) target = el; });
-      if (!target) nameEls.forEach(el => { if (!target && norm(el.textContent).includes(want)) target = el; });
-      scrollEl = (target ? target.closest('.tool-card,.fmt-card,.pago-card,.pres-card,tr') : null) || target;
+      if (performance.now() - started < 1200) requestAnimationFrame(attempt);
+      else clearPendingOpen();
+      return;
     }
-    if (scrollEl){
-      const y = scrollEl.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-      flashEl(scrollEl);
-      // Preparar "segundo Enter abre el enlace"
-      const link = scrollEl.querySelector ? scrollEl.querySelector('a.btn-go, a.btn-violet, a.link-sm') : null;
-      pendingOpenEl = (link && link.href) ? link : null;
-      try { document.getElementById('globalSearch').focus({ preventScroll:true }); } catch(e){}
-      showKbHint(!!pendingOpenEl);
-    } else {
-      clearPendingOpen();
-    }
-  }, 400);
+    revealTarget(scrollEl);
+  })();
 }
-function flashEl(el){ el.classList.add('search-flash'); setTimeout(() => el.classList.remove('search-flash'), 1600); }
+/* Lleva el foco visual al resultado: abre la tarjeta si está colapsada, la centra
+   respetando las barras fijas y la resalta con claridad. */
+function revealTarget(scrollEl){
+  // Si es una tarjeta de herramienta con panel colapsado, ábrelo para mostrar el dato al instante
+  if (scrollEl.classList && scrollEl.classList.contains('tool-card') && !scrollEl.classList.contains('expanded')){
+    const tg = scrollEl.querySelector('.tc-toggle');
+    if (tg){ scrollEl.classList.add('expanded'); const lbl = tg.querySelector('span'); if (lbl) lbl.textContent = 'Ocultar acceso'; }
+  }
+  const OFFSET = 140; // deja espacio para topbar + nav de procesos fijos
+  const doScroll = () => {
+    const y = scrollEl.getBoundingClientRect().top + window.scrollY - OFFSET;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  };
+  doScroll();
+  setTimeout(doScroll, 280); // reajusta tras la expansión/animación para clavar la posición
+  flashEl(scrollEl);
+  // Preparar "segundo Enter abre el enlace" (también tras clic de ratón)
+  const link = scrollEl.querySelector ? scrollEl.querySelector('a.btn-go, a.btn-violet, a.link-sm') : null;
+  pendingOpenEl = (link && link.href) ? link : null;
+  try { document.getElementById('globalSearch').focus({ preventScroll:true }); } catch(e){}
+  showKbHint(!!pendingOpenEl);
+}
+function flashEl(el){ el.classList.remove('search-flash'); void el.offsetWidth; el.classList.add('search-flash'); setTimeout(() => el.classList.remove('search-flash'), 2200); }
 
 /* ──────── BÚSQUEDAS RECIENTES ──────── */
 function saveRecent(q){
