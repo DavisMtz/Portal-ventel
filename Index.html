@@ -750,14 +750,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .tda-note{background:#ECFDF5;border-color:rgba(5,150,105,.18) !important;color:#065F46 !important}
 .tda-note strong{color:#065F46 !important}
 .tda-badge{display:inline-flex;align-items:center;padding:.08rem .46rem;border-radius:100px;background:rgba(255,255,255,.28);color:#fff;font-size:.64rem;font-weight:800;letter-spacing:.04em;margin-left:.25rem}
-/* Generales – teal */
-.gen-block{border-left-color:#0891B2}
-.gen-block .bt-obs-list li::before{color:#0891B2}
-.gen-block .bt-quote{background:#CFFAFE;border-left-color:#0891B2;color:#164E63}
-.gen-num{background:linear-gradient(135deg,#0891B2,#22D3EE) !important;box-shadow:0 8px 16px -8px rgba(8,145,178,.55) !important}
-.gen-plat{background:#CFFAFE !important;color:#155E75 !important}
-.gen-note{background:#ECFEFF;border-color:rgba(8,145,178,.18) !important;color:#155E75 !important}
-.gen-note strong{color:#155E75 !important}
+/* Generales – rose */
+.gen-block{border-left-color:#E11D48}
+.gen-block .bt-obs-list li::before{color:#E11D48}
+.gen-block .bt-quote{background:#FFE4E6;border-left-color:#E11D48;color:#881337}
+.gen-num{background:linear-gradient(135deg,#E11D48,#FB7185) !important;box-shadow:0 8px 16px -8px rgba(225,29,72,.55) !important}
+.gen-plat{background:#FFE4E6 !important;color:#9F1239 !important}
+.gen-note{background:#FFF1F2;border-color:rgba(225,29,72,.18) !important;color:#9F1239 !important}
+.gen-note strong{color:#9F1239 !important}
 .gen-badge{display:inline-flex;align-items:center;padding:.08rem .46rem;border-radius:100px;background:rgba(255,255,255,.28);color:#fff;font-size:.64rem;font-weight:800;letter-spacing:.04em;margin-left:.25rem}
 .bt-head{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem}
 .bt-title{font-family:var(--f-display);font-size:1.08rem;font-weight:800;color:var(--ink);margin:0;padding-top:.25rem}
@@ -904,7 +904,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   <button class="side-link" data-sec="slmensajerias" onclick="switchSec('slmensajerias',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5v9l-9 5-9-5V8z"/><path d="M12 3v14M3 8l9 5 9-5"/></svg> SL Mensajerías <span class="slm-badge">SF</span></button>
   <button class="side-link" data-sec="mkp" onclick="switchSec('mkp',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg> MarketPlace <span class="mkp-badge">MKP</span></button>
   <button class="side-link" data-sec="tienda" onclick="switchSec('tienda',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21H3V9.5z"/><path d="M9 21V12h6v9"/></svg> Tienda <span class="tda-badge">TDA</span></button>
-  <button class="side-link" data-sec="generales" onclick="switchSec('generales',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg> Generales <span class="gen-badge">GEN</span></button>
+  <button class="side-link" data-sec="generales" onclick="switchSec('generales',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg> Generales <span class="gen-badge">GEN</span></button>
 
   <span class="side-label">Recursos</span>
   <button class="side-link" data-sec="formatos" onclick="switchSec('formatos',this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg> Formatos <span class="side-count" id="n-formatos">·</span></button>
@@ -3046,26 +3046,27 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 
   </section>
 
+  <!-- ══ GENERALES ══ -->
   <section id="sec-generales" class="view-section">
     <div class="sec-head">
       <span class="sec-eyebrow"><span class="dot"></span>Homologación de procesos 2026</span>
       <h1 class="sec-title">Procesos <em>Generales</em></h1>
-      <p class="sec-sub">Los 9 procesos generales — Mesa de Regalos, Métodos de Pago, Devoluciones, Digitales y Sterling. Usa el buscador o los chips para ir directo al proceso.</p>
+      <p class="sec-sub">Los 9 procesos generales — Mesa de Regalos, Métodos de Pago, Devoluciones no reflejadas, Digitales y Sterling — con tiempos, plataformas y observaciones clave. Usa el buscador o los chips para ir directo al proceso.</p>
     </div>
 
     <nav class="fp-nav" aria-label="Procesos Generales">
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-1')">1 · Mesa de Regalos · Dedicatoria</button>
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-2')">2 · Mesa de Regalos · Cancelación</button>
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-3')">3 · Mesa de Regalos · Asociar compra</button>
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-4')">4 · Métodos de pago · Reprocesos</button>
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-5')">5 · Métodos de pago · Sin registro</button>
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-6')">6 · Métodos de pago · Atípico</button>
-      <button class="fp-nav-chip" onclick="jumpToGen('gen-7')">7 · Devoluciones no reflejadas</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-1')">1 · MDR Dedicatoria</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-2')">2 · MDR Cancelación</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-3')">3 · MDR Asociar compra</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-4')">4 · M. pago (Reprocesos)</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-5')">5 · M. pago (s/registro)</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-6')">6 · M. pago (atípico)</button>
+      <button class="fp-nav-chip" onclick="jumpToGen('gen-7')">7 · Dev. no reflejadas</button>
       <button class="fp-nav-chip" onclick="jumpToGen('gen-8')">8 · Digitales</button>
       <button class="fp-nav-chip" onclick="jumpToGen('gen-9')">9 · Sterling</button>
     </nav>
 
-    <!-- 1 · Mesa de Regalos — Dedicatoria -->
+    <!-- 1 · Mesa de Regalos Dedicatoria -->
     <div class="bt-block gen-block" id="gen-1">
       <div class="bt-head">
         <span class="fp-num gen-num">1</span>
@@ -3081,22 +3082,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <div class="bt-obs">
         <span class="bt-obs-lbl">Observaciones</span>
         <ul class="bt-obs-list">
-          <li>Cuida la <strong>redacción y ortografía</strong> del mensaje de dedicatoria.</li>
+          <li>Cuida la <strong>redacción y ortografía</strong> del mensaje.</li>
         </ul>
       </div>
     </div>
 
-    <!-- 2 · Mesa de Regalos — Cancelación compra festejado -->
+    <!-- 2 · Mesa de Regalos (Cancelación de compra de festejado) -->
     <div class="bt-block gen-block" id="gen-2">
       <div class="bt-head">
         <span class="fp-num gen-num">2</span>
         <div>
-          <h2 class="bt-title">Mesa de Regalos — Cancelación compra festejado</h2>
-          <div class="bt-plats"><span class="bt-plat gen-plat">SOMS</span><span class="bt-plat gen-plat">MDR</span><span class="bt-plat gen-plat">SAP ECC</span><span class="bt-plat gen-plat">Salesforce</span><span class="bt-plat gen-plat">FMS</span></div>
+          <h2 class="bt-title">Mesa de Regalos — Cancelación de compra de festejado</h2>
+          <div class="bt-plats"><span class="bt-plat gen-plat">SOMS</span><span class="bt-plat gen-plat">MDR</span><span class="bt-plat gen-plat">SAP ECC</span><span class="bt-plat gen-plat">Salesforce</span></div>
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A (evento abierto)</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5-7 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5-7 días</span></div>
         </div>
       </div>
       <div class="bt-obs">
@@ -3107,91 +3108,84 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       </div>
     </div>
 
-    <!-- 3 · Mesa de Regalos — Asociar compra -->
+    <!-- 3 · Mesa de Regalos (asociar compra) -->
     <div class="bt-block gen-block" id="gen-3">
       <div class="bt-head">
         <span class="fp-num gen-num">3</span>
         <div>
           <h2 class="bt-title">Mesa de Regalos — Asociar compra</h2>
-          <div class="bt-plats"><span class="bt-plat gen-plat">SOMS</span><span class="bt-plat gen-plat">MDR</span><span class="bt-plat gen-plat">Formulario vinculación</span></div>
+          <div class="bt-plats"><span class="bt-plat gen-plat">SOMS</span><span class="bt-plat gen-plat">MDR</span><span class="bt-plat gen-plat">Formulario de vinculación para evento</span></div>
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A (evento abierto)</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5-7 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5-7 días</span></div>
         </div>
       </div>
       <div class="bt-obs">
-        <span class="bt-obs-lbl">Observaciones</span>
+        <span class="bt-obs-lbl">Observaciones — recuerda que:</span>
         <ul class="bt-obs-list">
-          <li>Solo aplica para compras de la <span class="bt-quote">0009 (VenTel)</span> y <span class="bt-quote">0039 (Internet)</span>.</li>
-          <li>El <strong>domicilio de entrega</strong> debe ser el mismo que el de la mesa de regalos.</li>
+          <li>Solo compras de la <strong>0009 (VenTel)</strong> y <strong>0039 (Internet)</strong>.</li>
+          <li>El domicilio de entrega debe ser el <strong>mismo de la mesa de regalos</strong>.</li>
           <li><strong>No aplica</strong> para mercancía <strong>MKP</strong>.</li>
         </ul>
       </div>
     </div>
 
-    <!-- 4 · Métodos de pago — Registrado en Reprocesos -->
+    <!-- 4 · Métodos de pago (registrado en Reprocesos) -->
     <div class="bt-block gen-block" id="gen-4">
       <div class="bt-head">
         <span class="fp-num gen-num">4</span>
         <div>
-          <h2 class="bt-title">Métodos de pago — Registrado en Reprocesos</h2>
+          <h2 class="bt-title">Métodos de pago — registrado en Reprocesos</h2>
           <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Drive de Reprocesos</span><span class="bt-plat gen-plat">SAP ECC</span></div>
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10-12 días hábiles</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Vía partida</span><span class="bt-time-val ok">3-5 días</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10-12 días</span></div>
         </div>
       </div>
       <div class="bt-obs">
         <span class="bt-obs-lbl">Observaciones</span>
         <ul class="bt-obs-list">
-          <li><strong>OpenPay:</strong> si la partida está liberada, ofrecer en este orden: <strong>1°</strong> el producto · <strong>2°</strong> sustituto (si no hay inventario) · <strong>3°</strong> devolución a través de la partida.</li>
-          <li>Si la resolución es a través de una <strong>partida</strong> → el tiempo es de <strong>3 a 5 días</strong>.</li>
+          <li><strong>OpenPay</strong>: si la partida está liberada se puede ofrecer — primero el <strong>producto</strong>; si no hay inventario, <strong>sustituto</strong>; y como última instancia ofrecer la <strong>devolución</strong> a través de la partida.</li>
         </ul>
+        <div class="bt-note gen-note"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex-shrink:0;margin-top:2px"><path d="M12 3 22 20H2Z"/><path d="M12 10v4M12 17v.4"/></svg><span><strong>Nota:</strong> Si es a través de una <strong>partida</strong>, el tiempo es de <strong>3 a 5 días</strong>.</span></div>
       </div>
     </div>
 
-    <!-- 5 · Métodos de pago — Sin registro en Reprocesos -->
+    <!-- 5 · Métodos de pago (sin registro en Reprocesos) -->
     <div class="bt-block gen-block" id="gen-5">
       <div class="bt-head">
         <span class="fp-num gen-num">5</span>
         <div>
-          <h2 class="bt-title">Métodos de pago — Sin registro en Reprocesos</h2>
-          <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Correo PostVenta</span><span class="bt-plat gen-plat">MDA Opc 28</span><span class="bt-plat gen-plat">Drive de Reprocesos</span></div>
+          <h2 class="bt-title">Métodos de pago — sin registro en Reprocesos</h2>
+          <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Correo Postventa</span><span class="bt-plat gen-plat">MDA Opc 28 Métodos de pago</span><span class="bt-plat gen-plat">Drive de Reprocesos</span></div>
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10-12 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10-12 días</span></div>
         </div>
       </div>
       <div class="bt-obs">
         <span class="bt-obs-lbl">Observaciones</span>
         <ul class="bt-obs-list">
-          <li>Posterior a <strong>72h naturales</strong> → solicitar al cliente el <strong>comprobante</strong> con la referencia de pago.</li>
+          <li>Posterior a <strong>72h (naturales)</strong> es necesario solicitar al cliente el <strong>comprobante con la referencia de pago</strong>.</li>
         </ul>
       </div>
     </div>
 
-    <!-- 6 · Métodos de pago — Caso atípico -->
+    <!-- 6 · Métodos de pago (Caso atípico) -->
     <div class="bt-block gen-block" id="gen-6">
       <div class="bt-head">
         <span class="fp-num gen-num">6</span>
         <div>
           <h2 class="bt-title">Métodos de pago — Caso atípico</h2>
-          <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Correo PostVenta Omnicanal</span><span class="bt-plat gen-plat">Correo Depósito aclaraciones</span></div>
+          <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Correo Postventa Omnicanal</span><span class="bt-plat gen-plat">Correo a Depósito aclaraciones</span></div>
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10-12 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10-12 días</span></div>
         </div>
-      </div>
-      <div class="bt-obs">
-        <span class="bt-obs-lbl">Observaciones</span>
-        <ul class="bt-obs-list">
-          <li>Escalar a través del <strong>correo PostVenta Omnicanal</strong> y, en paralelo, al <strong>correo de Depósito aclaraciones</strong>.</li>
-        </ul>
       </div>
     </div>
 
@@ -3201,18 +3195,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         <span class="fp-num gen-num">7</span>
         <div>
           <h2 class="bt-title">Devoluciones no reflejadas</h2>
-          <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Correo PostVenta (evidencia)</span><span class="bt-plat gen-plat">Correo Depósito aclaraciones</span></div>
+          <div class="bt-plats"><span class="bt-plat gen-plat">FMS</span><span class="bt-plat gen-plat">Correo Postventa evidencia</span><span class="bt-plat gen-plat">Correo a Depósito aclaraciones</span></div>
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5 días</span></div>
         </div>
-      </div>
-      <div class="bt-obs">
-        <span class="bt-obs-lbl">Observaciones</span>
-        <ul class="bt-obs-list">
-          <li>Enviar la <strong>evidencia</strong> a través del correo de PostVenta y escalar al correo de <strong>Depósito aclaraciones</strong>.</li>
-        </ul>
       </div>
     </div>
 
@@ -3226,14 +3214,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5-7 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">5-7 días</span></div>
         </div>
-      </div>
-      <div class="bt-obs">
-        <span class="bt-obs-lbl">Observaciones</span>
-        <ul class="bt-obs-list">
-          <li>Gestionar a través de <strong>FMS</strong> y escalar en <strong>Salesforce</strong>.</li>
-        </ul>
       </div>
     </div>
 
@@ -3247,14 +3229,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
         <div class="bt-times">
           <div class="bt-time-chip"><span class="bt-time-lbl">Reporte</span><span class="bt-time-val">N/A</span></div>
-          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10 días hábiles</span></div>
+          <div class="bt-time-chip"><span class="bt-time-lbl">Solución</span><span class="bt-time-val warn">10 días</span></div>
         </div>
       </div>
       <div class="bt-obs">
         <span class="bt-obs-lbl">Observaciones</span>
         <ul class="bt-obs-list">
-          <li>Después del <strong>5to día</strong> sin cambio a <strong>CONF</strong> → escalar.</li>
-          <li>Validar que <strong>no se trate de una preventa</strong>.</li>
+          <li>Después del <strong>5.º día</strong> sin cambio a <strong>CONF</strong>; validar que <strong>no se trate de una preventa</strong>.</li>
         </ul>
       </div>
     </div>
@@ -3353,7 +3334,7 @@ const SECTION_META = {
   slmensajerias:  { icon:'package',      label:'SL Mensajerías' },
   mkp:            { icon:'package',      label:'MarketPlace' },
   tienda:         { icon:'package',      label:'Tienda Física' },
-  generales:      { icon:'document',     label:'Generales' }
+  generales:      { icon:'tools',        label:'Generales' }
 };
 
 /* Índice estático de Formas de Pago (sección sin datos de backend) para el buscador */
@@ -3450,15 +3431,15 @@ const TDA_INDEX = [
 
 /* Índice estático de Generales para el buscador */
 const GEN_INDEX = [
-  { name:'Mesa de Regalos — Dedicatoria', sub:'Generales · Inmediata · SOMS/MDR · redacción y ortografía', target:'gen-1', kw:'mesa regalos dedicatoria mensaje redaccion ortografia soms mdr evento abierto inmediata generales' },
-  { name:'Mesa de Regalos — Cancelación compra festejado', sub:'Generales · 5-7 días · SOMS/MDR/SAP ECC/Salesforce · FMS/OTP', target:'gen-2', kw:'mesa regalos cancelacion compra festejado fms soms mdr sap ecc salesforce otp coincidir datos evento abierto generales' },
-  { name:'Mesa de Regalos — Asociar compra', sub:'Generales · 5-7 días · SOMS/MDR/Formulario vinculación · 0009/0039', target:'gen-3', kw:'mesa regalos asociar compra vinculacion formulario evento 0009 ventel 0039 internet domicilio entrega no aplica mkp generales' },
-  { name:'Métodos de pago — Registrado en Reprocesos', sub:'Generales · 10-12 días · FMS/Drive Reprocesos/SAP ECC · OpenPay/partida', target:'gen-4', kw:'metodos pago registrado reprocesos fms drive sap ecc openpay partida liberada producto sustituto inventario devolucion 3 5 dias generales' },
-  { name:'Métodos de pago — Sin registro en Reprocesos', sub:'Generales · 10-12 días · FMS/Correo PostVenta/MDA Opc 28 · comprobante 72h', target:'gen-5', kw:'metodos pago sin registro reprocesos fms correo postventa mda opc 28 comprobante referencia pago 72 horas naturales generales' },
-  { name:'Métodos de pago — Caso atípico', sub:'Generales · 10-12 días · FMS/Correo Omnicanal/Correo Depósito aclaraciones', target:'gen-6', kw:'metodos pago caso atipico fms correo postventa omnicanal deposito aclaraciones generales' },
-  { name:'Devoluciones no reflejadas', sub:'Generales · 5 días · FMS/Correo PostVenta evidencia/Correo Depósito aclaraciones', target:'gen-7', kw:'devoluciones no reflejadas fms correo postventa evidencia deposito aclaraciones 5 dias generales' },
-  { name:'Digitales', sub:'Generales · 5-7 días · FMS/Salesforce', target:'gen-8', kw:'digitales fms salesforce 5 7 dias generales' },
-  { name:'Sterling', sub:'Generales · 10 días · SOMS/Salesforce · 5 días s/cambio CONF · preventa', target:'gen-9', kw:'sterling soms salesforce 10 dias 5 dia sin cambio conf preventa generales' },
+  { name:'Mesa de Regalos — Dedicatoria', sub:'Generales · N/A (evento abierto) · Inmediata · SOMS/MDR', target:'gen-1', kw:'mesa de regalos mdr dedicatoria mensaje redaccion ortografia soms evento abierto inmediata generales' },
+  { name:'Mesa de Regalos — Cancelación de compra de festejado', sub:'Generales · 5-7 días · SOMS/MDR/SAP ECC/Salesforce · OTP', target:'gen-2', kw:'mesa de regalos mdr cancelacion compra festejado fms soms sap ecc salesforce otp coincidir datos generales evento abierto' },
+  { name:'Mesa de Regalos — Asociar compra', sub:'Generales · 5-7 días · SOMS/MDR/Formulario de vinculación · 0009/0039', target:'gen-3', kw:'mesa de regalos mdr asociar compra vincular vinculacion evento 0009 ventel 0039 internet domicilio entrega mkp soms generales' },
+  { name:'Métodos de pago — registrado en Reprocesos', sub:'Generales · 10-12 días · FMS/Drive Reprocesos/SAP ECC · OpenPay', target:'gen-4', kw:'metodos de pago registrado reprocesos fms drive sap ecc openpay partida liberada producto sustituto devolucion 3 a 5 dias generales' },
+  { name:'Métodos de pago — sin registro en Reprocesos', sub:'Generales · 10-12 días · FMS/Correo Postventa/MDA Opc 28', target:'gen-5', kw:'metodos de pago sin registro reprocesos fms correo postventa mda opc 28 drive comprobante referencia 72 horas naturales generales' },
+  { name:'Métodos de pago — Caso atípico', sub:'Generales · 10-12 días · FMS/Correo Postventa Omnicanal/Depósito', target:'gen-6', kw:'metodos de pago caso atipico fms correo postventa omnicanal deposito aclaraciones generales' },
+  { name:'Devoluciones no reflejadas', sub:'Generales · 5 días · FMS/Correo Postventa evidencia/Depósito', target:'gen-7', kw:'devoluciones no reflejadas fms correo postventa evidencia deposito aclaraciones generales' },
+  { name:'Digitales', sub:'Generales · 5-7 días · FMS/Salesforce', target:'gen-8', kw:'digitales fms salesforce generales' },
+  { name:'Sterling', sub:'Generales · 10 días · SOMS/Salesforce · CONF/preventa', target:'gen-9', kw:'sterling soms salesforce conf preventa 5 dia cambio generales' },
 ];
 
 let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[], avisos:[] };
