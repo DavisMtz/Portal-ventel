@@ -123,6 +123,7 @@ function buildToolsData_() {
     paqueterias: [],
     formatos: [],
     pdePago: [],
+    plantillas: [],
     avisos: [],
     anuncios: [],
     status: 'ok',
@@ -172,6 +173,22 @@ function buildToolsData_() {
       detalles: ['detalle', 'descrip', 'info'],
       liga:     ['liga', 'enlace', 'link', 'url', 'simulad']
     }, 'nombre');
+
+    // ── Hoja: Plantillas ──
+    // Columnas: Titulo | Tipo | Asunto | Cuerpo | Consideraciones
+    //   · Tipo "Correo"     → usa Asunto + Cuerpo + Consideraciones.
+    //   · Tipo "Sales Force" → usa solo Cuerpo + Consideraciones (Asunto se ignora).
+    // En el Cuerpo, cualquier fragmento entre corchetes [ ... ] se interpreta en el
+    // portal como un campo editable; al copiar se reemplaza por el texto que escriba
+    // el asesor. En Consideraciones se ponen notas y los correos de copia obligatoria
+    // o escalamiento (el portal detecta los correos y los ofrece para copiar).
+    response.plantillas = readSheet_(ss, 'Plantillas', {
+      titulo:          ['titulo', 'título', 'nombre', 'plantilla'],
+      tipo:            ['tipo'],
+      asunto:          ['asunto', 'subject'],
+      cuerpo:          ['cuerpo', 'body', 'mensaje', 'texto', 'contenido'],
+      consideraciones: ['consider', 'nota', 'escalam', 'copia', 'observ']
+    }, 'titulo');
 
     // ── Anuncios (hoja "Anuncios" en JSON + respaldo legacy "Avisos") ──
     response.anuncios = readAnuncios_(ss);

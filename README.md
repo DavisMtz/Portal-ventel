@@ -15,6 +15,10 @@ El **Portal Ventel** es una plataforma centralizada diseñada para optimizar el 
   * **Tarjeta con imagen + CTA** — publicación visual con imagen, descripción, vigencia y botón de enlace.
   * **Modal de bienvenida** — pop-up que aparece una vez por sesión hasta cerrarse.
   La columna `Hasta` (fecha) y `Activo` (TRUE/FALSE) controlan la vigencia/visibilidad. La hoja `Avisos` legacy se sigue leyendo como banner para no perder publicaciones anteriores.
+* **Plantillas de Correo y Salesforce:** Sección **Plantillas** alimentada por la hoja `Plantillas` (columnas: `Titulo | Tipo | Asunto | Cuerpo | Consideraciones`). El portal interpreta cada fila según su **Tipo**:
+  * **Correo** — muestra *Asunto* + *Cuerpo* + *Consideraciones*, con copia rápida del asunto, del cuerpo o de "todo" (asunto + cuerpo).
+  * **Sales Force** — muestra solo *Cuerpo* + *Consideraciones* (el asunto se ignora).
+  En el *Cuerpo*, cualquier fragmento entre corchetes `[ así ]` se convierte en un **campo editable** dentro de la tarjeta; el texto entre corchetes es la pista (placeholder) y, al **Copiar cuerpo**, se reemplaza por lo que escriba el asesor (si se deja vacío, se conserva `[la pista]`). En *Consideraciones* se ponen las notas y los correos de **copia obligatoria o escalamiento**; el portal detecta automáticamente esos correos y los ofrece como chips para copiarlos. Las plantillas se filtran por tipo (chips Todas/Correo/Salesforce) y aparecen en el **buscador general**.
 * **Reporte de Enlaces Caídos:** Cada tarjeta tiene un botón de reporte que registra fecha, sección, nombre, enlace y usuario en una hoja `Reportes` (se crea sola al primer reporte).
 * **Historial Real de Navegación:** Las secciones usan `google.script.history`, por lo que el botón "atrás" del navegador funciona y se pueden compartir enlaces directos a una sección.
 * **Puente con el Monitor de Promos:** El dashboard muestra cuántas promociones están activas hoy y cuántas terminan en ≤ 3 días, con acceso directo al Monitor.
