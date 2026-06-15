@@ -241,6 +241,10 @@ function esActivo_(v) {
 function readAnuncios_(ss) {
   ss = ss || SpreadsheetApp.getActiveSpreadsheet();
   const now = new Date();
+  // Inicio del día de HOY: "Hasta" es inclusivo de todo ese día. Un anuncio expira
+  // solo cuando su fecha cae en un día anterior a hoy (así una fecha guardada a las
+  // 00:00 —p. ej. editada a mano en la hoja— sigue visible toda la jornada).
+  const hoy0 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
   const out = [];
 
   const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
@@ -251,7 +255,7 @@ function readAnuncios_(ss) {
       for (let i = 1; i < data.length; i++) {
         const row = data[i];
         if (c.activo > -1 && !esActivo_(row[c.activo])) continue;
-        if (c.hasta > -1 && row[c.hasta] instanceof Date && row[c.hasta] < now) continue; // expirado
+        if (c.hasta > -1 && row[c.hasta] instanceof Date && row[c.hasta] < hoy0) continue; // expirado (día anterior a hoy)
         let datos = {};
         if (c.datos > -1 && row[c.datos]) {
           try { datos = JSON.parse(String(row[c.datos])); } catch (e) { datos = {}; }
@@ -280,7 +284,7 @@ function readAnuncios_(ss) {
       for (let i = 1; i < dataA.length; i++) {
         const row = dataA[i];
         if (iMsg < 0 || !row[iMsg] || !row[iMsg].toString().trim()) continue;
-        if (iHasta > -1 && row[iHasta] instanceof Date && row[iHasta] < now) continue;
+        if (iHasta > -1 && row[iHasta] instanceof Date && row[iHasta] < hoy0) continue;
         out.push({
           id:      'avi-' + i,
           formato: 'banner',
