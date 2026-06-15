@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#F6F7FB; --card:#FFFFFF; --ink:#1B1F2A; --muted:#6B7280; --line:#E5E7EB;
+    --brand:#E10098; --brand-d:#B80079;
+    --info:#1D4ED8; --info-bg:#EAF0FE; --warn:#B45309; --warn-bg:#FDF1E0;
+    --alert:#C81E3C; --alert-bg:#FDE8EC; --ok:#0E7A4F; --ok-bg:#E5F5EE;
+    --sf:#0E7490; --sf-bg:#E2F4F9;
+    --radius:12px; --sh:0 4px 14px rgba(20,20,40,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5}
+  .wrap{padding:12px 12px 28px}
+  h1{font-size:15px;margin:0 0 2px;display:flex;align-items:center;gap:6px}
+  .sub{color:var(--muted);font-size:11.5px;margin:0 0 14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+        box-shadow:var(--sh);padding:12px;margin-bottom:14px}
+  .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+       color:var(--muted);margin:12px 0 5px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .lbl:first-child{margin-top:0}
+  input[type=text],textarea{
+    width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 9px;font:inherit;
+    color:var(--ink);background:#fff;outline:none}
+  input:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(225,0,152,.12)}
+  textarea{min-height:70px;resize:vertical}
+  textarea#f-cuerpo{min-height:120px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .seg button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 6px;
+    font:inherit;font-weight:700;cursor:pointer;color:var(--ink);transition:.15s}
+  .seg button .t{font-size:11px;color:var(--muted);font-weight:500;display:block}
+  .seg button.on{border-color:var(--brand);background:#FFF0F8;color:var(--brand-d)}
+  .hint{font-size:11px;color:var(--muted);margin-top:3px}
+  .hint code{background:#F0F1F5;border-radius:4px;padding:1px 4px;font-size:11px;color:var(--brand-d)}
+  .hint .vl-spin{vertical-align:middle;margin-right:5px}
+  .mini-btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 8px;
+    font:inherit;font-size:11px;font-weight:700;cursor:pointer;color:var(--brand-d);text-transform:none;letter-spacing:0}
+  .mini-btn:hover{border-color:var(--brand);background:#FFF0F8}
+  .vl-spin{display:inline-block;position:relative;vertical-align:middle;width:var(--vl-sz,16px);height:var(--vl-sz,16px)}
+  .vl-spin i{position:absolute;top:0;left:50%;width:calc(var(--vl-sz,16px)*.2);height:calc(var(--vl-sz,16px)*.2);
+    margin-left:calc(var(--vl-sz,16px)*-.1);border-radius:50%;opacity:.2;
+    transform-origin:50% calc(var(--vl-sz,16px)*.5);animation:vl-trail 1s linear infinite}
+  .vl-spin i:nth-child(odd){background:#F28C00}
+  .vl-spin i:nth-child(even){background:#8E2A8B}
+  @keyframes vl-trail{0%,100%{opacity:.2}40%{opacity:1}}
+  .btn{width:100%;border:none;border-radius:10px;padding:11px;font:inherit;font-weight:700;
+    cursor:pointer;background:var(--brand);color:#fff;margin-top:14px;transition:.15s}
+  .btn:hover{background:var(--brand-d)}
+  .btn[disabled]{opacity:.6;cursor:default}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .msg{font-size:12px;border-radius:9px;padding:8px 10px;margin-top:10px;display:none}
+  .msg.ok{display:block;background:var(--ok-bg);color:var(--ok)}
+  .msg.err{display:block;background:var(--alert-bg);color:var(--alert)}
+  .hidden{display:none!important}
+  .cc{font-size:10px;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0}
+
+  /* Vista previa */
+  .prev-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--muted);margin-bottom:7px}
+  .pv{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}
+  .pv-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+  .pv-type{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+    padding:2px 8px;border-radius:20px}
+  .pv-type.mail{background:var(--info-bg);color:var(--info)}
+  .pv-type.sf{background:var(--sf-bg);color:var(--sf)}
+  .pv-title{font-size:13.5px;font-weight:800;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pv-sub{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 3px}
+  .pv-asunto{font-size:12.5px;font-weight:600;background:#F6F7FB;border-radius:8px;padding:6px 8px}
+  .pv-body{font-size:12.5px;line-height:1.55;white-space:pre-wrap;background:#F6F7FB;border-radius:8px;
+    padding:8px 9px;border-left:3px solid var(--brand);word-break:break-word}
+  .fld{display:inline-block;font-weight:700;color:var(--brand-d);background:#FFF0F8;
+    border:1px dashed var(--brand);border-radius:5px;padding:0 4px;font-size:11.5px}
+  .pv-consid{font-size:12px;line-height:1.5;white-space:pre-wrap;background:var(--warn-bg);color:#5b3a12;
+    border-radius:8px;padding:7px 9px;margin-top:8px;word-break:break-word}
+  .pv-mails{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .pv-mail{font-size:11px;font-weight:600;background:#fff;border:1px solid var(--line);border-radius:6px;
+    padding:2px 7px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--muted)}
+
+  /* Lista de existentes */
+  .item{border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;background:#fff}
+  .item .hd{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+  .badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+    padding:2px 7px;border-radius:20px}
+  .badge.mail{background:var(--info-bg);color:var(--info)}
+  .badge.sf{background:var(--sf-bg);color:var(--sf)}
+  .item .tt{font-weight:700;font-size:12.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item .ac{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .item .ac button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;
+    padding:6px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--ink)}
+  .item .ac button.del{color:var(--alert)}
+  .empty{color:var(--muted);font-size:12px;text-align:center;padding:8px}
+  .spin{color:var(--muted);font-size:12px;text-align:center;padding:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✉️ Constructor de Plantillas</h1>
+  <p class="sub">Crea la plantilla, mírala en vivo y guárdala en la hoja <b>Plantillas</b>. El portal la interpreta según su tipo. Usa <code>[ corchetes ]</code> en el cuerpo para los campos que el asesor rellenará al copiar.</p>
+
+  <!-- Vista previa -->
+  <div class="card">
+    <div class="prev-label">Vista previa</div>
+    <div id="preview"></div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="card">
+    <input type="hidden" id="f-id">
+
+    <span class="lbl">Tipo de plantilla</span>
+    <div class="seg" id="tipos">
+      <button data-t="Correo" class="on" type="button">Correo<span class="t">asunto + cuerpo</span></button>
+      <button data-t="Sales Force" type="button">Sales Force<span class="t">solo cuerpo</span></button>
+    </div>
+
+    <span class="lbl">Título <span class="cc" id="cc-titulo"></span></span>
+    <input type="text" id="f-titulo" placeholder="Ej. Confirmación de cambio de domicilio">
+
+    <div id="grp-asunto">
+      <span class="lbl">Asunto <span class="cc" id="cc-asunto"></span></span>
+      <input type="text" id="f-asunto" placeholder="Asunto del correo">
+    </div>
+
+    <span class="lbl">Cuerpo
+      <button class="mini-btn" id="btnCampo" type="button">+ Insertar campo […]</button>
+    </span>
+    <textarea id="f-cuerpo" placeholder="Escribe el mensaje. Encierra entre corchetes lo que se rellena, p. ej. Estimado/a [nombre del cliente]:"></textarea>
+    <div class="hint" id="campoHint">Cada <code>[texto]</code> será un campo editable en el portal. <span id="fldCount"></span></div>
+
+    <span class="lbl">Consideraciones <span class="cc">notas + correos</span></span>
+    <textarea id="f-consid" placeholder="Notas, copia obligatoria o escalamiento. Escribe los correos y el portal los detecta para copiarlos."></textarea>
+    <div class="hint">Los correos que escribas aquí (copia obligatoria / escalamiento) se mostrarán como botones para copiar en el portal.</div>
+
+    <button class="btn" id="btnGuardar" type="button">Guardar plantilla</button>
+    <button class="btn ghost hidden" id="btnCancelar" type="button">Cancelar edición</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <!-- Existentes -->
+  <div class="card">
+    <div class="prev-label">Plantillas existentes</div>
+    <div id="lista"><div class="spin">Cargando…</div></div>
+  </div>
+</div>
+
+<script>
+  var state = { tipo: 'Correo' };
+
+  function $(id){ return document.getElementById(id); }
+  function miniSpinner(){
+    var s = '';
+    for (var i = 0; i < 8; i++){ s += '<i style="transform:rotate(' + (i*45) + 'deg);animation-delay:' + (-(8-i)*0.125).toFixed(3) + 's"></i>'; }
+    return '<span class="vl-spin" aria-hidden="true">' + s + '</span>';
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var MAIL_RE = /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/g;
+
+  function tipoClase(t){ return t === 'Sales Force' ? 'sf' : 'mail'; }
+
+  function applyTipo(t){
+    state.tipo = t;
+    Array.prototype.forEach.call($('tipos').children, function(b){
+      b.classList.toggle('on', b.dataset.t === t);
+    });
+    // El asunto solo aplica a Correo.
+    $('grp-asunto').classList.toggle('hidden', t !== 'Correo');
+    renderPreview();
+  }
+
+  // Convierte el cuerpo en HTML: [campos] → chips. Devuelve también el conteo.
+  function cuerpoHtml(texto){
+    var t = String(texto || ''), html = '', last = 0, i = 0, m;
+    MAIL_RE.lastIndex = 0;
+    var re = /\[([^\]]*)\]/g;
+    while ((m = re.exec(t))){
+      html += esc(t.slice(last, m.index));
+      var hint = m[1].trim();
+      html += '<span class="fld">' + esc(hint || '____') + '</span>';
+      last = m.index + m[0].length; i++;
+    }
+    html += esc(t.slice(last));
+    return { html: html, fields: i };
+  }
+
+  function consideracionesHtml(texto){
+    var t = String(texto || '').trim();
+    if (!t) return '';
+    var mails = t.match(MAIL_RE) || [];
+    var uniq = mails.filter(function(x, k){ return mails.indexOf(x) === k; });
+    var chips = uniq.length
+      ? '<div class="pv-mails">' + uniq.map(function(m){ return '<span class="pv-mail">✉ ' + esc(m) + '</span>'; }).join('') + '</div>'
+      : '';
+    return '<div class="pv-consid">' + esc(t) + chips + '</div>';
+  }
+
+  function renderPreview(){
+    var t = state.tipo, isMail = t === 'Correo';
+    var titulo = $('f-titulo').value.trim();
+    var asunto = $('f-asunto').value.trim();
+    var body = cuerpoHtml($('f-cuerpo').value);
+    updateCounters();
+    $('fldCount').textContent = body.fields
+      ? '· ' + body.fields + ' campo' + (body.fields !== 1 ? 's' : '') + ' detectado' + (body.fields !== 1 ? 's' : '')
+      : '';
+    var html = '<div class="pv">'
+      + '<div class="pv-head"><span class="pv-type ' + tipoClase(t) + '">' + (isMail ? 'Correo' : 'Salesforce') + '</span>'
+      + '<span class="pv-title">' + (esc(titulo) || 'Título de la plantilla') + '</span></div>';
+    if (isMail){
+      html += '<div class="pv-sub">Asunto</div><div class="pv-asunto">' + (esc(asunto) || 'Asunto del correo…') + '</div>';
+    }
+    html += '<div class="pv-sub">Cuerpo</div><div class="pv-body">' + (body.html || 'Cuerpo del mensaje…') + '</div>';
+    html += consideracionesHtml($('f-consid').value);
+    html += '</div>';
+    $('preview').innerHTML = html;
+  }
+
+  var COUNTERS = { 'f-titulo':['cc-titulo',80], 'f-asunto':['cc-asunto',120] };
+  function updateCounters(){
+    Object.keys(COUNTERS).forEach(function(id){
+      var cc = $(COUNTERS[id][0]), max = COUNTERS[id][1];
+      if (!cc) return;
+      cc.textContent = (($(id).value || '').length) + '/' + max;
+    });
+  }
+
+  // Inserta [campo] en el cursor (o envuelve el texto seleccionado).
+  function insertarCampo(){
+    var ta = $('f-cuerpo');
+    var s = ta.selectionStart, e = ta.selectionEnd, v = ta.value;
+    var sel = v.slice(s, e), inner = sel || 'campo';
+    ta.value = v.slice(0, s) + '[' + inner + ']' + v.slice(e);
+    ta.focus();
+    ta.setSelectionRange(s + 1, s + 1 + inner.length); // selecciona el contenido del corchete
+    renderPreview();
+  }
+
+  function showMsg(text, ok){
+    var m = $('msg'); m.className = 'msg ' + (ok ? 'ok' : 'err'); m.textContent = text;
+    if (ok) setTimeout(function(){ m.className = 'msg'; }, 4000);
+  }
+
+  function guardar(){
+    var titulo = $('f-titulo').value.trim();
+    if (!titulo){ showMsg('El título es obligatorio.', false); return; }
+    var cuerpo = $('f-cuerpo').value.trim();
+    if (!cuerpo){ showMsg('El cuerpo es obligatorio.', false); return; }
+    var payload = {
+      id: $('f-id').value || '',
+      titulo: titulo,
+      tipo: state.tipo,
+      asunto: state.tipo === 'Correo' ? $('f-asunto').value.trim() : '',
+      cuerpo: cuerpo,
+      consideraciones: $('f-consid').value.trim()
+    };
+    var btn = $('btnGuardar'); btn.disabled = true; btn.innerHTML = miniSpinner() + ' Guardando…';
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false; btn.textContent = $('f-id').value ? 'Guardar cambios' : 'Guardar plantilla';
+        if (res && res.status === 'ok'){ showMsg('✓ Guardada correctamente.', true); resetForm(); cargarLista(); }
+        else showMsg('Error: ' + ((res && res.error) || 'desconocido'), false);
+      })
+      .withFailureHandler(function(e){
+        btn.disabled = false; btn.textContent = 'Guardar plantilla';
+        showMsg('Error: ' + e.message, false);
+      })
+      .guardarPlantilla(payload);
+  }
+
+  function resetForm(){
+    $('f-id').value = '';
+    $('f-titulo').value = ''; $('f-asunto').value = '';
+    $('f-cuerpo').value = ''; $('f-consid').value = '';
+    $('btnCancelar').classList.add('hidden');
+    $('btnGuardar').textContent = 'Guardar plantilla';
+    applyTipo('Correo');
+  }
+
+  // ── Lista de existentes ──
+  function cargarLista(){
+    google.script.run.withSuccessHandler(renderLista)
+      .withFailureHandler(function(){ $('lista').innerHTML = '<div class="empty">No se pudo cargar.</div>'; })
+      .getPlantillasAdmin();
+  }
+
+  function renderLista(res){
+    var box = $('lista');
+    if (!res || res.status !== 'ok' || !res.plantillas.length){
+      box.innerHTML = '<div class="empty">Aún no hay plantillas.</div>'; return;
+    }
+    box.innerHTML = res.plantillas.map(function(p){
+      var cls = tipoClase(p.tipo);
+      var nf = (String(p.cuerpo || '').match(/\[([^\]]*)\]/g) || []).length;
+      var id = esc(p.id);
+      return '<div class="item">'
+        + '<div class="hd"><span class="badge ' + cls + '">' + esc(p.tipo) + '</span>'
+        + '<span class="tt">' + esc(p.titulo) + '</span></div>'
+        + (nf ? '<div class="hint">' + nf + ' campo' + (nf !== 1 ? 's' : '') + ' editable' + (nf !== 1 ? 's' : '') + '</div>' : '')
+        + '<div class="ac">'
+        + '<button data-act="edit" data-id="' + id + '">Editar</button>'
+        + '<button data-act="dup" data-id="' + id + '">Duplicar</button>'
+        + '<button class="del" data-act="del" data-id="' + id + '">Borrar</button>'
+        + '</div></div>';
+    }).join('');
+    window._plantillas = {};
+    res.plantillas.forEach(function(p){ window._plantillas[p.id] = p; });
+  }
+
+  function cargarEnForm(p){
+    $('f-id').value = p.id || '';
+    applyTipo(p.tipo || 'Correo');
+    $('f-titulo').value = p.titulo || '';
+    $('f-asunto').value = p.asunto || '';
+    $('f-cuerpo').value = p.cuerpo || '';
+    $('f-consid').value = p.consideraciones || '';
+    $('btnGuardar').textContent = p.id ? 'Guardar cambios' : 'Guardar copia';
+    $('btnCancelar').classList.remove('hidden');
+    renderPreview();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // Duplica: carga los valores como una NUEVA plantilla (sin id).
+  function duplicar(id){
+    var p = window._plantillas && window._plantillas[id];
+    if (!p) return;
+    var copy = JSON.parse(JSON.stringify(p));
+    copy.id = '';
+    copy.titulo = (copy.titulo || '') + ' (copia)';
+    cargarEnForm(copy);
+    showMsg('Copia cargada — ajústala y guárdala para crear una nueva.', true);
+  }
+
+  // ── Eventos ──
+  $('tipos').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (b) applyTipo(b.dataset.t);
+  });
+  ['f-titulo','f-asunto','f-cuerpo','f-consid'].forEach(function(id){
+    $(id).addEventListener('input', renderPreview);
+  });
+  $('btnCampo').addEventListener('click', insertarCampo);
+  $('btnGuardar').addEventListener('click', guardar);
+  $('btnCancelar').addEventListener('click', resetForm);
+  $('lista').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b || b.disabled) return;
+    var id = b.dataset.id, act = b.dataset.act;
+    if (act === 'edit'){ var p = window._plantillas && window._plantillas[id]; if (p) cargarEnForm(p); }
+    else if (act === 'dup'){ duplicar(id); }
+    else if (act === 'del'){
+      if (confirm('¿Borrar esta plantilla?'))
+        google.script.run.withSuccessHandler(cargarLista).eliminarPlantilla(id);
+    }
+  });
+
+  // Init
+  applyTipo('Correo'); renderPreview(); cargarLista();
+</script>
+</body>
+</html>

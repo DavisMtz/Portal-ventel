@@ -29,15 +29,24 @@ function doGet(e) {
 // la hoja "Anuncios". Cualquier editor de la hoja puede publicar.
 
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('📢 Anuncios')
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('📢 Anuncios')
     .addItem('Abrir constructor…', 'mostrarConstructorAnuncios')
+    .addToUi();
+  ui.createMenu('✉️ Plantillas')
+    .addItem('Abrir constructor…', 'mostrarConstructorPlantillas')
     .addToUi();
 }
 
 function mostrarConstructorAnuncios() {
   const html = HtmlService.createHtmlOutputFromFile('Constructor')
     .setTitle('Constructor de Anuncios');
+  SpreadsheetApp.getUi().showSidebar(html);
+}
+
+function mostrarConstructorPlantillas() {
+  const html = HtmlService.createHtmlOutputFromFile('ConstructorPlantillas')
+    .setTitle('Constructor de Plantillas');
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
@@ -570,6 +579,160 @@ function moverAnuncio(id, dir) {
     sheet.getRange(2, c.orden + 1, last - 1, 1).setValues(ordenCol);
 
     invalidarCacheAnuncios_();
+    return { status: 'ok' };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+// ── 3c. PLANTILLAS (constructor en sidebar → hoja "Plantillas") ───────────────
+// El constructor (ConstructorPlantillas.html) crea y edita filas de la hoja
+// "Plantillas". Para poder editar/borrar una fila concreta se usa una columna
+// "ID" (se agrega sola si la hoja se creó a mano sin ella). El portal la ignora,
+// solo lee Titulo | Tipo | Asunto | Cuerpo | Consideraciones.
+
+var PLANTILLAS_SHEET   = 'Plantillas';
+var PLANTILLAS_HEADERS = ['ID', 'Titulo', 'Tipo', 'Asunto', 'Cuerpo', 'Consideraciones'];
+
+function plantillasSheet_(ss, create) {
+  ss = ss || SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(PLANTILLAS_SHEET);
+  if (!sheet && create) {
+    sheet = ss.insertSheet(PLANTILLAS_SHEET);
+    sheet.appendRow(PLANTILLAS_HEADERS);
+    sheet.getRange(1, 1, 1, PLANTILLAS_HEADERS.length).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+// Localiza columnas por encabezado (criterio flexible, igual que readSheet_).
+function plantillasCols_(hdr) {
+  const h = hdr.map(x => x.toString().toLowerCase().trim());
+  const find = aliases => h.findIndex(x => aliases.some(a => x.includes(a)));
+  return {
+    id:              h.findIndex(x => x === 'id'),
+    titulo:          find(['titulo', 'título', 'nombre', 'plantilla']),
+    tipo:            find(['tipo']),
+    asunto:          find(['asunto', 'subject']),
+    cuerpo:          find(['cuerpo', 'body', 'mensaje', 'texto', 'contenido']),
+    consideraciones: find(['consider', 'nota', 'escalam', 'copia', 'observ'])
+  };
+}
+
+// Garantiza la columna "ID" (se inserta al inicio si la hoja se creó sin ella).
+function ensurePlantillaIdCol_(sheet) {
+  const hdr = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const has = hdr.some(x => String(x).toLowerCase().trim() === 'id');
+  if (!has) {
+    sheet.insertColumnBefore(1);
+    sheet.getRange(1, 1).setValue('ID').setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+}
+
+// Normaliza el tipo a uno de los dos valores canónicos.
+function pltTipoNormaliza_(tipo) {
+  const t = String(tipo || '').toLowerCase();
+  return /sales|force|^sf$|\bsf\b/.test(t) ? 'Sales Force' : 'Correo';
+}
+
+// Invalida la caché del portal para que el index revalide tras un cambio.
+function invalidarCachePlantillas_() {
+  try { CacheService.getScriptCache().remove('toolsData_v1'); } catch (e) {}
+}
+
+/**
+ * Crea o actualiza una plantilla en la hoja "Plantillas".
+ * @param {Object} payload { id?, titulo, tipo, asunto, cuerpo, consideraciones }
+ * @return {Object} { status, id } | { status:'error', error }
+ */
+function guardarPlantilla(payload) {
+  try {
+    if (!payload || !payload.titulo || !String(payload.titulo).trim())
+      throw new Error('El título es obligatorio.');
+    if (!payload.cuerpo || !String(payload.cuerpo).trim())
+      throw new Error('El cuerpo es obligatorio.');
+
+    const tipo = pltTipoNormaliza_(payload.tipo);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = plantillasSheet_(ss, true);
+    ensurePlantillaIdCol_(sheet);
+    const width = sheet.getLastColumn();
+    const c = plantillasCols_(sheet.getRange(1, 1, 1, width).getValues()[0]);
+
+    const id = payload.id && String(payload.id).trim()
+      ? String(payload.id).trim()
+      : 'plt-' + Date.now().toString(36);
+
+    const rowValues = [];
+    rowValues[c.id]              = id;
+    rowValues[c.titulo]          = String(payload.titulo).trim();
+    rowValues[c.tipo]            = tipo;
+    // El asunto solo aplica a "Correo"; en "Sales Force" se guarda vacío.
+    if (c.asunto > -1) rowValues[c.asunto] = tipo === 'Correo' ? String(payload.asunto || '').trim() : '';
+    if (c.cuerpo > -1) rowValues[c.cuerpo] = String(payload.cuerpo || '').trim();
+    if (c.consideraciones > -1) rowValues[c.consideraciones] = String(payload.consideraciones || '').trim();
+
+    const rowIdx = findAnuncioRow_(sheet, c, id); // genérico: localiza por columna ID
+    if (rowIdx > 0) sheet.getRange(rowIdx, 1, 1, width).setValues([fillRow_(rowValues, width)]);
+    else sheet.appendRow(fillRow_(rowValues, width));
+
+    invalidarCachePlantillas_();
+    return { status: 'ok', id: id };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+/** Devuelve TODAS las plantillas para el sidebar (asigna IDs faltantes). */
+function getPlantillasAdmin() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(PLANTILLAS_SHEET);
+    if (!sheet) return { status: 'ok', plantillas: [] };
+    ensurePlantillaIdCol_(sheet);
+    const data = sheet.getDataRange().getValues();
+    if (data.length < 2) return { status: 'ok', plantillas: [] };
+    const c = plantillasCols_(data[0]);
+    const out = [];
+    let wroteId = false;
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const titulo = c.titulo > -1 ? String(row[c.titulo] || '').trim() : '';
+      if (!titulo) continue;
+      let id = c.id > -1 ? String(row[c.id] || '').trim() : '';
+      if (!id && c.id > -1) { // asigna y persiste un ID para poder editar/borrar
+        id = 'plt-' + Date.now().toString(36) + '-' + i;
+        sheet.getRange(i + 1, c.id + 1).setValue(id);
+        wroteId = true;
+      }
+      out.push({
+        id:              id,
+        titulo:          titulo,
+        tipo:            pltTipoNormaliza_(c.tipo > -1 ? row[c.tipo] : ''),
+        asunto:          c.asunto > -1 ? String(row[c.asunto] || '').trim() : '',
+        cuerpo:          c.cuerpo > -1 ? String(row[c.cuerpo] || '').trim() : '',
+        consideraciones: c.consideraciones > -1 ? String(row[c.consideraciones] || '').trim() : ''
+      });
+    }
+    if (wroteId) invalidarCachePlantillas_();
+    return { status: 'ok', plantillas: out };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+function eliminarPlantilla(id) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(PLANTILLAS_SHEET);
+    if (!sheet) return { status: 'error', error: 'No existe la hoja Plantillas.' };
+    const c = plantillasCols_(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]);
+    const rowIdx = findAnuncioRow_(sheet, c, String(id).trim());
+    if (rowIdx < 0) return { status: 'error', error: 'No se encontró la plantilla.' };
+    sheet.deleteRow(rowIdx);
+    invalidarCachePlantillas_();
     return { status: 'ok' };
   } catch (error) {
     return { status: 'error', error: error.toString() };
