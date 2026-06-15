@@ -297,6 +297,56 @@ function invalidarCacheAnuncios_() {
 }
 
 /**
+ * Convierte 'YYYY-MM-DD' en una fecha LOCAL al fin del día (23:59:59).
+ * Construir con argumentos numéricos usa la zona horaria del script, evitando el
+ * corrimiento de un día que produce `new Date('YYYY-MM-DD')` (que se interpreta en UTC).
+ * Devuelve '' si no hay fecha → el anuncio nunca expira.
+ */
+function parseFechaLocal_(str) {
+  const m = String(str || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return '';
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 23, 59, 59);
+  return isNaN(d.getTime()) ? '' : d;
+}
+
+// ── Imágenes de anuncios en Drive ─────────────────────────────────────────────
+var ANUNCIOS_FOLDER = 'Portal Ventel';
+
+// Reutiliza la carpeta "Portal Ventel" si existe; si no, la crea.
+function carpetaAnuncios_() {
+  const it = DriveApp.getFoldersByName(ANUNCIOS_FOLDER);
+  return it.hasNext() ? it.next() : DriveApp.createFolder(ANUNCIOS_FOLDER);
+}
+
+/**
+ * Recibe una imagen como data:URL base64 desde el constructor, la guarda en Drive
+ * (carpeta "Portal Ventel"), la comparte como visible con el enlace y devuelve la URL.
+ * @param {Object} payload { dataUrl, nombre }
+ * @return {Object} { status:'ok', url, id } | { status:'error', error }
+ */
+function subirImagenAnuncio(payload) {
+  try {
+    if (!payload || !payload.dataUrl) throw new Error('No se recibió la imagen.');
+    const m = String(payload.dataUrl).match(/^data:([^;]+);base64,(.+)$/);
+    if (!m) throw new Error('Formato de imagen no válido.');
+    const mime = m[1];
+    if (mime.indexOf('image/') !== 0) throw new Error('El archivo no es una imagen.');
+    const bytes = Utilities.base64Decode(m[2]);
+    if (bytes.length > 8 * 1024 * 1024) throw new Error('La imagen supera el límite de 8 MB.');
+
+    const nombre = (String(payload.nombre || 'anuncio').replace(/[^\w.\-]+/g, '_')) + '-' + Date.now();
+    const blob = Utilities.newBlob(bytes, mime, nombre);
+    const file = carpetaAnuncios_().createFile(blob);
+    try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (e) {}
+
+    const url = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1200';
+    return { status: 'ok', url: url, id: file.getId() };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+/**
  * Crea o actualiza una publicación. Escribe el contenido como JSON.
  * @param {Object} payload { id?, formato, activo, orden, hasta, datos }
  * @return {Object} { status, id } | { status:'error', error }
@@ -314,7 +364,6 @@ function publicarAnuncio(payload) {
     const datos = payload.datos && typeof payload.datos === 'object' ? payload.datos : {};
     const activo = payload.activo === undefined ? true : !!payload.activo;
     const orden  = Number(payload.orden) || 0;
-    const hasta  = payload.hasta ? new Date(payload.hasta) : '';
     let user = '';
     try { user = Session.getActiveUser().getEmail(); } catch (e) {}
 
@@ -327,7 +376,7 @@ function publicarAnuncio(payload) {
     rowValues[c.formato] = formato;
     rowValues[c.activo]  = activo;
     rowValues[c.orden]   = orden;
-    rowValues[c.hasta]   = (hasta instanceof Date && !isNaN(hasta)) ? hasta : '';
+    rowValues[c.hasta]   = parseFechaLocal_(payload.hasta);
     rowValues[c.datos]   = JSON.stringify(datos);
     rowValues[c.autor]   = user;
     rowValues[c.creado]  = new Date();
