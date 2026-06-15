@@ -3578,6 +3578,7 @@ table.ds-matrix{width:100%;border-collapse:separate;border-spacing:0;min-width:5
       <button class="fp-nav-chip" onclick="jumpToDevsap('ds-glosario')">Glosario de leyendas</button>
       <button class="fp-nav-chip" onclick="jumpToDevsap('ds-mayor')">SL mayor a $3,000</button>
       <button class="fp-nav-chip" onclick="jumpToDevsap('ds-menor')">SL menor a $3,000</button>
+      <button class="fp-nav-chip" onclick="jumpToDevsap('ds-criterios')">Criterios y excepciones</button>
     </nav>
 
     <!-- Glosario de leyendas -->
@@ -3648,7 +3649,7 @@ table.ds-matrix{width:100%;border-collapse:separate;border-spacing:0;min-width:5
           <tbody>
             <tr><th>Servicio SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td></tr>
             <tr><th>Satisfacción SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
-            <tr><th>C&amp;C Servicio SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td></tr>
+            <tr><th>C&amp;C Servicio SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
             <tr><th>C&amp;C Satisfacción SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
             <tr><th>Sin tienda Liverpool cercana</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td></tr>
             <tr><th>Mercancía de dimensiones grandes SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td></tr>
@@ -3674,12 +3675,33 @@ table.ds-matrix{width:100%;border-collapse:separate;border-spacing:0;min-width:5
             <tr><th>Servicio SL</th><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
             <tr><th>Satisfacción SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
             <tr><th>C&amp;C Servicio SL</th><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
-            <tr><th>C&amp;C Satisfacción SL</th><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
+            <tr><th>C&amp;C Satisfacción SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
             <tr><th>Sin tienda Liverpool cercana</th><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
             <tr><th>Mercancía de dimensiones grandes SL</th><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td></tr>
             <tr><th>Mercancía frágil rota</th><td><span class="ds-cell ds-no">✕</span></td><td class="on"><span class="ds-cell ds-yes">✓</span></td><td><span class="ds-cell ds-no">✕</span></td><td><span class="ds-cell ds-no">✕</span></td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Criterios y excepciones (detalle) -->
+    <div class="bt-block" id="ds-criterios" style="border-left-color:var(--brand)">
+      <div class="bt-head" style="margin-bottom:.6rem">
+        <span class="fp-num" style="background:linear-gradient(135deg,var(--brand),var(--brand-bright))">📝</span>
+        <div>
+          <h2 class="bt-title">Criterios y excepciones</h2>
+          <div class="bt-plats"><span class="bt-plat info">Mercaderías</span><span class="bt-plat info">MKP</span></div>
+        </div>
+      </div>
+      <div class="bt-obs">
+        <span class="bt-obs-lbl">Observaciones</span>
+        <ul class="bt-obs-list">
+          <li><strong>Servicio SL</strong> = mercancía <strong>dañada, equivocada o incompleta</strong>. <strong>Satisfacción SL</strong> = el cliente <strong>no cumple expectativas</strong>.</li>
+          <li><strong>No aplica recogido</strong> en mercancía frágil: <strong>cristalería, vinos, perfumería, vajillas</strong>, etc. — en estos casos se aplica <strong>devolución</strong>.</li>
+          <li><strong>Productos grandes</strong> (hornos, pantallas 40", escritorios, aparatos de ejercicio): se genera <strong>recogido y, posteriormente, la devolución</strong>.</li>
+          <li><strong>Satisfacción SL menor a $3,000</strong>: por regla se <strong>canaliza a tienda</strong>; como excepción, si el cliente <strong>no cuenta con un Liverpool cerca</strong>, se aplica devolución con la leyenda <span class="bt-quote">Satisfacción SL</span> en SAP.</li>
+          <li>En <strong>Servicio SL mayor a $3,000</strong> el recogido se genera y la devolución se aplica <strong>cuando éste se realice</strong>.</li>
+        </ul>
       </div>
     </div>
 
@@ -3956,6 +3978,7 @@ const DEVSAP_INDEX = [
   { name:'Leyenda Correo soporte', sub:'Glosario SAP · recogido vencido · digitales · bonificaciones · semáforo PAO', target:'ds-correo-soporte', kw:'correo soporte leyenda recogido vencido descargas digitales bonificaciones semaforo pao cambio estatus cadena correos mercaderias sl mkp bt ordenes de venta glosario sap devoluciones' },
   { name:'Matriz SL mayor a $3,000', sub:'Devoluciones SAP · recogido/devolución/canalizar/recogido y devolución', target:'ds-mayor', kw:'sl mayor a 3000 matriz devoluciones sap recogido devolucion canalizar tienda recogido y devolucion servicio satisfaccion cc candc sin tienda dimensiones grandes fragil rota mercancia mas de 3000' },
   { name:'Matriz SL menor a $3,000', sub:'Devoluciones SAP · recogido/devolución/canalizar/recogido y devolución', target:'ds-menor', kw:'sl menor a 3000 matriz devoluciones sap recogido devolucion canalizar tienda recogido y devolucion servicio satisfaccion cc candc sin tienda dimensiones grandes fragil rota mercancia hasta 3000' },
+  { name:'Criterios y excepciones de devoluciones SL', sub:'Devoluciones SAP · frágil sin recogido · productos grandes · excepción Satisfacción', target:'ds-criterios', kw:'criterios excepciones devoluciones sl no aplica recogido cristaleria vinos perfumeria vajillas fragil productos grandes hornos pantallas escritorios aparatos ejercicio satisfaccion sin liverpool cerca dañada equivocada incompleta no cumple expectativas sap' },
 ];
 
 let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[], plantillas:[], avisos:[], anuncios:[] };
