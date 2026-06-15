@@ -23,6 +23,24 @@ function doGet(e) {
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
+// ── 1b. MENÚ Y CONSTRUCTOR DE ANUNCIOS (sidebar dentro de la hoja) ────────────
+// Al abrir la hoja se agrega un menú "📢 Anuncios"; desde ahí los supervisores
+// abren un sidebar (Constructor.html) que escribe las publicaciones como JSON en
+// la hoja "Anuncios". Cualquier editor de la hoja puede publicar.
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('📢 Anuncios')
+    .addItem('Abrir constructor…', 'mostrarConstructorAnuncios')
+    .addToUi();
+}
+
+function mostrarConstructorAnuncios() {
+  const html = HtmlService.createHtmlOutputFromFile('Constructor')
+    .setTitle('Constructor de Anuncios');
+  SpreadsheetApp.getUi().showSidebar(html);
+}
+
 // ── 2. CACHÉ ──────────────────────────────────────────────────────────────────
 // Las hojas cambian poco; servir desde CacheService evita releer 5+ hojas en
 // cada visita (el límite por llave es ~100KB, si se excede se sirve sin caché).
@@ -101,6 +119,7 @@ function buildToolsData_() {
     formatos: [],
     pdePago: [],
     avisos: [],
+    anuncios: [],
     status: 'ok',
     error: null
   };
@@ -149,27 +168,12 @@ function buildToolsData_() {
       liga:     ['liga', 'enlace', 'link', 'url', 'simulad']
     }, 'nombre');
 
-    // ── Hoja: Avisos (opcional) ──
-    // Columnas: Mensaje | Tipo (info/warn/alert/ok) | Hasta (fecha opcional)
-    const sheetA = ss.getSheetByName('Avisos');
-    if (sheetA) {
-      const data = sheetA.getDataRange().getValues();
-      const hdr = data[0].map(h => h.toString().toLowerCase().trim());
-      const iMsg   = hdr.findIndex(h => h.includes('mensaje') || h.includes('aviso') || h.includes('texto'));
-      const iTipo  = hdr.findIndex(h => h.includes('tipo'));
-      const iHasta = hdr.findIndex(h => h.includes('hasta') || h.includes('vigen') || h.includes('fecha'));
-      const now = new Date();
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (iMsg < 0 || !row[iMsg] || !row[iMsg].toString().trim()) continue;
-        if (iHasta > -1 && row[iHasta] instanceof Date && row[iHasta] < now) continue; // aviso expirado
-        response.avisos.push({
-          mensaje: String(row[iMsg]).trim(),
-          tipo:    iTipo > -1 && row[iTipo] ? String(row[iTipo]).trim().toLowerCase() : 'info'
-        });
-      }
-    }
+    // ── Anuncios (hoja "Anuncios" en JSON + respaldo legacy "Avisos") ──
+    response.anuncios = readAnuncios_(ss);
+    // Compatibilidad: cachés antiguas del cliente aún leen "avisos" (solo banners).
+    response.avisos = response.anuncios
+      .filter(a => a.formato === 'banner')
+      .map(a => ({ mensaje: a.mensaje || '', tipo: a.tono || 'info' }));
 
   } catch (error) {
     response.status = 'error';
@@ -178,6 +182,250 @@ function buildToolsData_() {
   }
 
   return response;
+}
+
+// ── 3b. ANUNCIOS (hoja "Anuncios" en JSON) ───────────────────────────────────
+// Cada fila es una publicación. Columnas:
+//   ID | Formato | Activo | Orden | Hasta | Datos (JSON) | Autor | Creado
+// Formatos: 'banner' | 'destacado' | 'tarjeta' | 'modal'.
+// La columna Datos guarda el contenido propio de cada formato (ver Constructor.html).
+
+var ANUNCIOS_SHEET   = 'Anuncios';
+var ANUNCIOS_HEADERS = ['ID', 'Formato', 'Activo', 'Orden', 'Hasta', 'Datos (JSON)', 'Autor', 'Creado'];
+var ANUNCIOS_FORMATOS = ['banner', 'destacado', 'tarjeta', 'modal'];
+
+function anunciosSheet_(ss, create) {
+  ss = ss || SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(ANUNCIOS_SHEET);
+  if (!sheet && create) {
+    sheet = ss.insertSheet(ANUNCIOS_SHEET);
+    sheet.appendRow(ANUNCIOS_HEADERS);
+    sheet.getRange(1, 1, 1, ANUNCIOS_HEADERS.length).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+// Localiza las columnas por encabezado (mismo criterio flexible que readSheet_).
+function anunciosCols_(hdr) {
+  const h = hdr.map(x => x.toString().toLowerCase().trim());
+  return {
+    id:      h.findIndex(x => x.includes('id')),
+    formato: h.findIndex(x => x.includes('formato')),
+    activo:  h.findIndex(x => x.includes('activo')),
+    orden:   h.findIndex(x => x.includes('orden')),
+    hasta:   h.findIndex(x => x.includes('hasta') || x.includes('vigen') || x.includes('fecha')),
+    datos:   h.findIndex(x => x.includes('dato') || x.includes('json')),
+    autor:   h.findIndex(x => x.includes('autor')),
+    creado:  h.findIndex(x => x.includes('creado') || x.includes('creacion'))
+  };
+}
+
+function esActivo_(v) {
+  if (v === true) return true;
+  if (v === false) return false;
+  const s = String(v).trim().toLowerCase();
+  return s === '' || s === 'true' || s === 'si' || s === 'sí' || s === '1' || s === 'x' || s === 'activo';
+}
+
+/**
+ * Lee la hoja "Anuncios" (publicaciones en JSON) y la hoja legacy "Avisos".
+ * Devuelve los anuncios visibles: activos y no expirados, ordenados por "Orden".
+ * @return {Object[]} [{ id, formato, tono?, ...datos }]
+ */
+function readAnuncios_(ss) {
+  ss = ss || SpreadsheetApp.getActiveSpreadsheet();
+  const now = new Date();
+  const out = [];
+
+  const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
+  if (sheet) {
+    const data = sheet.getDataRange().getValues();
+    if (data.length > 1) {
+      const c = anunciosCols_(data[0]);
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (c.activo > -1 && !esActivo_(row[c.activo])) continue;
+        if (c.hasta > -1 && row[c.hasta] instanceof Date && row[c.hasta] < now) continue; // expirado
+        let datos = {};
+        if (c.datos > -1 && row[c.datos]) {
+          try { datos = JSON.parse(String(row[c.datos])); } catch (e) { datos = {}; }
+        }
+        const formato = c.formato > -1 && row[c.formato]
+          ? String(row[c.formato]).trim().toLowerCase() : 'banner';
+        if (ANUNCIOS_FORMATOS.indexOf(formato) < 0) continue;
+        out.push(Object.assign({
+          id:      c.id > -1 && row[c.id] ? String(row[c.id]).trim() : 'anc-row-' + i,
+          formato: formato,
+          orden:   c.orden > -1 && row[c.orden] !== '' ? Number(row[c.orden]) || 0 : 0
+        }, datos));
+      }
+    }
+  }
+
+  // Respaldo de migración: avisos viejos de la hoja "Avisos" → formato banner.
+  const sheetA = ss.getSheetByName('Avisos');
+  if (sheetA) {
+    const dataA = sheetA.getDataRange().getValues();
+    if (dataA.length > 1) {
+      const hdr = dataA[0].map(h => h.toString().toLowerCase().trim());
+      const iMsg   = hdr.findIndex(h => h.includes('mensaje') || h.includes('aviso') || h.includes('texto'));
+      const iTipo  = hdr.findIndex(h => h.includes('tipo'));
+      const iHasta = hdr.findIndex(h => h.includes('hasta') || h.includes('vigen') || h.includes('fecha'));
+      for (let i = 1; i < dataA.length; i++) {
+        const row = dataA[i];
+        if (iMsg < 0 || !row[iMsg] || !row[iMsg].toString().trim()) continue;
+        if (iHasta > -1 && row[iHasta] instanceof Date && row[iHasta] < now) continue;
+        out.push({
+          id:      'avi-' + i,
+          formato: 'banner',
+          orden:   1000 + i,
+          tono:    iTipo > -1 && row[iTipo] ? String(row[iTipo]).trim().toLowerCase() : 'info',
+          mensaje: String(row[iMsg]).trim()
+        });
+      }
+    }
+  }
+
+  out.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+  return out;
+}
+
+// Invalida la caché del portal para que el index revalide tras un cambio.
+function invalidarCacheAnuncios_() {
+  try { CacheService.getScriptCache().remove('toolsData_v1'); } catch (e) {}
+}
+
+/**
+ * Crea o actualiza una publicación. Escribe el contenido como JSON.
+ * @param {Object} payload { id?, formato, activo, orden, hasta, datos }
+ * @return {Object} { status, id } | { status:'error', error }
+ */
+function publicarAnuncio(payload) {
+  try {
+    if (!payload || !payload.formato) throw new Error('Falta el formato del anuncio.');
+    const formato = String(payload.formato).trim().toLowerCase();
+    if (ANUNCIOS_FORMATOS.indexOf(formato) < 0) throw new Error('Formato no válido: ' + formato);
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = anunciosSheet_(ss, true);
+    const c = anunciosCols_(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]);
+
+    const datos = payload.datos && typeof payload.datos === 'object' ? payload.datos : {};
+    const activo = payload.activo === undefined ? true : !!payload.activo;
+    const orden  = Number(payload.orden) || 0;
+    const hasta  = payload.hasta ? new Date(payload.hasta) : '';
+    let user = '';
+    try { user = Session.getActiveUser().getEmail(); } catch (e) {}
+
+    const id = payload.id && String(payload.id).trim()
+      ? String(payload.id).trim()
+      : 'anc-' + Date.now().toString(36);
+
+    const rowValues = [];
+    rowValues[c.id]      = id;
+    rowValues[c.formato] = formato;
+    rowValues[c.activo]  = activo;
+    rowValues[c.orden]   = orden;
+    rowValues[c.hasta]   = (hasta instanceof Date && !isNaN(hasta)) ? hasta : '';
+    rowValues[c.datos]   = JSON.stringify(datos);
+    rowValues[c.autor]   = user;
+    rowValues[c.creado]  = new Date();
+
+    // ¿Existe ya esa fila? → actualizar; si no, agregar.
+    const rowIdx = findAnuncioRow_(sheet, c, id);
+    if (rowIdx > 0) {
+      sheet.getRange(rowIdx, 1, 1, ANUNCIOS_HEADERS.length).setValues([fillRow_(rowValues, ANUNCIOS_HEADERS.length)]);
+    } else {
+      sheet.appendRow(fillRow_(rowValues, ANUNCIOS_HEADERS.length));
+    }
+
+    invalidarCacheAnuncios_();
+    return { status: 'ok', id: id };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+function fillRow_(arr, len) {
+  const out = [];
+  for (let i = 0; i < len; i++) out[i] = (arr[i] === undefined || arr[i] === null) ? '' : arr[i];
+  return out;
+}
+
+function findAnuncioRow_(sheet, c, id) {
+  if (c.id < 0) return -1;
+  const last = sheet.getLastRow();
+  if (last < 2) return -1;
+  const ids = sheet.getRange(2, c.id + 1, last - 1, 1).getValues();
+  for (let i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]).trim() === id) return i + 2;
+  }
+  return -1;
+}
+
+/** Devuelve TODAS las publicaciones (activas, inactivas y expiradas) para el sidebar. */
+function getAnunciosAdmin() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
+    if (!sheet) return { status: 'ok', anuncios: [] };
+    const data = sheet.getDataRange().getValues();
+    if (data.length < 2) return { status: 'ok', anuncios: [] };
+    const c = anunciosCols_(data[0]);
+    const anuncios = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (c.id < 0 || !row[c.id]) continue;
+      let datos = {};
+      if (c.datos > -1 && row[c.datos]) { try { datos = JSON.parse(String(row[c.datos])); } catch (e) {} }
+      const hasta = c.hasta > -1 && row[c.hasta] instanceof Date ? row[c.hasta] : null;
+      anuncios.push({
+        id:      String(row[c.id]).trim(),
+        formato: c.formato > -1 ? String(row[c.formato]).trim().toLowerCase() : 'banner',
+        activo:  c.activo > -1 ? esActivo_(row[c.activo]) : true,
+        orden:   c.orden > -1 ? (Number(row[c.orden]) || 0) : 0,
+        hasta:   hasta ? Utilities.formatDate(hasta, Session.getScriptTimeZone(), 'yyyy-MM-dd') : '',
+        datos:   datos
+      });
+    }
+    anuncios.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+    return { status: 'ok', anuncios: anuncios };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+function eliminarAnuncio(id) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
+    if (!sheet) return { status: 'error', error: 'No existe la hoja Anuncios.' };
+    const c = anunciosCols_(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]);
+    const rowIdx = findAnuncioRow_(sheet, c, String(id).trim());
+    if (rowIdx < 0) return { status: 'error', error: 'No se encontró el anuncio.' };
+    sheet.deleteRow(rowIdx);
+    invalidarCacheAnuncios_();
+    return { status: 'ok' };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+function toggleAnuncio(id, activo) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
+    if (!sheet) return { status: 'error', error: 'No existe la hoja Anuncios.' };
+    const c = anunciosCols_(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]);
+    const rowIdx = findAnuncioRow_(sheet, c, String(id).trim());
+    if (rowIdx < 0 || c.activo < 0) return { status: 'error', error: 'No se encontró el anuncio.' };
+    sheet.getRange(rowIdx, c.activo + 1).setValue(!!activo);
+    invalidarCacheAnuncios_();
+    return { status: 'ok' };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
 }
 
 // ── 4. DATOS DE PROMOCIONES (para Promociones.html) ──────────────────────────

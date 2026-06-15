@@ -695,6 +695,52 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .aviso-close:hover{opacity:1;background:rgba(0,0,0,.08)}
 .aviso-close .ic{width:13px;height:13px;margin:0}
 
+/* ── Anuncio DESTACADO (banner fijo, no descartable) ── */
+.anc-destacado{display:flex;gap:.9rem;align-items:flex-start;border-radius:16px;padding:1rem 1.1rem;box-shadow:var(--sh-xs);border:1px solid transparent}
+.anc-destacado.info{background:var(--info-bg);border-color:color-mix(in srgb,var(--info) 24%,transparent)}
+.anc-destacado.warn{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 26%,transparent)}
+.anc-destacado.alert{background:var(--alert-bg);border-color:color-mix(in srgb,var(--alert) 26%,transparent)}
+.anc-destacado.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 24%,transparent)}
+.anc-d-ic{flex-shrink:0;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.6)}
+.anc-destacado.info .anc-d-ic{color:var(--info)} .anc-destacado.warn .anc-d-ic{color:var(--warn)}
+.anc-destacado.alert .anc-d-ic{color:var(--alert)} .anc-destacado.ok .anc-d-ic{color:var(--ok)}
+.anc-d-ic .ic{width:20px;height:20px}
+.anc-d-body{flex:1;min-width:0}
+.anc-d-title{font-family:Archivo,inherit;font-weight:800;font-size:1.02rem;line-height:1.25;margin-bottom:.15rem;color:var(--ink)}
+.anc-d-text{font-size:.9rem;font-weight:500;line-height:1.5;color:var(--ink-soft,#4b5563)}
+
+/* ── Botón CTA compartido (destacado / tarjeta / modal) ── */
+.anc-cta{display:inline-flex;align-items:center;gap:.4rem;margin-top:.7rem;background:var(--brand,#E10098);color:#fff;border-radius:10px;padding:.5rem .95rem;font-size:.85rem;font-weight:700;text-decoration:none;transition:filter .2s,transform .2s}
+.anc-cta:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.anc-cta .ic{width:15px;height:15px}
+
+/* ── Anuncio TARJETA (imagen + descripción + CTA) ── */
+.anuncios-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:1rem;margin-bottom:1.4rem}
+.anuncios-cards:empty{display:none}
+.anc-card{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);box-shadow:var(--sh-xs);transition:transform .25s,box-shadow .25s}
+.anc-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md,0 10px 26px rgba(20,20,40,.12))}
+.anc-card-img{height:140px;background-size:cover;background-position:center;background-color:#eef0f5}
+.anc-card-body{padding:.95rem 1.05rem 1.1rem;display:flex;flex-direction:column}
+.anc-card-title{font-family:Archivo,inherit;font-weight:800;font-size:1.02rem;line-height:1.25;color:var(--ink)}
+.anc-card-vig{display:inline-flex;align-items:center;gap:.35rem;font-size:.76rem;font-weight:700;color:var(--brand-d,#B80079);margin-top:.3rem}
+.anc-card-vig .ic{width:14px;height:14px}
+.anc-card-desc{font-size:.86rem;font-weight:500;line-height:1.5;color:var(--ink-soft,#4b5563);margin:.45rem 0 0}
+.anc-card.info{border-top:3px solid var(--info)} .anc-card.warn{border-top:3px solid var(--warn)}
+.anc-card.alert{border-top:3px solid var(--alert)} .anc-card.ok{border-top:3px solid var(--ok)}
+.anc-card .anc-cta{align-self:flex-start}
+
+/* ── Anuncio MODAL (pop-up de bienvenida) ── */
+.anc-modal-overlay{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:1.2rem;background:rgba(15,18,30,.55);backdrop-filter:blur(3px)}
+.anc-modal-overlay.open{display:flex}
+.anc-modal-card{position:relative;width:min(440px,100%);background:var(--card,#fff);border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.anc-modal-img{height:180px;background-size:cover;background-position:center;background-color:#eef0f5}
+.anc-modal-body{padding:1.4rem 1.5rem 1.6rem}
+.anc-modal-body h3{font-family:Archivo,inherit;font-weight:800;font-size:1.3rem;line-height:1.2;margin:0 0 .5rem;color:var(--ink)}
+.anc-modal-body p{font-size:.95rem;font-weight:500;line-height:1.55;color:var(--ink-soft,#4b5563);margin:0}
+.anc-modal-close{position:absolute;top:.8rem;right:.8rem;z-index:2;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.9);color:#1b1f2a;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.anc-modal-close:hover{background:#fff}
+.anc-modal-close .ic{width:16px;height:16px}
+
 /* ════════════════════════════════════════════════════════════
    WIDGET PROMOS DEL DÍA (dashboard → Monitor de Promociones)
 ════════════════════════════════════════════════════════════ */
@@ -1036,6 +1082,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         </div>
       </div>
     </div>
+
+    <div class="dash-label" id="anunciosLabel" style="display:none"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M14 7.5a5 5 0 0 1 0 7M17.5 5a9 9 0 0 1 0 12"/></svg> Anuncios del equipo <span class="dl-line"></span></div>
+    <div class="anuncios-cards" id="anunciosCards"></div>
 
     <div class="dash-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/></svg> Hoy en promociones <span class="dl-line"></span></div>
     <div class="promo-strip" id="promoStrip">
@@ -3358,6 +3407,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 </div>
 </div>
 
+<!-- ══ MODAL DE ANUNCIO (pop-up de bienvenida) ══ -->
+<div class="anc-modal-overlay" id="anuncioModal"></div>
+
 <!-- ══ BOTTOM NAV (solo móvil) ══ -->
 <nav class="bottom-nav" aria-label="Navegación principal móvil">
   <button class="bn-item active" data-bn="inicio" onclick="goSec('inicio')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.4V21h5v-6h4v6h5V9.4"/></svg>Inicio</button>
@@ -3604,7 +3656,7 @@ const GEN_INDEX = [
   { name:'Sterling', sub:'Generales · 10 días · SOMS/Salesforce · CONF/preventa', target:'gen-9', kw:'sterling soms salesforce conf preventa 5 dia cambio generales' },
 ];
 
-let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[], avisos:[] };
+let store = { herramientas:[], presentaciones:[], paqueterias:[], formatos:[], pdePago:[], avisos:[], anuncios:[] };
 let searchTimer;
 let fpRevealsReady = false;
 let btRevealsReady = false;
@@ -3620,7 +3672,7 @@ function lsSet(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); 
 let usage   = lsGet('ventel-usage', {});       // clics por herramienta → ordena los accesos rápidos
 let pins    = lsGet('ventel-pins', []);        // herramientas fijadas con el pin
 let recents = lsGet('ventel-recent', []);      // últimas búsquedas (máx. 5)
-let dismissedAvisos = lsGet('ventel-avisos-out', []);
+let dismissedAvisos = lsGet('ventel-avisos-out', []);   // ids de anuncios descartados (banner/modal)
 let dataIsFresh = false;                       // true cuando ya respondió Apps Script (no el caché)
 let lastUpdated = null;                         // timestamp (ms) de la última carga de datos mostrada
 let syncTimer = null;                           // intervalo que refresca el texto "hace X"
@@ -3729,6 +3781,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (rep) { e.preventDefault(); reportLink(rep); return; }
     const dis = e.target.closest('.aviso-close');
     if (dis) { dismissAviso(dis); return; }
+    const mcl = e.target.closest('.anc-modal-close');
+    if (mcl) { closeAnuncioModal(mcl.dataset.ancModal, true); return; }
+    if (e.target.id === 'anuncioModal') { closeAnuncioModal('', false); return; }
     const tracked = e.target.closest('[data-track]');
     if (tracked) trackUse(tracked.dataset.track);
   });
@@ -3971,13 +4026,18 @@ function onToolsData(data, fromCache){
   if (!data || data.status === 'error') { if (!fromCache) onToolsError(data && data.error); return; }
   if (fromCache && dataIsFresh) return; // ya están pintados los datos frescos
   if (!fromCache){ dataIsFresh = true; lastUpdated = Date.now(); lsSet('ventel-data-v1', { t: lastUpdated, data: data }); renderSyncStatus(); }
+  // Compat: cachés viejas solo traen "avisos" (texto). Se mapean a anuncios banner.
+  const anuncios = data.anuncios || (data.avisos || []).map((a, i) => ({
+    id: 'avi-' + i, formato: 'banner', tono: a.tipo || 'info', mensaje: a.mensaje || ''
+  }));
   store = {
     herramientas:   data.herramientas   || [],
     presentaciones: data.presentaciones || [],
     paqueterias:    data.paqueterias    || [],
     formatos:       data.formatos       || [],
     pdePago:        data.pdePago        || [],
-    avisos:         data.avisos         || []
+    avisos:         data.avisos         || [],
+    anuncios:       anuncios
   };
   setCount('herramientas', store.herramientas.length);
   setCount('presentaciones', store.presentaciones.length);
@@ -4013,7 +4073,7 @@ function hideLoader(id){ const el = document.getElementById(`ld-${id}`); if (el)
 
 /* ──────── DASHBOARD ──────── */
 function renderDashboard(){
-  renderAvisos();
+  renderAnuncios();
 
   // Accesos rápidos personalizados: fijados primero, luego los más usados
   const qg = document.getElementById('qaGrid');
@@ -4064,22 +4124,103 @@ function togglePin(name){
   renderDashboard();
 }
 
-/* ── Avisos del equipo (hoja "Avisos") ── */
-function avisoId(a){ return a.tipo + '|' + a.mensaje; }
-function renderAvisos(){
-  const wrap = document.getElementById('avisosWrap');
-  if (!wrap) return;
-  const list = (store.avisos || []).filter(a => !dismissedAvisos.includes(avisoId(a)));
-  wrap.innerHTML = list.map(a => {
-    const tipo = ['info','warn','alert','ok'].includes(a.tipo) ? a.tipo : 'info';
-    return `
-    <div class="aviso ${tipo}" role="status">
-      ${icon('megaphone')}
-      <span>${esc(a.mensaje)}</span>
-      <button class="aviso-close" data-aviso="${esc(avisoId(a))}" aria-label="Descartar aviso">${icon('close')}</button>
-    </div>`;
-  }).join('');
+/* ── Anuncios del equipo (hoja "Anuncios" — JSON multi-formato) ── */
+function anuTone(t){ return ['info','warn','alert','ok'].includes(t) ? t : 'info'; }
+function safeUrl(u){ u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
+function ctaHtml(a){
+  const u = safeUrl(a.ctaUrl), t = esc(a.ctaTexto || 'Abrir');
+  return (u && a.ctaTexto) ? `<a class="anc-cta" href="${u}" target="_blank" rel="noopener">${t} ${icon('external')}</a>` : '';
 }
+
+function renderAnuncios(){
+  const wrap  = document.getElementById('avisosWrap');
+  const cards = document.getElementById('anunciosCards');
+  const list  = (store.anuncios || []).filter(a => !dismissedAvisos.includes(a.id));
+
+  // Banners descartables + destacados fijos → #avisosWrap
+  if (wrap) {
+    wrap.innerHTML = list.filter(a => a.formato === 'banner' || a.formato === 'destacado').map(a => {
+      if (a.formato === 'destacado') {
+        const tone = anuTone(a.tono);
+        return `
+        <div class="anc-destacado ${tone}" role="status">
+          <span class="anc-d-ic">${icon('megaphone')}</span>
+          <div class="anc-d-body">
+            ${a.titulo ? `<div class="anc-d-title">${esc(a.titulo)}</div>` : ''}
+            ${a.cuerpo ? `<div class="anc-d-text">${esc(a.cuerpo)}</div>` : ''}
+            ${ctaHtml(a)}
+          </div>
+        </div>`;
+      }
+      const tone = anuTone(a.tono);
+      return `
+      <div class="aviso ${tone}" role="status">
+        ${icon('megaphone')}
+        <span>${esc(a.mensaje)}</span>
+        <button class="aviso-close" data-aviso="${esc(a.id)}" aria-label="Descartar aviso">${icon('close')}</button>
+      </div>`;
+    }).join('');
+  }
+
+  // Tarjetas con imagen + CTA → #anunciosCards
+  if (cards) {
+    const tarjetas = list.filter(a => a.formato === 'tarjeta');
+    cards.innerHTML = tarjetas.map(a => {
+      const img = safeUrl(a.imagenUrl);
+      const tone = anuTone(a.tono);
+      return `
+      <article class="anc-card ${tone}">
+        ${img ? `<div class="anc-card-img" style="background-image:url('${img}')"></div>` : ''}
+        <div class="anc-card-body">
+          <div class="anc-card-title">${esc(a.titulo || '')}</div>
+          ${a.vigencia ? `<div class="anc-card-vig">${icon('calendar')} ${esc(a.vigencia)}</div>` : ''}
+          ${a.descripcion ? `<p class="anc-card-desc">${esc(a.descripcion)}</p>` : ''}
+          ${ctaHtml(a)}
+        </div>
+      </article>`;
+    }).join('');
+    const lbl = document.getElementById('anunciosLabel');
+    if (lbl) lbl.style.display = tarjetas.length ? '' : 'none';
+  }
+
+  // Modal de bienvenida → una vez por sesión, hasta cerrarse
+  const modalAnc = list.find(a => a.formato === 'modal');
+  if (modalAnc) showAnuncioModal(modalAnc);
+}
+
+function showAnuncioModal(a){
+  const root = document.getElementById('anuncioModal');
+  if (!root) return;
+  let seen = [];
+  try { seen = JSON.parse(sessionStorage.getItem('ventel-modal-seen') || '[]'); } catch(e){}
+  if (seen.includes(a.id)) return;
+  const img = safeUrl(a.imagenUrl);
+  root.innerHTML = `
+    <div class="anc-modal-card" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
+      <button class="anc-modal-close" data-anc-modal="${esc(a.id)}" aria-label="Cerrar">${icon('close')}</button>
+      ${img ? `<div class="anc-modal-img" style="background-image:url('${img}')"></div>` : ''}
+      <div class="anc-modal-body">
+        ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
+        ${a.cuerpo ? `<p>${esc(a.cuerpo)}</p>` : ''}
+        ${ctaHtml(a)}
+      </div>
+    </div>`;
+  root.classList.add('open');
+  try { seen.push(a.id); sessionStorage.setItem('ventel-modal-seen', JSON.stringify(seen)); } catch(e){}
+  if (GS()) gsap.fromTo(root.querySelector('.anc-modal-card'),
+    { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.4, ease:'power3.out' });
+}
+
+function closeAnuncioModal(id, permanente){
+  const root = document.getElementById('anuncioModal');
+  if (!root) return;
+  if (permanente && id && !dismissedAvisos.includes(id)) {
+    dismissedAvisos.push(id); lsSet('ventel-avisos-out', dismissedAvisos);
+  }
+  root.classList.remove('open');
+  root.innerHTML = '';
+}
+
 function dismissAviso(btn){
   const id = btn.dataset.aviso;
   if (id && !dismissedAvisos.includes(id)) { dismissedAvisos.push(id); lsSet('ventel-avisos-out', dismissedAvisos); }
@@ -4927,8 +5068,10 @@ function empty(label){ return `<div class="empty-card"><span class="big">${icon(
 function mockData(){
   return {
     status:'ok',
-    avisos:[
-      { mensaje:'Vista previa con datos de ejemplo — los avisos reales se administran desde la hoja "Avisos".', tipo:'info' }
+    anuncios:[
+      { id:'anc-demo-1', formato:'banner', tono:'info', mensaje:'Vista previa con datos de ejemplo — los anuncios reales se crean desde el menú "📢 Anuncios" de la hoja.' },
+      { id:'anc-demo-2', formato:'destacado', tono:'ok', titulo:'Nueva política de envíos', cuerpo:'Ya está disponible la guía actualizada de tiempos de entrega para Marketplace.', ctaTexto:'Ver guía', ctaUrl:'https://www.liverpool.com.mx' },
+      { id:'anc-demo-3', formato:'tarjeta', tono:'warn', titulo:'Hot Sale 2026', descripcion:'Prepara tus herramientas: arranca la campaña con descuentos en todas las categorías.', vigencia:'25 al 31 de mayo', imagenUrl:'', ctaTexto:'Abrir promociones', ctaUrl:'https://www.liverpool.com.mx' }
     ],
     herramientas:[
       { nombre:'SOMS', enlace:'', comoAcceder:'VPN requerida + usuario corporativo', descripcion:'Sistema Operativo de Manejo de Servicios. Gestiona pedidos, envíos y operaciones diarias.', claves:'' },
