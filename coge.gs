@@ -196,7 +196,7 @@ function buildToolsData_() {
 // La columna Datos guarda el contenido propio de cada formato (ver Constructor.html).
 
 var ANUNCIOS_SHEET   = 'Anuncios';
-var ANUNCIOS_HEADERS = ['ID', 'Formato', 'Activo', 'Orden', 'Hasta', 'Datos (JSON)', 'Autor', 'Creado'];
+var ANUNCIOS_HEADERS = ['ID', 'Formato', 'Activo', 'Orden', 'Desde', 'Hasta', 'Datos (JSON)', 'Autor', 'Creado'];
 var ANUNCIOS_FORMATOS = ['banner', 'destacado', 'tarjeta', 'modal'];
 
 function anunciosSheet_(ss, create) {
@@ -219,11 +219,22 @@ function anunciosCols_(hdr) {
     formato: h.findIndex(x => x.includes('formato')),
     activo:  h.findIndex(x => x.includes('activo')),
     orden:   h.findIndex(x => x.includes('orden')),
+    desde:   h.findIndex(x => x.includes('desde') || x.includes('inicio')),
     hasta:   h.findIndex(x => x.includes('hasta') || x.includes('vigen') || x.includes('fecha')),
     datos:   h.findIndex(x => x.includes('dato') || x.includes('json')),
     autor:   h.findIndex(x => x.includes('autor')),
     creado:  h.findIndex(x => x.includes('creado') || x.includes('creacion'))
   };
+}
+
+// Garantiza que la hoja tenga la columna "Desde" (se agrega al final si falta,
+// para no romper hojas creadas antes de la programación de anuncios).
+function ensureDesdeCol_(sheet) {
+  const hdr = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const has = hdr.some(x => { const s = String(x).toLowerCase(); return s.includes('desde') || s.includes('inicio'); });
+  if (!has) {
+    sheet.getRange(1, sheet.getLastColumn() + 1).setValue('Desde').setFontWeight('bold');
+  }
 }
 
 function esActivo_(v) {
@@ -241,6 +252,10 @@ function esActivo_(v) {
 function readAnuncios_(ss) {
   ss = ss || SpreadsheetApp.getActiveSpreadsheet();
   const now = new Date();
+  // Inicio del día de HOY: "Hasta" es inclusivo de todo ese día. Un anuncio expira
+  // solo cuando su fecha cae en un día anterior a hoy (así una fecha guardada a las
+  // 00:00 —p. ej. editada a mano en la hoja— sigue visible toda la jornada).
+  const hoy0 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
   const out = [];
 
   const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
@@ -251,7 +266,8 @@ function readAnuncios_(ss) {
       for (let i = 1; i < data.length; i++) {
         const row = data[i];
         if (c.activo > -1 && !esActivo_(row[c.activo])) continue;
-        if (c.hasta > -1 && row[c.hasta] instanceof Date && row[c.hasta] < now) continue; // expirado
+        if (c.desde > -1 && row[c.desde] instanceof Date && row[c.desde] > now) continue; // programado: aún no inicia
+        if (c.hasta > -1 && row[c.hasta] instanceof Date && row[c.hasta] < hoy0) continue; // expirado (día anterior a hoy)
         let datos = {};
         if (c.datos > -1 && row[c.datos]) {
           try { datos = JSON.parse(String(row[c.datos])); } catch (e) { datos = {}; }
@@ -280,7 +296,7 @@ function readAnuncios_(ss) {
       for (let i = 1; i < dataA.length; i++) {
         const row = dataA[i];
         if (iMsg < 0 || !row[iMsg] || !row[iMsg].toString().trim()) continue;
-        if (iHasta > -1 && row[iHasta] instanceof Date && row[iHasta] < now) continue;
+        if (iHasta > -1 && row[iHasta] instanceof Date && row[iHasta] < hoy0) continue;
         out.push({
           id:      'avi-' + i,
           formato: 'banner',
@@ -302,15 +318,18 @@ function invalidarCacheAnuncios_() {
 }
 
 /**
- * Convierte 'YYYY-MM-DD' en una fecha LOCAL al fin del día (23:59:59).
+ * Convierte 'YYYY-MM-DD' en una fecha LOCAL. Por defecto al FIN del día (23:59:59)
+ * para "Hasta"; con inicio=true al INICIO del día (00:00:00) para "Desde".
  * Construir con argumentos numéricos usa la zona horaria del script, evitando el
  * corrimiento de un día que produce `new Date('YYYY-MM-DD')` (que se interpreta en UTC).
- * Devuelve '' si no hay fecha → el anuncio nunca expira.
+ * Devuelve '' si no hay fecha.
  */
-function parseFechaLocal_(str) {
+function parseFechaLocal_(str, inicio) {
   const m = String(str || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!m) return '';
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 23, 59, 59);
+  const d = inicio
+    ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 0, 0, 0)
+    : new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 23, 59, 59);
   return isNaN(d.getTime()) ? '' : d;
 }
 
@@ -364,7 +383,9 @@ function publicarAnuncio(payload) {
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = anunciosSheet_(ss, true);
-    const c = anunciosCols_(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]);
+    ensureDesdeCol_(sheet);
+    const width = sheet.getLastColumn();
+    const c = anunciosCols_(sheet.getRange(1, 1, 1, width).getValues()[0]);
 
     const datos = payload.datos && typeof payload.datos === 'object' ? payload.datos : {};
     const activo = payload.activo === undefined ? true : !!payload.activo;
@@ -381,6 +402,7 @@ function publicarAnuncio(payload) {
     rowValues[c.formato] = formato;
     rowValues[c.activo]  = activo;
     rowValues[c.orden]   = orden;
+    if (c.desde > -1) rowValues[c.desde] = parseFechaLocal_(payload.desde, true);
     rowValues[c.hasta]   = parseFechaLocal_(payload.hasta);
     rowValues[c.datos]   = JSON.stringify(datos);
     rowValues[c.autor]   = user;
@@ -389,9 +411,9 @@ function publicarAnuncio(payload) {
     // ¿Existe ya esa fila? → actualizar; si no, agregar.
     const rowIdx = findAnuncioRow_(sheet, c, id);
     if (rowIdx > 0) {
-      sheet.getRange(rowIdx, 1, 1, ANUNCIOS_HEADERS.length).setValues([fillRow_(rowValues, ANUNCIOS_HEADERS.length)]);
+      sheet.getRange(rowIdx, 1, 1, width).setValues([fillRow_(rowValues, width)]);
     } else {
-      sheet.appendRow(fillRow_(rowValues, ANUNCIOS_HEADERS.length));
+      sheet.appendRow(fillRow_(rowValues, width));
     }
 
     invalidarCacheAnuncios_();
@@ -427,19 +449,31 @@ function getAnunciosAdmin() {
     const data = sheet.getDataRange().getValues();
     if (data.length < 2) return { status: 'ok', anuncios: [] };
     const c = anunciosCols_(data[0]);
+    const tz = Session.getScriptTimeZone();
+    const now = new Date();
+    const hoy0 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     const anuncios = [];
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
       if (c.id < 0 || !row[c.id]) continue;
       let datos = {};
       if (c.datos > -1 && row[c.datos]) { try { datos = JSON.parse(String(row[c.datos])); } catch (e) {} }
+      const desde = c.desde > -1 && row[c.desde] instanceof Date ? row[c.desde] : null;
       const hasta = c.hasta > -1 && row[c.hasta] instanceof Date ? row[c.hasta] : null;
+      const activo = c.activo > -1 ? esActivo_(row[c.activo]) : true;
+      let estado;
+      if (!activo) estado = 'inactivo';
+      else if (desde && desde > now) estado = 'programado';
+      else if (hasta && hasta < hoy0) estado = 'expirado';
+      else estado = 'activo';
       anuncios.push({
         id:      String(row[c.id]).trim(),
         formato: c.formato > -1 ? String(row[c.formato]).trim().toLowerCase() : 'banner',
-        activo:  c.activo > -1 ? esActivo_(row[c.activo]) : true,
+        activo:  activo,
+        estado:  estado,
         orden:   c.orden > -1 ? (Number(row[c.orden]) || 0) : 0,
-        hasta:   hasta ? Utilities.formatDate(hasta, Session.getScriptTimeZone(), 'yyyy-MM-dd') : '',
+        desde:   desde ? Utilities.formatDate(desde, tz, 'yyyy-MM-dd') : '',
+        hasta:   hasta ? Utilities.formatDate(hasta, tz, 'yyyy-MM-dd') : '',
         datos:   datos
       });
     }
@@ -475,6 +509,49 @@ function toggleAnuncio(id, activo) {
     const rowIdx = findAnuncioRow_(sheet, c, String(id).trim());
     if (rowIdx < 0 || c.activo < 0) return { status: 'error', error: 'No se encontró el anuncio.' };
     sheet.getRange(rowIdx, c.activo + 1).setValue(!!activo);
+    invalidarCacheAnuncios_();
+    return { status: 'ok' };
+  } catch (error) {
+    return { status: 'error', error: error.toString() };
+  }
+}
+
+/**
+ * Reordena un anuncio una posición arriba ('up') o abajo ('down'), intercambiándolo
+ * con su vecino. Renumera la columna Orden de forma secuencial y estable.
+ * @return {Object} { status } | { status:'error', error }
+ */
+function moverAnuncio(id, dir) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(ANUNCIOS_SHEET);
+    if (!sheet) return { status: 'error', error: 'No existe la hoja Anuncios.' };
+    const last = sheet.getLastRow();
+    if (last < 2) return { status: 'ok' };
+    const c = anunciosCols_(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]);
+    if (c.orden < 0 || c.id < 0) return { status: 'error', error: 'Faltan columnas ID/Orden.' };
+
+    const vals = sheet.getRange(2, 1, last - 1, sheet.getLastColumn()).getValues();
+    const items = vals.map((row, i) => ({
+      rowIdx: i + 2,
+      id: String(row[c.id]).trim(),
+      orden: Number(row[c.orden]) || 0
+    }));
+    // Orden estable: por "Orden" y, a igualdad, por posición física.
+    items.sort((a, b) => (a.orden - b.orden) || (a.rowIdx - b.rowIdx));
+
+    const idx = items.findIndex(it => it.id === String(id).trim());
+    if (idx < 0) return { status: 'error', error: 'No se encontró el anuncio.' };
+    const j = dir === 'up' ? idx - 1 : idx + 1;
+    if (j < 0 || j >= items.length) return { status: 'ok' }; // ya está en el extremo
+
+    const tmp = items[idx]; items[idx] = items[j]; items[j] = tmp;
+
+    // Renumera secuencialmente (10, 20, 30…) y escribe la columna Orden de una vez.
+    const ordenCol = new Array(last - 1);
+    items.forEach((it, k) => { ordenCol[it.rowIdx - 2] = [(k + 1) * 10]; });
+    sheet.getRange(2, c.orden + 1, last - 1, 1).setValues(ordenCol);
+
     invalidarCacheAnuncios_();
     return { status: 'ok' };
   } catch (error) {

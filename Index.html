@@ -711,9 +711,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-d-text{font-size:.9rem;font-weight:500;line-height:1.5;color:var(--ink-soft,#4b5563)}
 
 /* ── Botón CTA compartido (destacado / tarjeta / modal) ── */
-.anc-cta{display:inline-flex;align-items:center;gap:.4rem;margin-top:.7rem;background:var(--brand,#E10098);color:#fff;border-radius:10px;padding:.5rem .95rem;font-size:.85rem;font-weight:700;text-decoration:none;transition:filter .2s,transform .2s}
+.anc-ctas{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;margin-top:.7rem}
+.anc-cta{display:inline-flex;align-items:center;gap:.4rem;background:var(--brand,#E10098);color:#fff;border-radius:10px;padding:.5rem .95rem;font-size:.85rem;font-weight:700;text-decoration:none;transition:filter .2s,transform .2s}
 .anc-cta:hover{filter:brightness(1.07);transform:translateY(-1px)}
 .anc-cta .ic{width:15px;height:15px}
+.anc-cta.secundario{background:transparent;color:var(--brand-deep,#A8006F);border:1.5px solid color-mix(in srgb,var(--brand,#E10098) 42%,transparent)}
+.anc-cta.secundario:hover{background:var(--brand-tint);filter:none}
 
 /* ── Anuncio TARJETA (imagen + descripción + CTA) ── */
 .anuncios-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:1rem;margin-bottom:1.4rem}
@@ -728,7 +731,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-card-desc{font-size:.86rem;font-weight:500;line-height:1.5;color:var(--ink-soft,#4b5563);margin:.45rem 0 0}
 .anc-card.info{border-top:3px solid var(--info)} .anc-card.warn{border-top:3px solid var(--warn)}
 .anc-card.alert{border-top:3px solid var(--alert)} .anc-card.ok{border-top:3px solid var(--ok)}
-.anc-card .anc-cta{align-self:flex-start}
+.anc-card .anc-ctas{align-self:flex-start}
 .anc-card[data-anc-expand]{cursor:pointer}
 .anc-card-zoom{position:absolute;top:.55rem;right:.55rem;z-index:2;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(20,20,40,.5);color:#fff;opacity:0;transform:scale(.85);transition:opacity .2s,transform .2s;pointer-events:none}
 .anc-card-zoom .ic{width:15px;height:15px;margin:0}
@@ -764,7 +767,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-modal-card.is-expand .anc-modal-vig{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;color:var(--brand-d,#B80079);margin:0 0 .55rem}
 .anc-modal-card.is-expand .anc-modal-vig .ic{width:15px;height:15px}
 .anc-modal-card.is-expand .anc-modal-body p{white-space:pre-wrap}
-.anc-modal-card.is-expand .anc-cta{margin-top:1rem}
+.anc-modal-card.is-expand .anc-ctas{margin-top:1rem}
 
 /* ════════════════════════════════════════════════════════════
    WIDGET PROMOS DEL DÍA (dashboard → Monitor de Promociones)
@@ -4170,8 +4173,11 @@ function togglePin(name){
 function anuTone(t){ return ['info','warn','alert','ok'].includes(t) ? t : 'info'; }
 function safeUrl(u){ u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
 function ctaHtml(a){
-  const u = safeUrl(a.ctaUrl), t = esc(a.ctaTexto || 'Abrir');
-  return (u && a.ctaTexto) ? `<a class="anc-cta" href="${u}" target="_blank" rel="noopener">${t} ${icon('external')}</a>` : '';
+  const u  = safeUrl(a.ctaUrl),  u2 = safeUrl(a.cta2Url);
+  let btns = '';
+  if (u  && a.ctaTexto)  btns += `<a class="anc-cta" href="${u}" target="_blank" rel="noopener">${esc(a.ctaTexto)} ${icon('external')}</a>`;
+  if (u2 && a.cta2Texto) btns += `<a class="anc-cta secundario" href="${u2}" target="_blank" rel="noopener">${esc(a.cta2Texto)} ${icon('external')}</a>`;
+  return btns ? `<div class="anc-ctas">${btns}</div>` : '';
 }
 
 function renderAnuncios(){
@@ -4186,7 +4192,7 @@ function renderAnuncios(){
         const tone = anuTone(a.tono);
         return `
         <div class="anc-destacado ${tone}" role="status">
-          <span class="anc-d-ic">${icon('megaphone')}</span>
+          <span class="anc-d-ic">${icon(a.icono || 'megaphone')}</span>
           <div class="anc-d-body">
             ${a.titulo ? `<div class="anc-d-title">${esc(a.titulo)}</div>` : ''}
             ${a.cuerpo ? `<div class="anc-d-text">${esc(a.cuerpo)}</div>` : ''}
@@ -5183,7 +5189,7 @@ function mockData(){
     status:'ok',
     anuncios:[
       { id:'anc-demo-1', formato:'banner', tono:'info', mensaje:'Vista previa con datos de ejemplo — los anuncios reales se crean desde el menú "📢 Anuncios" de la hoja.' },
-      { id:'anc-demo-2', formato:'destacado', tono:'ok', titulo:'Nueva política de envíos', cuerpo:'Ya está disponible la guía actualizada de tiempos de entrega para Marketplace.', ctaTexto:'Ver guía', ctaUrl:'https://www.liverpool.com.mx' },
+      { id:'anc-demo-2', formato:'destacado', tono:'ok', icono:'truck', titulo:'Nueva política de envíos', cuerpo:'Ya está disponible la guía actualizada de tiempos de entrega para Marketplace.', ctaTexto:'Ver guía', ctaUrl:'https://www.liverpool.com.mx', cta2Texto:'Preguntas', cta2Url:'https://www.liverpool.com.mx' },
       { id:'anc-demo-3', formato:'tarjeta', tono:'warn', titulo:'Hot Sale 2026', descripcion:'Prepara tus herramientas: arranca la campaña con descuentos en todas las categorías.', vigencia:'25 al 31 de mayo', imagenUrl:'', ctaTexto:'Abrir promociones', ctaUrl:'https://www.liverpool.com.mx' }
     ],
     herramientas:[

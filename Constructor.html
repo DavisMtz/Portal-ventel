@@ -64,9 +64,20 @@
   .msg.err{display:block;background:var(--alert-bg);color:var(--alert)}
   .hidden{display:none!important}
 
+  .cc{font-size:10px;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0}
+  .cc.over{color:var(--alert)}
+  select{appearance:auto}
+
   /* Vista previa */
   .prev-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
-    color:var(--muted);margin-bottom:7px}
+    color:var(--muted);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between}
+  .pv-toggle{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 8px;
+    font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;color:var(--ink);text-transform:none;letter-spacing:0}
+  #preview.dark{background:#11141c;border-radius:12px;padding:10px;margin-top:2px}
+  #preview.dark .pv-dest{background:linear-gradient(135deg,#1c2130,#241526);border-color:#2c3344}
+  #preview.dark .pv-dest .pc,#preview.dark .pv-card .pc,#preview.dark .pv-modal .pc{color:#c4ccd8}
+  #preview.dark .pv-card,#preview.dark .pv-modal{background:#171b25;border-color:#2c3344;color:#eef2f6}
+  #preview.dark .pv-card .pt,#preview.dark .pv-modal .pt{color:#f3f5f8}
   .pv-banner{display:flex;align-items:flex-start;gap:8px;border-radius:12px;padding:10px 12px;
     font-size:12.5px;font-weight:600;line-height:1.4}
   .pv-banner.info{background:var(--info-bg);color:var(--info)}
@@ -85,6 +96,7 @@
   .pv-card .pc{font-size:12px;color:#374151;margin-top:4px}
   .pv-cta{display:inline-block;margin-top:9px;background:var(--brand);color:#fff;
     border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-decoration:none}
+  .pv-cta2{background:#fff;color:var(--brand-d);border:1.5px solid var(--brand);margin-left:6px}
   .pv-modal{border-radius:14px;border:1px dashed var(--line);padding:12px;text-align:center;background:#fff}
   .pv-modal img{width:100%;height:90px;object-fit:cover;border-radius:9px;margin-bottom:8px;background:#eee}
 
@@ -94,10 +106,15 @@
   .badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
     padding:2px 7px;border-radius:20px;background:#EEF;color:#334}
   .badge.off{background:#F3F4F6;color:#9CA3AF}
+  .badge.est.activo{background:var(--ok-bg);color:var(--ok)}
+  .badge.est.programado{background:var(--info-bg);color:var(--info)}
+  .badge.est.expirado{background:var(--warn-bg);color:var(--warn)}
+  .badge.est.inactivo{background:#F3F4F6;color:#9CA3AF}
   .item .tt{font-weight:700;font-size:12.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .item .ac{display:flex;gap:6px;margin-top:6px}
+  .item .ac{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
   .item .ac button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;
     padding:6px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--ink)}
+  .item .ac button.mini{flex:0 0 32px;padding:6px 0;font-size:13px;line-height:1}
   .item .ac button.del{color:var(--alert)}
   .empty{color:var(--muted);font-size:12px;text-align:center;padding:8px}
   .spin{color:var(--muted);font-size:12px;text-align:center;padding:8px}
@@ -110,7 +127,7 @@
 
   <!-- Vista previa -->
   <div class="card">
-    <div class="prev-label">Vista previa</div>
+    <div class="prev-label">Vista previa <button class="pv-toggle" id="pvTheme" type="button">🌙 Oscuro</button></div>
     <div id="preview"></div>
   </div>
 
@@ -139,25 +156,45 @@
 
     <!-- Mensaje (banner) -->
     <div id="grp-mensaje">
-      <span class="lbl">Mensaje</span>
+      <span class="lbl">Mensaje <span class="cc" id="cc-mensaje"></span></span>
       <textarea id="f-mensaje" placeholder="Texto del aviso…"></textarea>
     </div>
 
     <!-- Título -->
     <div id="grp-titulo">
-      <span class="lbl">Título</span>
+      <span class="lbl">Título <span class="cc" id="cc-titulo"></span></span>
       <input type="text" id="f-titulo" placeholder="Título de la publicación">
+    </div>
+
+    <!-- Ícono (destacado) -->
+    <div id="grp-icono">
+      <span class="lbl">Ícono</span>
+      <select id="f-icono">
+        <option value="megaphone">📣 Megáfono</option>
+        <option value="sparkle">✨ Destello</option>
+        <option value="bolt">⚡ Rayo</option>
+        <option value="flag">🚩 Bandera</option>
+        <option value="pin">📍 Pin</option>
+        <option value="calendar">📅 Calendario</option>
+        <option value="chart">📈 Gráfica</option>
+        <option value="store">🏬 Tienda</option>
+        <option value="truck">🚚 Envío</option>
+        <option value="money">💵 Dinero</option>
+        <option value="card">💳 Tarjeta</option>
+        <option value="gear">⚙️ Ajustes</option>
+        <option value="mail">✉️ Correo</option>
+      </select>
     </div>
 
     <!-- Cuerpo (destacado / modal) -->
     <div id="grp-cuerpo">
-      <span class="lbl">Cuerpo</span>
+      <span class="lbl">Cuerpo <span class="cc" id="cc-cuerpo"></span></span>
       <textarea id="f-cuerpo" placeholder="Detalle del anuncio…"></textarea>
     </div>
 
     <!-- Descripción (tarjeta) -->
     <div id="grp-desc">
-      <span class="lbl">Descripción</span>
+      <span class="lbl">Descripción <span class="cc" id="cc-desc"></span></span>
       <textarea id="f-desc" placeholder="Descripción corta…"></textarea>
     </div>
 
@@ -177,24 +214,32 @@
 
     <!-- CTA (destacado / tarjeta / modal) -->
     <div id="grp-cta">
-      <span class="lbl">Botón (opcional)</span>
+      <span class="lbl">Botón principal (opcional)</span>
       <div class="row">
         <input type="text" id="f-ctaTexto" placeholder="Texto del botón">
         <input type="url" id="f-ctaUrl" placeholder="https://…">
       </div>
+      <span class="lbl">Botón secundario (opcional)</span>
+      <div class="row">
+        <input type="text" id="f-cta2Texto" placeholder="Texto del 2º botón">
+        <input type="url" id="f-cta2Url" placeholder="https://…">
+      </div>
     </div>
 
-    <!-- Comunes -->
+    <!-- Programación / comunes -->
     <div class="row">
       <div>
-        <span class="lbl">Orden</span>
-        <input type="number" id="f-orden" value="0" min="0">
+        <span class="lbl">Publicar desde</span>
+        <input type="date" id="f-desde">
       </div>
       <div>
-        <span class="lbl">Expira (opcional)</span>
+        <span class="lbl">Expira</span>
         <input type="date" id="f-hasta">
       </div>
     </div>
+    <div class="hint">Sin «desde» se publica ya; sin «expira» no caduca. Programa a futuro con «desde».</div>
+    <span class="lbl">Orden <span class="cc">menor = más arriba · o usa ↑/↓ en la lista</span></span>
+    <input type="number" id="f-orden" value="0" min="0">
     <label class="chk"><input type="checkbox" id="f-activo" checked> Publicar activo</label>
 
     <button class="btn" id="btnPublicar" type="button">Publicar anuncio</button>
@@ -225,7 +270,7 @@
   // ── Campos visibles por formato ──
   var FIELDS = {
     banner:    ['grp-tono','grp-mensaje'],
-    destacado: ['grp-tono','grp-titulo','grp-cuerpo','grp-cta'],
+    destacado: ['grp-tono','grp-titulo','grp-icono','grp-cuerpo','grp-cta'],
     tarjeta:   ['grp-tono','grp-titulo','grp-desc','grp-imagen','grp-vigencia','grp-cta'],
     modal:     ['grp-titulo','grp-cuerpo','grp-imagen','grp-cta']
   };
@@ -236,7 +281,7 @@
       b.classList.toggle('on', b.dataset.f === f);
     });
     var show = FIELDS[f] || [];
-    ['grp-tono','grp-mensaje','grp-titulo','grp-cuerpo','grp-desc','grp-imagen','grp-vigencia','grp-cta']
+    ['grp-tono','grp-mensaje','grp-titulo','grp-icono','grp-cuerpo','grp-desc','grp-imagen','grp-vigencia','grp-cta']
       .forEach(function(g){ $(g).classList.toggle('hidden', show.indexOf(g) < 0); });
     renderPreview();
   }
@@ -256,7 +301,11 @@
     var mensaje = esc($('f-mensaje').value), desc = esc($('f-desc').value);
     var vig = esc($('f-vigencia').value), img = safeUrl($('f-imagen').value);
     var ctaT = esc($('f-ctaTexto').value), ctaU = safeUrl($('f-ctaUrl').value);
-    var cta = (ctaT && ctaU) ? '<a class="pv-cta" href="'+ctaU+'" target="_blank" rel="noopener">'+ctaT+'</a>' : '';
+    var cta2T = esc($('f-cta2Texto').value), cta2U = safeUrl($('f-cta2Url').value);
+    var cta = '';
+    if (ctaT && ctaU) cta += '<a class="pv-cta" href="'+ctaU+'" target="_blank" rel="noopener">'+ctaT+'</a>';
+    if (cta2T && cta2U) cta += '<a class="pv-cta pv-cta2" href="'+cta2U+'" target="_blank" rel="noopener">'+cta2T+'</a>';
+    updateCounters();
     var html = '';
 
     if (f === 'banner'){
@@ -282,7 +331,7 @@
     var f = state.formato, d = {};
     if (f === 'banner'){ d.tono = state.tono; d.mensaje = $('f-mensaje').value.trim(); }
     else if (f === 'destacado'){ d.tono = state.tono; d.titulo = $('f-titulo').value.trim();
-      d.cuerpo = $('f-cuerpo').value.trim(); }
+      d.cuerpo = $('f-cuerpo').value.trim(); d.icono = $('f-icono').value || 'megaphone'; }
     else if (f === 'tarjeta'){ d.tono = state.tono; d.titulo = $('f-titulo').value.trim();
       d.descripcion = $('f-desc').value.trim(); d.imagenUrl = safeUrl($('f-imagen').value);
       d.vigencia = $('f-vigencia').value.trim(); }
@@ -291,8 +340,22 @@
     if (f !== 'banner'){
       var t = $('f-ctaTexto').value.trim(), u = safeUrl($('f-ctaUrl').value);
       if (t && u){ d.ctaTexto = t; d.ctaUrl = u; }
+      var t2 = $('f-cta2Texto').value.trim(), u2 = safeUrl($('f-cta2Url').value);
+      if (t2 && u2){ d.cta2Texto = t2; d.cta2Url = u2; }
     }
     return d;
+  }
+
+  // Contadores de caracteres (sugeridos, no bloquean) y vista previa.
+  var COUNTERS = { 'f-mensaje':['cc-mensaje',140], 'f-titulo':['cc-titulo',70], 'f-cuerpo':['cc-cuerpo',300], 'f-desc':['cc-desc',180] };
+  function updateCounters(){
+    Object.keys(COUNTERS).forEach(function(id){
+      var cc = $(COUNTERS[id][0]), max = COUNTERS[id][1];
+      if (!cc) return;
+      var n = ($(id).value || '').length;
+      cc.textContent = n + '/' + max;
+      cc.classList.toggle('over', n > max);
+    });
   }
 
   function validar(d, f){
@@ -315,6 +378,7 @@
       formato: f,
       activo: $('f-activo').checked,
       orden: Number($('f-orden').value) || 0,
+      desde: $('f-desde').value || '',
       hasta: $('f-hasta').value || '',
       datos: datos
     };
@@ -336,7 +400,8 @@
     $('f-id').value = ''; $('f-mensaje').value = ''; $('f-titulo').value = '';
     $('f-cuerpo').value = ''; $('f-desc').value = ''; $('f-imagen').value = '';
     $('f-vigencia').value = ''; $('f-ctaTexto').value = ''; $('f-ctaUrl').value = '';
-    $('f-orden').value = '0'; $('f-hasta').value = ''; $('f-activo').checked = true;
+    $('f-cta2Texto').value = ''; $('f-cta2Url').value = ''; $('f-icono').value = 'megaphone';
+    $('f-orden').value = '0'; $('f-desde').value = ''; $('f-hasta').value = ''; $('f-activo').checked = true;
     $('f-imagenFile').value = '';
     $('imgHint').textContent = 'Súbela a Drive (carpeta «Portal Ventel») o pega una URL pública abajo.';
     $('btnCancelar').classList.add('hidden');
@@ -356,24 +421,35 @@
     return d.titulo || d.mensaje || '(sin título)';
   }
 
+  var EST_LABEL = { activo:'Activo', programado:'Programado', expirado:'Expirado', inactivo:'Oculto' };
+
   function renderLista(res){
     var box = $('lista');
     if (!res || res.status !== 'ok' || !res.anuncios.length){
       box.innerHTML = '<div class="empty">Aún no hay publicaciones.</div>'; return;
     }
-    box.innerHTML = res.anuncios.map(function(a){
-      var off = a.activo ? '' : ' off';
+    var n = res.anuncios.length;
+    box.innerHTML = res.anuncios.map(function(a, i){
+      var est = a.estado || (a.activo ? 'activo' : 'inactivo');
+      var fechas = [];
+      if (a.desde) fechas.push('Desde ' + esc(a.desde));
+      if (a.hasta) fechas.push('Expira ' + esc(a.hasta));
+      var id = esc(a.id);
       return '<div class="item">'
-        + '<div class="hd"><span class="badge'+off+'">'+esc(a.formato)+'</span>'
+        + '<div class="hd"><span class="badge">'+esc(a.formato)+'</span>'
+        + '<span class="badge est '+est+'">'+(EST_LABEL[est]||est)+'</span>'
         + '<span class="tt">'+esc(tituloDe(a))+'</span></div>'
-        + (a.hasta ? '<div class="hint">Expira: '+esc(a.hasta)+'</div>' : '')
+        + (fechas.length ? '<div class="hint">'+fechas.join(' · ')+'</div>' : '')
         + '<div class="ac">'
-        + '<button data-act="edit" data-id="'+esc(a.id)+'">Editar</button>'
-        + '<button data-act="toggle" data-id="'+esc(a.id)+'" data-on="'+(a.activo?'1':'0')+'">'+(a.activo?'Ocultar':'Activar')+'</button>'
-        + '<button class="del" data-act="del" data-id="'+esc(a.id)+'">Borrar</button>'
+        + '<button data-act="edit" data-id="'+id+'">Editar</button>'
+        + '<button data-act="dup" data-id="'+id+'">Duplicar</button>'
+        + '<button class="mini" data-act="up" data-id="'+id+'" title="Subir"'+(i===0?' disabled':'')+'>↑</button>'
+        + '<button class="mini" data-act="down" data-id="'+id+'" title="Bajar"'+(i===n-1?' disabled':'')+'>↓</button>'
+        + '<button data-act="toggle" data-id="'+id+'" data-on="'+(a.activo?'1':'0')+'">'+(a.activo?'Ocultar':'Activar')+'</button>'
+        + '<button class="del" data-act="del" data-id="'+id+'">Borrar</button>'
         + '</div></div>';
     }).join('');
-    // guarda los datos para editar
+    // guarda los datos para editar / duplicar
     window._anuncios = {};
     res.anuncios.forEach(function(a){ window._anuncios[a.id] = a; });
   }
@@ -391,13 +467,36 @@
     $('f-vigencia').value = d.vigencia || '';
     $('f-ctaTexto').value = d.ctaTexto || '';
     $('f-ctaUrl').value = d.ctaUrl || '';
+    $('f-cta2Texto').value = d.cta2Texto || '';
+    $('f-cta2Url').value = d.cta2Url || '';
+    $('f-icono').value = d.icono || 'megaphone';
     $('f-orden').value = a.orden || 0;
+    $('f-desde').value = a.desde || '';
     $('f-hasta').value = a.hasta || '';
     $('f-activo').checked = !!a.activo;
     $('btnPublicar').textContent = 'Guardar cambios';
     $('btnCancelar').classList.remove('hidden');
     renderPreview();
     window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // Duplica un anuncio: carga sus valores como uno NUEVO (sin id) listo para publicar.
+  function duplicar(id){
+    var a = window._anuncios && window._anuncios[id];
+    if (!a) return;
+    var copy = JSON.parse(JSON.stringify(a));
+    copy.id = '';
+    cargarEnForm(copy);
+    $('f-id').value = '';
+    $('btnPublicar').textContent = 'Publicar copia';
+    showMsg('Copia cargada — ajústala y publícala para crear una nueva.', true);
+  }
+
+  // Reordena (↑/↓) intercambiando con el vecino y recarga la lista.
+  function mover(id, dir){
+    google.script.run.withSuccessHandler(cargarLista)
+      .withFailureHandler(function(){ cargarLista(); })
+      .moverAnuncio(id, dir);
   }
 
   // ── Subir imagen a Drive ──
@@ -453,14 +552,21 @@
   $('tones').addEventListener('click', function(e){
     var t = e.target.closest('.tone'); if (t) applyTono(t.dataset.t);
   });
-  ['f-mensaje','f-titulo','f-cuerpo','f-desc','f-imagen','f-vigencia','f-ctaTexto','f-ctaUrl']
+  ['f-mensaje','f-titulo','f-cuerpo','f-desc','f-imagen','f-vigencia','f-ctaTexto','f-ctaUrl','f-cta2Texto','f-cta2Url']
     .forEach(function(id){ $(id).addEventListener('input', renderPreview); });
+  $('f-icono').addEventListener('change', renderPreview);
+  $('pvTheme').addEventListener('click', function(){
+    var dark = $('preview').classList.toggle('dark');
+    this.textContent = dark ? '☀️ Claro' : '🌙 Oscuro';
+  });
   $('btnPublicar').addEventListener('click', publicar);
   $('btnCancelar').addEventListener('click', resetForm);
   $('lista').addEventListener('click', function(e){
-    var b = e.target.closest('button'); if (!b) return;
+    var b = e.target.closest('button'); if (!b || b.disabled) return;
     var id = b.dataset.id, act = b.dataset.act;
     if (act === 'edit'){ var a = window._anuncios && window._anuncios[id]; if (a) cargarEnForm(a); }
+    else if (act === 'dup'){ duplicar(id); }
+    else if (act === 'up' || act === 'down'){ mover(id, act); }
     else if (act === 'toggle'){
       google.script.run.withSuccessHandler(cargarLista).toggleAnuncio(id, b.dataset.on !== '1');
     } else if (act === 'del'){
