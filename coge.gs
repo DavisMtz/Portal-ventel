@@ -41,6 +41,11 @@ function mostrarConstructorAnuncios() {
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
+// Inserta un archivo HTML dentro de otro en las plantillas: <?!= include('LoaderPartial') ?>
+function include(name) {
+  return HtmlService.createHtmlOutputFromFile(name).getContent();
+}
+
 // ── 2. CACHÉ ──────────────────────────────────────────────────────────────────
 // Las hojas cambian poco; servir desde CacheService evita releer 5+ hojas en
 // cada visita (el límite por llave es ~100KB, si se excede se sirve sin caché).

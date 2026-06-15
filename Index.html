@@ -8,6 +8,7 @@
 <!-- GSAP 3.13 + ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -741,6 +742,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-modal-img{height:180px;background-size:cover;background-position:center;background-color:#eef0f5}
 /* Imagen del modal: se prioriza mostrarla COMPLETA según su relación de aspecto */
 .anc-modal-photo{display:block;width:100%;max-height:60vh;height:auto;object-fit:contain;background:#0e1119}
+/* Hueco de imagen con loader de marca mientras la foto carga */
+.anc-modal-imgwrap{position:relative;width:100%;min-height:130px;display:flex;align-items:center;justify-content:center;background:#0e1119;overflow:hidden}
+.anc-modal-imgwrap .anc-modal-photo{opacity:0;transition:opacity .45s ease}
+.anc-modal-imgwrap.is-loaded .anc-modal-photo{opacity:1}
+.anc-modal-imgwrap .vl-spin{position:absolute;--vl-sz:48px;transition:opacity .3s ease}
+.anc-modal-imgwrap.is-loaded{min-height:0}
+.anc-modal-imgwrap.is-loaded .vl-spin{opacity:0}
 .anc-modal-body{padding:1.4rem 1.5rem 1.6rem}
 .anc-modal-body h3{font-family:Archivo,inherit;font-weight:800;font-size:1.3rem;line-height:1.2;margin:0 0 .5rem;color:var(--ink)}
 .anc-modal-body p{font-size:.95rem;font-weight:500;line-height:1.55;color:var(--ink-soft,#4b5563);margin:0}
@@ -750,6 +758,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 /* Tarjeta expandida: más ancha, imagen grande y cuerpo desplazable para texto largo */
 .anc-modal-card.is-expand{width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column}
 .anc-modal-card.is-expand .anc-modal-img{height:min(360px,48vh);flex-shrink:0;cursor:zoom-out}
+.anc-modal-card.is-expand .anc-modal-imgwrap{flex-shrink:0;max-height:72vh}
 .anc-modal-card.is-expand .anc-modal-photo{max-height:72vh;flex-shrink:0}
 .anc-modal-card.is-expand .anc-modal-body{overflow:auto}
 .anc-modal-card.is-expand .anc-modal-vig{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;color:var(--brand-d,#B80079);margin:0 0 .55rem}
@@ -999,6 +1008,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 <link id="gfont-Source-Sans-3" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&amp;display=swap">
 </head>
 <body>
+<?!= include('LoaderPartial') ?>
 <template id="__bundler_thumbnail" data-bg-color="#E10098">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#E10098"/>
@@ -3900,6 +3910,7 @@ function requestData(manual){
 function refreshData(btn){
   const sync = document.getElementById('heroSync');
   if (sync && sync.classList.contains('is-loading')) return; // evita dobles clics
+  if (window.VentelLoader) VentelLoader.show();
   requestData(true);
 }
 
@@ -4023,6 +4034,7 @@ function sectionEnter(section){
 
 /* Navegación al monitor de promociones (URL inyectada por GAS) */
 function handlePromoNav(e, link){
+  if (window.VentelLoader) VentelLoader.show();
   const href = link.getAttribute('href') || '';
   if (!href.startsWith('http')) { e.preventDefault(); window.location.href = 'Promociones.html'; }
 }
@@ -4078,8 +4090,10 @@ function onToolsData(data, fromCache){
   renderPaq(store.paqueterias);
   renderF(store.formatos);
   renderPP(store.pdePago);
+  if (window.VentelLoader) VentelLoader.hide();
 }
 function onToolsError(err){
+  if (window.VentelLoader) VentelLoader.hide();
   // Si el caché local ya pintó contenido, no lo tapamos con el error
   if (store.herramientas.length || store.formatos.length || store.paqueterias.length) return;
   ['herramientas','presentaciones','paqueterias','formatos','pdepago'].forEach(id => {
@@ -4227,7 +4241,7 @@ function showAnuncioModal(a){
   root.innerHTML = `
     <div class="anc-modal-card" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
       <button class="anc-modal-close" data-anc-modal="${esc(a.id)}" aria-label="Cerrar">${icon('close')}</button>
-      ${img ? `<img class="anc-modal-photo" src="${img}" alt="${esc(a.titulo || 'Anuncio')}" loading="lazy">` : ''}
+      ${ancImgHTML(img, a.titulo)}
       <div class="anc-modal-body">
         ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
         ${a.cuerpo ? `<p>${esc(a.cuerpo)}</p>` : ''}
@@ -4238,6 +4252,17 @@ function showAnuncioModal(a){
   try { seen.push(a.id); sessionStorage.setItem('ventel-modal-seen', JSON.stringify(seen)); } catch(e){}
   if (GS()) gsap.fromTo(root.querySelector('.anc-modal-card'),
     { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.4, ease:'power3.out' });
+}
+
+// Imagen de un modal con loader de marca: muestra el spinner hasta que la foto carga.
+function ancImgHTML(img, alt){
+  if (!img) return '';
+  const sp = (window.VentelLoader && VentelLoader.spinner) ? VentelLoader.spinner() : '';
+  const done = "this.closest('.anc-modal-imgwrap').classList.add('is-loaded')";
+  return `<div class="anc-modal-imgwrap">
+        <img class="anc-modal-photo" src="${img}" alt="${esc(alt || 'Anuncio')}" onload="${done}" onerror="${done}">
+        ${sp}
+      </div>`;
 }
 
 // Amplía un anuncio (con o sin imagen) en el overlay para ver mejor foto y texto.
@@ -4254,7 +4279,7 @@ function expandTarjeta(id){
   root.innerHTML = `
     <div class="anc-modal-card is-expand" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
       <button class="anc-modal-close" aria-label="Cerrar">${icon('close')}</button>
-      ${img ? `<img class="anc-modal-photo" src="${img}" alt="${esc(a.titulo || 'Anuncio')}" loading="lazy">` : ''}
+      ${ancImgHTML(img, a.titulo)}
       <div class="anc-modal-body">
         ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
         ${a.vigencia ? `<div class="anc-modal-vig">${icon('calendar')} ${esc(a.vigencia)}</div>` : ''}

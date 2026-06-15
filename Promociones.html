@@ -7,6 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23E10098'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='800' fill='%23fff' text-anchor='middle'%3EV%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -576,6 +577,7 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
 </style>
 </head>
 <body>
+<?!= include('LoaderPartial') ?>
 <div class="app">
 
 <!-- ══ SIDEBAR ══ -->
@@ -970,6 +972,7 @@ function requestData(manual){
 function refreshData(btn){
   const sync = document.getElementById('heroSync');
   if (sync && sync.classList.contains('is-loading')) return; // evita dobles clics
+  if (window.VentelLoader) VentelLoader.show();
   requestData(true);
 }
 
@@ -1057,6 +1060,7 @@ function handleDataSuccess(data, fromCache){
     gsap.fromTo('#controls-panel', {opacity:0,y:-10}, {opacity:1,y:0,duration:.45});
     gsap.fromTo('.stat-tile', {opacity:0,y:12}, {opacity:1,y:0,duration:.5,stagger:.08,ease:'power2.out'});
   }
+  if (window.VentelLoader) VentelLoader.hide();
 }
 
 function refreshActiveData(){
@@ -1070,6 +1074,7 @@ function refreshActiveData(){
 }
 
 function handleDataError(error){
+  if (window.VentelLoader) VentelLoader.hide();
   if (globalData) return; // el caché local ya pintó contenido; no lo tapamos con el error
   document.getElementById('promos-loader').innerHTML = `<div class="empty-state"><h3>Error de conexión</h3><p>${error}</p></div>`;
   document.getElementById('calendar-loader').innerHTML = `<div class="empty-state"><h3>Error de conexión</h3><p>No se pudo sincronizar el calendario.</p></div>`;
@@ -1354,6 +1359,7 @@ function setTheme(name){
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('scrim').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('scrim').classList.remove('show');}
 function handleSideNav(e,link){
+  if (window.VentelLoader) VentelLoader.show();
   var href=link.getAttribute('href')||'';
   if(!href.startsWith('http')){e.preventDefault();var sec=link.dataset.sec||'';window.location.href='Index.html'+(sec?('#'+sec):'');}
 }

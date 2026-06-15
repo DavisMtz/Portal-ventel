@@ -45,6 +45,15 @@
   .chk{display:flex;align-items:center;gap:7px;font-weight:600;cursor:pointer;margin-top:6px}
   .chk input{width:16px;height:16px;accent-color:var(--brand)}
   .hint{font-size:11px;color:var(--muted);margin-top:3px}
+  .hint .vl-spin{vertical-align:middle;margin-right:5px}
+  /* Mini-spinner de marca (naranja/morado) para esperas en el constructor */
+  .vl-spin{display:inline-block;position:relative;vertical-align:middle;width:var(--vl-sz,16px);height:var(--vl-sz,16px)}
+  .vl-spin i{position:absolute;top:0;left:50%;width:calc(var(--vl-sz,16px)*.2);height:calc(var(--vl-sz,16px)*.2);
+    margin-left:calc(var(--vl-sz,16px)*-.1);border-radius:50%;opacity:.2;
+    transform-origin:50% calc(var(--vl-sz,16px)*.5);animation:vl-trail 1s linear infinite}
+  .vl-spin i:nth-child(odd){background:#F28C00}
+  .vl-spin i:nth-child(even){background:#8E2A8B}
+  @keyframes vl-trail{0%,100%{opacity:.2}40%{opacity:1}}
   .btn{width:100%;border:none;border-radius:10px;padding:11px;font:inherit;font-weight:700;
     cursor:pointer;background:var(--brand);color:#fff;margin-top:14px;transition:.15s}
   .btn:hover{background:var(--brand-d)}
@@ -204,6 +213,11 @@
   var state = { formato:'banner', tono:'info' };
 
   function $(id){ return document.getElementById(id); }
+  function miniSpinner(){
+    var s = '';
+    for (var i = 0; i < 8; i++){ s += '<i style="transform:rotate(' + (i*45) + 'deg);animation-delay:' + (-(8-i)*0.125).toFixed(3) + 's"></i>'; }
+    return '<span class="vl-spin" aria-hidden="true">' + s + '</span>';
+  }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function safeUrl(u){ u=String(u||'').trim(); return /^https?:\/\//i.test(u)?u:''; }
@@ -304,7 +318,7 @@
       hasta: $('f-hasta').value || '',
       datos: datos
     };
-    var btn = $('btnPublicar'); btn.disabled = true; btn.textContent = 'Publicando…';
+    var btn = $('btnPublicar'); btn.disabled = true; btn.innerHTML = miniSpinner() + ' Publicando…';
     google.script.run
       .withSuccessHandler(function(res){
         btn.disabled = false; btn.textContent = 'Publicar anuncio';
@@ -410,7 +424,7 @@
   $('f-imagenFile').addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if (!file) return;
-    var hint = $('imgHint'); hint.textContent = 'Subiendo imagen…';
+    var hint = $('imgHint'); hint.innerHTML = miniSpinner() + 'Subiendo imagen…';
     $('btnPublicar').disabled = true;
     leerImagen(file, function(dataUrl){
       google.script.run
