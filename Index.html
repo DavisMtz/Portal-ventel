@@ -728,8 +728,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-card.info{border-top:3px solid var(--info)} .anc-card.warn{border-top:3px solid var(--warn)}
 .anc-card.alert{border-top:3px solid var(--alert)} .anc-card.ok{border-top:3px solid var(--ok)}
 .anc-card .anc-cta{align-self:flex-start}
+.anc-card[data-anc-expand]{cursor:pointer}
+.anc-card-zoom{position:absolute;top:.55rem;right:.55rem;z-index:2;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(20,20,40,.5);color:#fff;opacity:0;transform:scale(.85);transition:opacity .2s,transform .2s;pointer-events:none}
+.anc-card-zoom .ic{width:15px;height:15px;margin:0}
+.anc-card{position:relative}
+.anc-card:hover .anc-card-zoom,.anc-card:focus-visible .anc-card-zoom{opacity:1;transform:scale(1)}
 
-/* ── Anuncio MODAL (pop-up de bienvenida) ── */
+/* ── Anuncio MODAL (pop-up de bienvenida / tarjeta expandida) ── */
 .anc-modal-overlay{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:1.2rem;background:rgba(15,18,30,.55);backdrop-filter:blur(3px)}
 .anc-modal-overlay.open{display:flex}
 .anc-modal-card{position:relative;width:min(440px,100%);background:var(--card,#fff);border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
@@ -740,6 +745,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-modal-close{position:absolute;top:.8rem;right:.8rem;z-index:2;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.9);color:#1b1f2a;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .anc-modal-close:hover{background:#fff}
 .anc-modal-close .ic{width:16px;height:16px}
+/* Tarjeta expandida: más ancha, imagen grande y cuerpo desplazable para texto largo */
+.anc-modal-card.is-expand{width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column}
+.anc-modal-card.is-expand .anc-modal-img{height:min(360px,48vh);flex-shrink:0;cursor:zoom-out}
+.anc-modal-card.is-expand .anc-modal-body{overflow:auto}
+.anc-modal-card.is-expand .anc-modal-vig{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;color:var(--brand-d,#B80079);margin:0 0 .55rem}
+.anc-modal-card.is-expand .anc-modal-vig .ic{width:15px;height:15px}
+.anc-modal-card.is-expand .anc-modal-body p{white-space:pre-wrap}
+.anc-modal-card.is-expand .anc-cta{margin-top:1rem}
 
 /* ════════════════════════════════════════════════════════════
    WIDGET PROMOS DEL DÍA (dashboard → Monitor de Promociones)
@@ -3497,7 +3510,8 @@ const ICONS = {
   close:'<path d="M6 6l12 12M18 6 6 18"/>',
   home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.4V21h5v-6h4v6h5V9.4"/>',
   keyboard:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 9.5h.01M9.5 9.5h.01M13 9.5h.01M16.5 9.5h.01M6 13h.01M16.5 13h.01M9 13h6"/>',
-  sparkle:'<path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/>'
+  sparkle:'<path d="M12 3l2.3 6.2L21 11l-6 2 6 2-6.7 1.8L12 21l-2.3-4.2L3 15l6-2-6-2 6.7-1.8Z"/>',
+  maximize:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>'
 };
 function icon(name, cls){
   const p = ICONS[name] || ICONS.tools;
@@ -3749,6 +3763,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Cerrar la guía de atajos con Esc (aunque se esté escribiendo)
     if (e.key === 'Escape' && isShortcutsOpen()) { toggleShortcuts(false); return; }
+    // Cerrar el anuncio/tarjeta ampliada con Esc
+    const ancOpen = document.getElementById('anuncioModal');
+    if (e.key === 'Escape' && ancOpen && ancOpen.classList.contains('open')) { closeAnuncioModal('', false); return; }
+    // Enter/Espacio sobre una tarjeta enfocada → ampliarla
+    if ((e.key === 'Enter' || e.key === ' ') && !typing) {
+      const fc = document.activeElement.closest && document.activeElement.closest('.anc-card[data-anc-expand]');
+      if (fc) { e.preventDefault(); expandTarjeta(fc.dataset.ancExpand); return; }
+    }
     if (typing || e.ctrlKey || e.metaKey || e.altKey) { disarmGoto(); return; }
 
     // ? → guía de atajos
@@ -3784,6 +3806,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mcl = e.target.closest('.anc-modal-close');
     if (mcl) { closeAnuncioModal(mcl.dataset.ancModal, true); return; }
     if (e.target.id === 'anuncioModal') { closeAnuncioModal('', false); return; }
+    const expCard = e.target.closest('.anc-card[data-anc-expand]');
+    if (expCard && !e.target.closest('.anc-cta')) { expandTarjeta(expCard.dataset.ancExpand); return; }
     const tracked = e.target.closest('[data-track]');
     if (tracked) trackUse(tracked.dataset.track);
   });
@@ -4169,7 +4193,8 @@ function renderAnuncios(){
       const img = safeUrl(a.imagenUrl);
       const tone = anuTone(a.tono);
       return `
-      <article class="anc-card ${tone}">
+      <article class="anc-card ${tone}" data-anc-expand="${esc(a.id)}" tabindex="0" role="button" aria-label="Ampliar: ${esc(a.titulo || 'anuncio')}">
+        <span class="anc-card-zoom" aria-hidden="true">${icon('maximize')}</span>
         ${img ? `<div class="anc-card-img" style="background-image:url('${img}')"></div>` : ''}
         <div class="anc-card-body">
           <div class="anc-card-title">${esc(a.titulo || '')}</div>
@@ -4209,6 +4234,30 @@ function showAnuncioModal(a){
   try { seen.push(a.id); sessionStorage.setItem('ventel-modal-seen', JSON.stringify(seen)); } catch(e){}
   if (GS()) gsap.fromTo(root.querySelector('.anc-modal-card'),
     { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.4, ease:'power3.out' });
+}
+
+// Amplía una tarjeta (con o sin imagen) en el overlay para ver mejor foto y texto.
+// No marca el anuncio como descartado: el botón de cierre no lleva data-anc-modal.
+function expandTarjeta(id){
+  const root = document.getElementById('anuncioModal');
+  if (!root || !id) return;
+  const a = (store.anuncios || []).find(x => x.id === id);
+  if (!a) return;
+  const img = safeUrl(a.imagenUrl);
+  root.innerHTML = `
+    <div class="anc-modal-card is-expand" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
+      <button class="anc-modal-close" aria-label="Cerrar">${icon('close')}</button>
+      ${img ? `<div class="anc-modal-img" style="background-image:url('${img}')"></div>` : ''}
+      <div class="anc-modal-body">
+        ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
+        ${a.vigencia ? `<div class="anc-modal-vig">${icon('calendar')} ${esc(a.vigencia)}</div>` : ''}
+        ${a.descripcion ? `<p>${esc(a.descripcion)}</p>` : ''}
+        ${ctaHtml(a)}
+      </div>
+    </div>`;
+  root.classList.add('open');
+  if (GS()) gsap.fromTo(root.querySelector('.anc-modal-card'),
+    { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.35, ease:'power3.out' });
 }
 
 function closeAnuncioModal(id, permanente){
