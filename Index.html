@@ -739,6 +739,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-modal-overlay.open{display:flex}
 .anc-modal-card{position:relative;width:min(440px,100%);background:var(--card,#fff);border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .anc-modal-img{height:180px;background-size:cover;background-position:center;background-color:#eef0f5}
+/* Imagen del modal: se prioriza mostrarla COMPLETA según su relación de aspecto */
+.anc-modal-photo{display:block;width:100%;max-height:60vh;height:auto;object-fit:contain;background:#0e1119}
 .anc-modal-body{padding:1.4rem 1.5rem 1.6rem}
 .anc-modal-body h3{font-family:Archivo,inherit;font-weight:800;font-size:1.3rem;line-height:1.2;margin:0 0 .5rem;color:var(--ink)}
 .anc-modal-body p{font-size:.95rem;font-weight:500;line-height:1.55;color:var(--ink-soft,#4b5563);margin:0}
@@ -748,6 +750,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 /* Tarjeta expandida: más ancha, imagen grande y cuerpo desplazable para texto largo */
 .anc-modal-card.is-expand{width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column}
 .anc-modal-card.is-expand .anc-modal-img{height:min(360px,48vh);flex-shrink:0;cursor:zoom-out}
+.anc-modal-card.is-expand .anc-modal-photo{max-height:72vh;flex-shrink:0}
 .anc-modal-card.is-expand .anc-modal-body{overflow:auto}
 .anc-modal-card.is-expand .anc-modal-vig{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;color:var(--brand-d,#B80079);margin:0 0 .55rem}
 .anc-modal-card.is-expand .anc-modal-vig .ic{width:15px;height:15px}
@@ -3844,6 +3847,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else window.location.href = 'Promociones.html';
       return;
     }
+    if (it.dataset.anc) { const id = it.dataset.anc; saveRecent(gs.value); clearGlobalSearch(); openAnuncioDesdeBuscador(id); return; }
     if (it.dataset.nav) { jumpToSec(it.dataset.nav); return; }
     if (it.classList.contains('sd-recent')) {
       gs.value = it.dataset.q || '';
@@ -4223,7 +4227,7 @@ function showAnuncioModal(a){
   root.innerHTML = `
     <div class="anc-modal-card" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
       <button class="anc-modal-close" data-anc-modal="${esc(a.id)}" aria-label="Cerrar">${icon('close')}</button>
-      ${img ? `<div class="anc-modal-img" style="background-image:url('${img}')"></div>` : ''}
+      ${img ? `<img class="anc-modal-photo" src="${img}" alt="${esc(a.titulo || 'Anuncio')}" loading="lazy">` : ''}
       <div class="anc-modal-body">
         ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
         ${a.cuerpo ? `<p>${esc(a.cuerpo)}</p>` : ''}
@@ -4236,7 +4240,9 @@ function showAnuncioModal(a){
     { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.4, ease:'power3.out' });
 }
 
-// Amplía una tarjeta (con o sin imagen) en el overlay para ver mejor foto y texto.
+// Amplía un anuncio (con o sin imagen) en el overlay para ver mejor foto y texto.
+// Sirve para cualquier formato (tarjeta, destacado, banner, modal): se usa al hacer
+// clic en una tarjeta y también al abrir un anuncio desde el buscador.
 // No marca el anuncio como descartado: el botón de cierre no lleva data-anc-modal.
 function expandTarjeta(id){
   const root = document.getElementById('anuncioModal');
@@ -4244,20 +4250,28 @@ function expandTarjeta(id){
   const a = (store.anuncios || []).find(x => x.id === id);
   if (!a) return;
   const img = safeUrl(a.imagenUrl);
+  const cuerpo = a.descripcion || a.cuerpo || a.mensaje || '';
   root.innerHTML = `
     <div class="anc-modal-card is-expand" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
       <button class="anc-modal-close" aria-label="Cerrar">${icon('close')}</button>
-      ${img ? `<div class="anc-modal-img" style="background-image:url('${img}')"></div>` : ''}
+      ${img ? `<img class="anc-modal-photo" src="${img}" alt="${esc(a.titulo || 'Anuncio')}" loading="lazy">` : ''}
       <div class="anc-modal-body">
         ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
         ${a.vigencia ? `<div class="anc-modal-vig">${icon('calendar')} ${esc(a.vigencia)}</div>` : ''}
-        ${a.descripcion ? `<p>${esc(a.descripcion)}</p>` : ''}
+        ${cuerpo ? `<p>${esc(cuerpo)}</p>` : ''}
         ${ctaHtml(a)}
       </div>
     </div>`;
   root.classList.add('open');
   if (GS()) gsap.fromTo(root.querySelector('.anc-modal-card'),
     { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.35, ease:'power3.out' });
+}
+
+// Abre un anuncio desde el buscador: cambia a Inicio (para dar contexto) y lo amplía.
+function openAnuncioDesdeBuscador(id){
+  const tab = document.querySelector('.side-link[data-sec="inicio"]');
+  if (tab) switchSec('inicio', tab);
+  setTimeout(() => expandTarjeta(id), 60);
 }
 
 function closeAnuncioModal(id, permanente){
@@ -4511,6 +4525,19 @@ function doGlobalSearch(){
     if (matches.length) results.push({ key, matches });
   });
 
+  // Anuncios/publicaciones del equipo → resultados del buscador (abren la vista ampliada)
+  const ancMatches = (store.anuncios || [])
+    .map(a => {
+      const name = String(a.titulo || a.mensaje || 'Anuncio');
+      const sub  = String(a.descripcion || a.cuerpo || a.mensaje || a.vigencia || '');
+      const extra = [a.vigencia, a.ctaTexto, a.formato].map(x => String(x || '')).join(' ');
+      return { name, sub, ancId: a.id, score: scoreMatch(Q, norm(name), norm(sub), norm(extra)) };
+    })
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+  if (ancMatches.length) results.push({ key: '__anuncio', matches: ancMatches });
+
   const fpMatches = FP_INDEX
     .map(it => ({ name: it.name, sub: it.sub, target: it.target, score: scoreMatch(Q, norm(it.name), norm(it.sub), norm(it.kw || '')) }))
     .filter(r => r.score > 0)
@@ -4610,6 +4637,18 @@ function doGlobalSearch(){
             <div class="sd-sub">${esc(r.sub)}</div>
           </div>
           <span class="sd-go">${icon('external')}</span>
+        </div>`).join('');
+      }
+      if (key === '__anuncio') {
+        return `<div class="sd-group-label">${icon('megaphone')} Anuncios<span class="sd-count">${matches.length}</span></div>` +
+          matches.map((r, ri) => `
+        <div class="sd-item${gi === 0 && ri === 0 ? ' sd-top' : ''}" data-anc="${esc(r.ancId)}" role="option">
+          <div class="sd-emoji">${icon('megaphone')}</div>
+          <div style="min-width:0;">
+            <div class="sd-name">${hilite(r.name, q)}</div>
+            ${r.sub ? `<div class="sd-sub">${hilite(r.sub.substring(0,90) + (r.sub.length > 90 ? '…' : ''), q)}</div>` : ''}
+          </div>
+          <span class="sd-go">${icon('maximize')}</span>
         </div>`).join('');
       }
       if (key === '__nav') {
