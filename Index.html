@@ -4975,10 +4975,37 @@ function applyPltFilters(){
 }
 
 /* ──────── BÚSQUEDA GLOBAL ──────── */
+/* Búsqueda por ámbito ("scoped search"): si la consulta empieza con el nombre de una
+   sección (p. ej. "plantilla …"), la búsqueda se concentra en esa sección y deja fuera
+   el resto. Si sólo se escribe el nombre, se listan todos sus elementos. Hace la búsqueda
+   más inteligente: "plantilla bienvenida" busca "bienvenida" únicamente entre las plantillas. */
+const SEARCH_SCOPES = {
+  plantilla:    { key:'plantillas',     label:'Plantillas' },
+  plantillas:   { key:'plantillas',     label:'Plantillas' },
+  herramienta:  { key:'herramientas',   label:'Herramientas' },
+  herramientas: { key:'herramientas',   label:'Herramientas' },
+  paqueteria:   { key:'paqueterias',    label:'Paqueterías' },
+  paqueterias:  { key:'paqueterias',    label:'Paqueterías' },
+  formato:      { key:'formatos',       label:'Formatos' },
+  formatos:     { key:'formatos',       label:'Formatos' },
+  presentacion: { key:'presentaciones', label:'Presentaciones' },
+  presentaciones:{ key:'presentaciones',label:'Presentaciones' }
+};
+/* Detecta un prefijo de ámbito en la consulta. Devuelve { key, label, rest } o null. */
+function parseScope(input){
+  const trimmed = input.trim();
+  const sp = trimmed.search(/\s/);
+  const first = norm(sp === -1 ? trimmed : trimmed.slice(0, sp)).trim();
+  const scope = SEARCH_SCOPES[first];
+  if (!scope) return null;
+  return { key: scope.key, label: scope.label, rest: sp === -1 ? '' : trimmed.slice(sp + 1).trim() };
+}
 function doGlobalSearch(){
-  const q = document.getElementById('globalSearch').value.trim();
+  const input = document.getElementById('globalSearch').value.trim();
   const drop = document.getElementById('searchDrop');
-  if (!q) { closeDrop(); return; }
+  if (!input) { closeDrop(); return; }
+  const scope = parseScope(input);
+  const q = scope ? scope.rest : input;   // consulta efectiva (sin el prefijo de sección)
   const Q = buildQuery(q);
   const results = [];
   const specs = [
@@ -4989,7 +5016,10 @@ function doGlobalSearch(){
     { key:'pdePago',        nameF:'nombre', subF:'detalles',      extraF:['liga'], linkF:'liga' },
     { key:'plantillas',     nameF:'titulo', subF:'asunto',        extraF:['cuerpo','consideraciones','tipo'], linkF:null }
   ];
-  specs.forEach(({ key, nameF, subF, extraF, linkF, copyF, copyLbl }) => {
+  // En modo ámbito sólo se evalúa la sección elegida; si no hay texto, se listan todos sus elementos.
+  const activeSpecs = scope ? specs.filter(s => s.key === scope.key) : specs;
+  const listAll = !!scope && !Q.words.length;
+  activeSpecs.forEach(({ key, nameF, subF, extraF, linkF, copyF, copyLbl }) => {
     const matches = (store[key] || [])
       .map(item => {
         const name = String(item[nameF] || '');
@@ -4998,14 +5028,17 @@ function doGlobalSearch(){
         const href = linkF ? linkHref(item[linkF]) : null;
         const cv = copyF ? String(item[copyF] || '').trim() : '';
         const copy = cv ? { val: cv, lbl: copyLbl || 'dato' } : null;
-        return { name, sub, href, copy, score: scoreMatch(Q, norm(name), norm(sub), norm(extra)) };
+        const score = listAll ? 1 : scoreMatch(Q, norm(name), norm(sub), norm(extra));
+        return { name, sub, href, copy, score };
       })
       .filter(r => r.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
+      .slice(0, scope ? 50 : 5);
     if (matches.length) results.push({ key, matches });
   });
 
+  // El resto de fuentes (anuncios, índices, navegación, promociones) sólo aplica en búsqueda global.
+  if (!scope) {
   // Anuncios/publicaciones del equipo → resultados del buscador (abren la vista ampliada)
   const ancMatches = (store.anuncios || [])
     .map(a => {
@@ -5093,12 +5126,13 @@ function doGlobalSearch(){
   if (promoScore > 0) {
     results.push({ key:'__promo', matches:[{ name:'Promociones', sub:'Abrir el monitor de promociones', score: promoScore }] });
   }
+  } // fin búsqueda global (sin ámbito)
 
   // Ordena los grupos por su mejor coincidencia → la sección más relevante aparece primero
   results.sort((a, b) => b.matches[0].score - a.matches[0].score);
   // Si la búsqueda apunta claramente a "promociones", el monitor encabeza los resultados
   const qn = norm(q);
-  if (/^promo|promocion|^promos$|monitor/.test(qn)) {
+  if (!scope && /^promo|promocion|^promos$|monitor/.test(qn)) {
     const pi = results.findIndex(r => r.key === '__promo');
     if (pi > 0) { const [pg] = results.splice(pi, 1); results.unshift(pg); }
   }
@@ -5106,14 +5140,23 @@ function doGlobalSearch(){
 
   const wasOpen = drop.classList.contains('open');
   if (!results.length) {
-    const sugg = ['Transferencia','Guía','Devolución','RFC','Monedero','Cancelación'];
-    drop.innerHTML = `<div class="sd-empty"><span class="big">${icon('search')}</span>
-      Sin resultados para <strong>"${esc(q)}"</strong>
-      <div class="sd-empty-sub">Revisa la ortografía o prueba con una de estas búsquedas:</div>
-      <div class="sd-sugg-row">${sugg.map(s => `<button class="sd-sugg" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div>
-    </div>`;
+    if (scope) {
+      drop.innerHTML = `<div class="sd-empty"><span class="big">${icon('search')}</span>
+        Sin resultados ${q ? `para <strong>"${esc(q)}"</strong> ` : ''}en <strong>${esc(scope.label)}</strong>
+        <div class="sd-empty-sub">Prueba con otra palabra dentro de esta sección.</div>
+      </div>`;
+    } else {
+      const sugg = ['Transferencia','Guía','Devolución','RFC','Monedero','Cancelación'];
+      drop.innerHTML = `<div class="sd-empty"><span class="big">${icon('search')}</span>
+        Sin resultados para <strong>"${esc(q)}"</strong>
+        <div class="sd-empty-sub">Revisa la ortografía o prueba con una de estas búsquedas:</div>
+        <div class="sd-sugg-row">${sugg.map(s => `<button class="sd-sugg" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+      </div>`;
+    }
   } else {
-    const header = `<div class="sd-head"><span class="sd-head-n">${total}</span> resultado${total !== 1 ? 's' : ''} para <strong>"${esc(q)}"</strong></div>`;
+    const header = scope
+      ? `<div class="sd-head"><span class="sd-head-n">${total}</span> resultado${total !== 1 ? 's' : ''} ${q ? `para <strong>"${esc(q)}"</strong> ` : ''}en <strong>${esc(scope.label)}</strong></div>`
+      : `<div class="sd-head"><span class="sd-head-n">${total}</span> resultado${total !== 1 ? 's' : ''} para <strong>"${esc(q)}"</strong></div>`;
     const body = results.map(({ key, matches }, gi) => {
       if (key === '__promo') {
         return `<div class="sd-group-label">${icon('sparkle')} Promociones<span class="sd-count">1</span></div>` +
