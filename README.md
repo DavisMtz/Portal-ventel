@@ -9,7 +9,12 @@ El **Portal Ventel** es una plataforma centralizada diseñada para optimizar el 
 
 * **Carga Instantánea (caché en dos capas):** Los datos se cachean 10 minutos en el servidor (`CacheService`) y la última respuesta se guarda en `localStorage`; al abrir, el portal pinta de inmediato con el dato local y revalida contra Apps Script en segundo plano (*stale-while-revalidate*).
 * **Accesos Rápidos Personalizados:** El dashboard ordena las herramientas según la frecuencia de uso de cada asesor, y permite fijarlas con un pin. Todo se guarda localmente, sin configuración.
-* **Avisos del Equipo:** Una hoja `Avisos` (columnas: `Mensaje | Tipo | Hasta`) se muestra como banners descartables en el dashboard. `Tipo` acepta `info`, `warn`, `alert` u `ok`; `Hasta` (fecha) oculta el aviso automáticamente al expirar.
+* **Constructor de Anuncios (multi-formato):** Desde la propia hoja de cálculo, el menú **📢 Anuncios → Abrir constructor…** abre un *sidebar* HTML donde los supervisores arman publicaciones con vista previa en vivo y las guardan como **JSON** en la hoja `Anuncios` (columnas: `ID | Formato | Activo | Orden | Hasta | Datos (JSON) | Autor | Creado`). El portal interpreta ese JSON y soporta 4 formatos:
+  * **Banner descartable** — aviso de texto con tono `info/warn/alert/ok` que el asesor puede cerrar.
+  * **Banner destacado fijo** — tarjeta no descartable al inicio, con título, cuerpo y botón opcional.
+  * **Tarjeta con imagen + CTA** — publicación visual con imagen, descripción, vigencia y botón de enlace.
+  * **Modal de bienvenida** — pop-up que aparece una vez por sesión hasta cerrarse.
+  La columna `Hasta` (fecha) y `Activo` (TRUE/FALSE) controlan la vigencia/visibilidad. La hoja `Avisos` legacy se sigue leyendo como banner para no perder publicaciones anteriores.
 * **Reporte de Enlaces Caídos:** Cada tarjeta tiene un botón de reporte que registra fecha, sección, nombre, enlace y usuario en una hoja `Reportes` (se crea sola al primer reporte).
 * **Historial Real de Navegación:** Las secciones usan `google.script.history`, por lo que el botón "atrás" del navegador funciona y se pueden compartir enlaces directos a una sección.
 * **Puente con el Monitor de Promos:** El dashboard muestra cuántas promociones están activas hoy y cuántas terminan en ≤ 3 días, con acceso directo al Monitor.
