@@ -8,6 +8,7 @@
 <!-- GSAP 3.13 + ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -999,6 +1000,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 <link id="gfont-Source-Sans-3" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&amp;display=swap">
 </head>
 <body>
+<?!= include('LoaderPartial') ?>
 <template id="__bundler_thumbnail" data-bg-color="#E10098">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#E10098"/>
@@ -4023,6 +4025,7 @@ function sectionEnter(section){
 
 /* Navegación al monitor de promociones (URL inyectada por GAS) */
 function handlePromoNav(e, link){
+  if (window.VentelLoader) VentelLoader.show();
   const href = link.getAttribute('href') || '';
   if (!href.startsWith('http')) { e.preventDefault(); window.location.href = 'Promociones.html'; }
 }
@@ -4078,8 +4081,10 @@ function onToolsData(data, fromCache){
   renderPaq(store.paqueterias);
   renderF(store.formatos);
   renderPP(store.pdePago);
+  if (window.VentelLoader) VentelLoader.hide();
 }
 function onToolsError(err){
+  if (window.VentelLoader) VentelLoader.hide();
   // Si el caché local ya pintó contenido, no lo tapamos con el error
   if (store.herramientas.length || store.formatos.length || store.paqueterias.length) return;
   ['herramientas','presentaciones','paqueterias','formatos','pdepago'].forEach(id => {
