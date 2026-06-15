@@ -17,6 +17,16 @@
   @keyframes vl-fallspin{to{transform:rotate(360deg)}}
   .vl-overlay.vl-fallback .vl-svg{transform-origin:50% 50%;animation:vl-fallspin 1.5s linear infinite}
   @media (prefers-reduced-motion:reduce){.vl-overlay.vl-fallback .vl-svg{animation:none}}
+
+  /* Mini-spinner de marca (8 puntos naranja/morado) para esperas embebidas */
+  .vl-spin{display:inline-block;position:relative;width:var(--vl-sz,46px);height:var(--vl-sz,46px)}
+  .vl-spin i{position:absolute;top:0;left:50%;width:calc(var(--vl-sz,46px)*.17);height:calc(var(--vl-sz,46px)*.17);
+    margin-left:calc(var(--vl-sz,46px)*-.085);border-radius:50%;opacity:.18;
+    transform-origin:50% calc(var(--vl-sz,46px)*.5);animation:vl-trail 1s linear infinite}
+  .vl-spin i:nth-child(odd){background:#F28C00}
+  .vl-spin i:nth-child(even){background:#8E2A8B}
+  @keyframes vl-trail{0%,100%{opacity:.18}40%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.vl-spin i{animation-duration:0s}}
 </style>
 
 <div class="vl-overlay show" id="ventelLoader" role="status" aria-live="polite" aria-label="Cargando">
@@ -144,6 +154,15 @@
   if (hideTimer) clearTimeout(hideTimer);
   hideTimer = setTimeout(hide, 12000);
 
-  window.VentelLoader = { show: show, hide: hide };
+  // Markup del mini-spinner de marca (para esperas embebidas, p. ej. imágenes).
+  function spinner(cls){
+    var s = "";
+    for (var i = 0; i < 8; i++){
+      s += '<i style="transform:rotate(' + (i * 45) + 'deg);animation-delay:' + (-(8 - i) * 0.125).toFixed(3) + 's"></i>';
+    }
+    return '<span class="vl-spin' + (cls ? " " + cls : "") + '" aria-hidden="true">' + s + '</span>';
+  }
+
+  window.VentelLoader = { show: show, hide: hide, spinner: spinner };
 })();
 </script>

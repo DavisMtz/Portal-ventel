@@ -972,6 +972,7 @@ function requestData(manual){
 function refreshData(btn){
   const sync = document.getElementById('heroSync');
   if (sync && sync.classList.contains('is-loading')) return; // evita dobles clics
+  if (window.VentelLoader) VentelLoader.show();
   requestData(true);
 }
 
