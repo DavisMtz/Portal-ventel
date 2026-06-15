@@ -154,9 +154,10 @@
 
     <!-- Imagen (tarjeta / modal) -->
     <div id="grp-imagen">
-      <span class="lbl">Imagen (URL)</span>
-      <input type="url" id="f-imagen" placeholder="https://…/imagen.jpg">
-      <div class="hint">Usa un enlace público (http/https).</div>
+      <span class="lbl">Imagen</span>
+      <input type="file" id="f-imagenFile" accept="image/*">
+      <div class="hint" id="imgHint">Súbela a Drive (carpeta «Portal Ventel») o pega una URL pública abajo.</div>
+      <input type="url" id="f-imagen" placeholder="https://…/imagen.jpg" style="margin-top:6px">
     </div>
 
     <!-- Vigencia texto (tarjeta) -->
@@ -322,6 +323,8 @@
     $('f-cuerpo').value = ''; $('f-desc').value = ''; $('f-imagen').value = '';
     $('f-vigencia').value = ''; $('f-ctaTexto').value = ''; $('f-ctaUrl').value = '';
     $('f-orden').value = '0'; $('f-hasta').value = ''; $('f-activo').checked = true;
+    $('f-imagenFile').value = '';
+    $('imgHint').textContent = 'Súbela a Drive (carpeta «Portal Ventel») o pega una URL pública abajo.';
     $('btnCancelar').classList.add('hidden');
     $('btnPublicar').textContent = 'Publicar anuncio';
     applyFormato('banner'); applyTono('info');
@@ -382,6 +385,52 @@
     renderPreview();
     window.scrollTo({ top:0, behavior:'smooth' });
   }
+
+  // ── Subir imagen a Drive ──
+  // Redimensiona a máx. 1200px (JPEG ~0.85) para reducir el payload antes de subir.
+  function leerImagen(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var max = 1200, w = img.width, h = img.height;
+        if (w > max){ h = Math.round(h * max / w); w = max; }
+        try {
+          var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+          cv.getContext('2d').drawImage(img, 0, 0, w, h);
+          cb(cv.toDataURL('image/jpeg', 0.85));
+        } catch(err){ cb(reader.result); }
+      };
+      img.onerror = function(){ cb(reader.result); };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  $('f-imagenFile').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var hint = $('imgHint'); hint.textContent = 'Subiendo imagen…';
+    $('btnPublicar').disabled = true;
+    leerImagen(file, function(dataUrl){
+      google.script.run
+        .withSuccessHandler(function(res){
+          $('btnPublicar').disabled = false;
+          if (res && res.status === 'ok'){
+            $('f-imagen').value = res.url;
+            hint.textContent = '✓ Imagen subida a Drive.';
+            renderPreview();
+          } else {
+            hint.textContent = 'Error: ' + ((res && res.error) || 'no se pudo subir');
+          }
+        })
+        .withFailureHandler(function(err){
+          $('btnPublicar').disabled = false;
+          hint.textContent = 'Error: ' + err.message;
+        })
+        .subirImagenAnuncio({ dataUrl: dataUrl, nombre: file.name });
+    });
+  });
 
   // ── Eventos ──
   $('formatos').addEventListener('click', function(e){
