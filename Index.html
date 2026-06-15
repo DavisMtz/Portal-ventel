@@ -739,6 +739,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .anc-modal-overlay.open{display:flex}
 .anc-modal-card{position:relative;width:min(440px,100%);background:var(--card,#fff);border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .anc-modal-img{height:180px;background-size:cover;background-position:center;background-color:#eef0f5}
+/* Imagen del modal: se prioriza mostrarla COMPLETA según su relación de aspecto */
+.anc-modal-photo{display:block;width:100%;max-height:60vh;height:auto;object-fit:contain;background:#0e1119}
 .anc-modal-body{padding:1.4rem 1.5rem 1.6rem}
 .anc-modal-body h3{font-family:Archivo,inherit;font-weight:800;font-size:1.3rem;line-height:1.2;margin:0 0 .5rem;color:var(--ink)}
 .anc-modal-body p{font-size:.95rem;font-weight:500;line-height:1.55;color:var(--ink-soft,#4b5563);margin:0}
@@ -748,6 +750,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 /* Tarjeta expandida: más ancha, imagen grande y cuerpo desplazable para texto largo */
 .anc-modal-card.is-expand{width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column}
 .anc-modal-card.is-expand .anc-modal-img{height:min(360px,48vh);flex-shrink:0;cursor:zoom-out}
+.anc-modal-card.is-expand .anc-modal-photo{max-height:72vh;flex-shrink:0}
 .anc-modal-card.is-expand .anc-modal-body{overflow:auto}
 .anc-modal-card.is-expand .anc-modal-vig{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;color:var(--brand-d,#B80079);margin:0 0 .55rem}
 .anc-modal-card.is-expand .anc-modal-vig .ic{width:15px;height:15px}
@@ -4224,7 +4227,7 @@ function showAnuncioModal(a){
   root.innerHTML = `
     <div class="anc-modal-card" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
       <button class="anc-modal-close" data-anc-modal="${esc(a.id)}" aria-label="Cerrar">${icon('close')}</button>
-      ${img ? `<div class="anc-modal-img" style="background-image:url('${img}')"></div>` : ''}
+      ${img ? `<img class="anc-modal-photo" src="${img}" alt="${esc(a.titulo || 'Anuncio')}" loading="lazy">` : ''}
       <div class="anc-modal-body">
         ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
         ${a.cuerpo ? `<p>${esc(a.cuerpo)}</p>` : ''}
@@ -4251,7 +4254,7 @@ function expandTarjeta(id){
   root.innerHTML = `
     <div class="anc-modal-card is-expand" role="dialog" aria-modal="true" aria-label="${esc(a.titulo || 'Anuncio')}">
       <button class="anc-modal-close" aria-label="Cerrar">${icon('close')}</button>
-      ${img ? `<div class="anc-modal-img" style="background-image:url('${img}')"></div>` : ''}
+      ${img ? `<img class="anc-modal-photo" src="${img}" alt="${esc(a.titulo || 'Anuncio')}" loading="lazy">` : ''}
       <div class="anc-modal-body">
         ${a.titulo ? `<h3>${esc(a.titulo)}</h3>` : ''}
         ${a.vigencia ? `<div class="anc-modal-vig">${icon('calendar')} ${esc(a.vigencia)}</div>` : ''}
