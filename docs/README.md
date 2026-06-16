@@ -6,6 +6,7 @@ técnico. Elige según lo que necesites:
 | Documento | ¿Para quién? | ¿Qué contiene? |
 |---|---|---|
 | [**GUIA-DE-USUARIO.md**](./GUIA-DE-USUARIO.md) | Cualquier persona (sin tecnicismos) | Qué es el portal, qué puedes hacer y de dónde toma los datos, en lenguaje fácil |
+| [**MANUAL-PUBLICACIONES.md**](./MANUAL-PUBLICACIONES.md) | Supervisión y Team Leaders | Cómo publicar anuncios paso a paso, los 4 tipos, cómo se comportan y cómo administrarlos |
 | [**ARQUITECTURA-TECNICA.md**](./ARQUITECTURA-TECNICA.md) | Desarrolladores / mantenimiento | Tecnologías, estructura de archivos, flujo de datos, caché y API del backend |
 | [**REFERENCIA-DE-DATOS.md**](./REFERENCIA-DE-DATOS.md) | Quien administra los datos / backend | Cada hoja de cálculo, sus columnas, formatos JSON y reglas de visibilidad |
 
