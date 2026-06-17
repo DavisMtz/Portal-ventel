@@ -4398,6 +4398,11 @@ function sectionEnter(section){
 /* Navegación al monitor de promociones (URL inyectada por GAS) */
 function handlePromoNav(e, link){
   if (window.VentelLoader) VentelLoader.show();
+  /* Retroalimentación visual inmediata + cerrar menú móvil antes de cambiar de página */
+  document.querySelectorAll('.side-link').forEach(t => { t.classList.remove('active'); t.removeAttribute('aria-current'); });
+  const promoLink = document.getElementById('promoNavLink');
+  if (promoLink){ promoLink.classList.add('active'); promoLink.setAttribute('aria-current','page'); }
+  closeSidebar();
   const href = link.getAttribute('href') || '';
   if (!href.startsWith('http')) { e.preventDefault(); window.location.href = 'Promociones.html'; }
 }
