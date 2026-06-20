@@ -3813,12 +3813,6 @@ table.ds-matrix{width:100%;border-collapse:separate;border-spacing:0;min-width:5
   </div>
 </div>
 
-<!-- ══ Banner de conexión (sin internet → datos guardados) ══ -->
-<div class="net-banner" id="netBanner" role="status" aria-live="polite" hidden>
-  <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l20 20M8.5 16.5a5 5 0 0 1 6-.8M5 12.5a10 10 0 0 1 4-2.6M19 12.5a10 10 0 0 0-3-2.2M2 9a15 15 0 0 1 4.5-2.9M22 9a15 15 0 0 0-7-3.6"/></svg>
-  <span id="netBannerTxt">Sin conexión — mostrando los últimos datos guardados</span>
-</div>
-
 <!-- ══ Botón flotante: copiados recientes ══ -->
 <button class="clip-fab" id="clipFab" onclick="toggleClipDrawer()" aria-label="Copiados recientes" title="Copiados recientes" hidden>
   <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -4042,16 +4036,6 @@ html[data-contrast="high"] :focus-visible{ outline:3px solid var(--brand); outli
 .uid-btn.danger{ background:var(--alert); border-color:var(--alert); color:#fff; }
 .uid-btn.danger:hover{ filter:brightness(.93); }
 
-/* ── Banner de conexión ── */
-.net-banner{
-  position:fixed; left:50%; bottom:84px; transform:translateX(-50%); z-index:1300;
-  display:flex; align-items:center; gap:.5rem; max-width:92vw;
-  background:var(--warn-bg); color:var(--warn); border:1px solid var(--warn);
-  padding:.6rem .9rem; border-radius:999px; font-size:.85rem; font-weight:600; box-shadow:var(--sh-md);
-}
-.net-banner .ic{ width:18px; height:18px; }
-.net-banner.is-back{ background:var(--ok-bg); color:var(--ok); border-color:var(--ok); }
-
 /* ── Botón flotante de copiados ── */
 .clip-fab{
   position:fixed; right:18px; bottom:84px; z-index:1250; width:50px; height:50px; border-radius:50%;
@@ -4061,8 +4045,8 @@ html[data-contrast="high"] :focus-visible{ outline:3px solid var(--brand); outli
 .clip-fab:hover{ transform:translateY(-2px) scale(1.04); }
 .clip-fab .ic{ width:22px; height:22px; }
 .clip-fab-n{ position:absolute; top:-4px; right:-4px; min-width:19px; height:19px; padding:0 4px; border-radius:999px; background:var(--ink); color:#fff; font-size:.68rem; font-weight:800; display:grid; place-items:center; border:2px solid var(--content-bg); }
-@media (max-width:880px){ .clip-fab{ bottom:78px; } .net-banner{ bottom:78px; } }
-@media (min-width:881px){ .clip-fab{ bottom:22px; } .net-banner{ bottom:22px; } }
+@media (max-width:880px){ .clip-fab{ bottom:78px; } }
+@media (min-width:881px){ .clip-fab{ bottom:22px; } }
 
 /* ── Cajón de copiados ── */
 .clip-drawer{ position:fixed; inset:0; z-index:1350; display:none; }
@@ -6434,7 +6418,6 @@ function mockData(){
    · Ajustes de vista (densidad, tamaño de texto, alto contraste)
    · Mis colecciones (agrupar herramientas, plantillas, formatos…)
    · Copiados recientes (historial de portapapeles)
-   · Estado de conexión (offline → datos guardados)
 ══════════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
@@ -6817,45 +6800,6 @@ function mockData(){
       window.renderDashboard = function(){ orig.apply(this, arguments); try{ renderCollections(); }catch(e){} };
     }
   })();
-
-  /* ─────────── ESTADO DE CONEXIÓN ─────────── */
-  /* El banner se rige por el resultado REAL de la carga de datos (no por
-     navigator.onLine, que dentro del iframe de Apps Script no es fiable):
-     si una recarga fresca falla → "sin conexión"; si vuelve a entrar → se oculta. */
-  var _wasOffline = false;
-  function hideNet(){ var b = document.getElementById('netBanner'); if (b){ b.setAttribute('hidden',''); b.classList.remove('is-back'); } }
-  function showNet(offline){
-    var b = document.getElementById('netBanner');
-    if (!b) return;
-    if (offline){
-      b.classList.remove('is-back');
-      document.getElementById('netBannerTxt').textContent = 'Sin conexión — mostrando los últimos datos guardados';
-      b.removeAttribute('hidden');
-    } else {
-      // breve confirmación de reconexión y se oculta
-      b.classList.add('is-back');
-      document.getElementById('netBannerTxt').textContent = 'Conexión restablecida';
-      b.removeAttribute('hidden');
-      setTimeout(hideNet, 2600);
-    }
-  }
-  // Engancha el resultado de la carga de datos del portal.
-  (function(){
-    var okFn = window.onToolsData, errFn = window.onToolsError;
-    if (typeof okFn === 'function') window.onToolsData = function(d, fromCache){
-      okFn.apply(this, arguments);
-      if (!fromCache && d && d.status !== 'error'){
-        if (_wasOffline){ _wasOffline = false; showNet(false); } else hideNet();
-      }
-    };
-    if (typeof errFn === 'function') window.onToolsError = function(){
-      errFn.apply(this, arguments);
-      _wasOffline = true; showNet(true);
-    };
-  })();
-  // Reacciona a los eventos del navegador (cuando sí son fiables).
-  window.addEventListener('offline', function(){ _wasOffline = true; showNet(true); });
-  window.addEventListener('online',  function(){ if (typeof requestData === 'function') try{ requestData(false); }catch(e){} });
 
   /* ─────────── TECLADO GLOBAL para los nuevos overlays (Esc + trampa de foco) ─────────── */
   document.addEventListener('keydown', function(e){
