@@ -3966,17 +3966,17 @@ html[data-contrast="high"] :focus-visible{ outline:3px solid var(--brand); outli
 .cct-chips{ display:flex; gap:.3rem; flex-wrap:wrap; }
 .cct-chip{ font-size:.66rem; font-weight:700; padding:.12rem .42rem; border-radius:999px; background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--line-soft); }
 
-/* ── Modal de colección ── */
+/* ── Modal de colección ── (centrado por flexbox: deja libre el transform para GSAP) */
 .col-modal, .colpick{ position:fixed; inset:0; z-index:1400; display:none; }
-.col-modal.open, .colpick.open{ display:block; }
+.col-modal.open, .colpick.open{ display:flex; align-items:center; justify-content:center; padding:1rem; }
 .col-backdrop, .colpick-backdrop{ position:absolute; inset:0; background:rgba(10,14,20,.55); backdrop-filter:blur(3px); }
 .col-card{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  position:relative;
   width:min(620px,92vw); max-height:86vh; overflow:auto; background:var(--content-bg);
   border:1px solid var(--line); border-radius:var(--rad-lg); box-shadow:var(--sh-lg); padding:1.2rem;
 }
 .colpick-card{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  position:relative;
   width:min(440px,92vw); max-height:80vh; overflow:auto; background:var(--content-bg);
   border:1px solid var(--line); border-radius:var(--rad-lg); box-shadow:var(--sh-lg); padding:1.1rem;
 }
@@ -4019,10 +4019,10 @@ html[data-contrast="high"] :focus-visible{ outline:3px solid var(--brand); outli
 
 /* ── Diálogo genérico (prompt/confirm premium) ── */
 .ui-dialog{ position:fixed; inset:0; z-index:1600; display:none; }
-.ui-dialog.open{ display:block; }
+.ui-dialog.open{ display:flex; align-items:center; justify-content:center; padding:1rem; }
 .ui-dialog-backdrop{ position:absolute; inset:0; background:rgba(10,14,20,.58); backdrop-filter:blur(3px); }
 .ui-dialog-card{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  position:relative;
   width:min(420px,92vw); background:var(--content-bg); border:1px solid var(--line);
   border-radius:var(--rad-lg); box-shadow:var(--sh-lg); padding:1.3rem 1.3rem 1.1rem;
 }
@@ -6857,14 +6857,21 @@ function mockData(){
   window.addEventListener('offline', function(){ _wasOffline = true; showNet(true); });
   window.addEventListener('online',  function(){ if (typeof requestData === 'function') try{ requestData(false); }catch(e){} });
 
-  /* ─────────── ESCAPE GLOBAL para los nuevos overlays ─────────── */
+  /* ─────────── TECLADO GLOBAL para los nuevos overlays (Esc + trampa de foco) ─────────── */
   document.addEventListener('keydown', function(e){
-    if (e.key !== 'Escape') return;
     var cp = document.getElementById('colPick');
     var cm = document.getElementById('colModal');
     var cd = document.getElementById('clipDrawer');
-    if (cp && cp.classList.contains('open')){ closeColPick(); return; }
-    if (cm && cm.classList.contains('open')){ closeColModal(); return; }
+    var cpOpen = cp && cp.classList.contains('open');
+    var cmOpen = cm && cm.classList.contains('open');
+    if (e.key === 'Tab'){
+      if (cpOpen) trapFocus(document.getElementById('colPickCard'), e);
+      else if (cmOpen) trapFocus(document.getElementById('colCard'), e);
+      return;
+    }
+    if (e.key !== 'Escape') return;
+    if (cpOpen){ closeColPick(); return; }
+    if (cmOpen){ closeColModal(); return; }
     if (cd && cd.classList.contains('open')){ toggleClipDrawer(false); return; }
   });
 
