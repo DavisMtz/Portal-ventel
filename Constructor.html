@@ -118,6 +118,18 @@
   .item .ac button.del{color:var(--alert)}
   .empty{color:var(--muted);font-size:12px;text-align:center;padding:8px}
   .spin{color:var(--muted);font-size:12px;text-align:center;padding:8px}
+
+  /* Estado de programación (vigencia legible) */
+  .sched{display:flex;align-items:center;gap:7px;margin-top:8px;border-radius:9px;
+    padding:8px 10px;font-size:12px;font-weight:600;line-height:1.35;
+    background:var(--info-bg);color:var(--info)}
+  .sched.ok{background:var(--ok-bg);color:var(--ok)}
+  .sched.prog{background:var(--info-bg);color:var(--info)}
+  .sched.warn{background:var(--warn-bg);color:var(--warn)}
+  .sched.alert{background:var(--alert-bg);color:var(--alert)}
+  .sched .si-ic{font-size:14px;line-height:1}
+  .hint.soon{color:var(--warn);font-weight:700}
+  .hint.expired{color:var(--alert);font-weight:700}
 </style>
 </head>
 <body>
@@ -238,6 +250,7 @@
       </div>
     </div>
     <div class="hint">Sin «desde» se publica ya; sin «expira» no caduca. Programa a futuro con «desde».</div>
+    <div class="sched" id="schedInfo"></div>
     <span class="lbl">Orden <span class="cc">menor = más arriba · o usa ↑/↓ en la lista</span></span>
     <input type="number" id="f-orden" value="0" min="0">
     <label class="chk"><input type="checkbox" id="f-activo" checked> Publicar activo</label>
@@ -266,6 +279,48 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function safeUrl(u){ u=String(u||'').trim(); return /^https?:\/\//i.test(u)?u:''; }
+
+  // ── Fechas / vigencia legible (programación visible del anuncio) ──
+  var MES_ABR = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function hoy0(){ var d = new Date(); d.setHours(0,0,0,0); return d; }
+  function parseISO(s){ // 'YYYY-MM-DD' → Date local a medianoche (sin corrimiento UTC)
+    s = String(s||'').trim(); var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+    if (!m) return null; var d = new Date(+m[1], +m[2]-1, +m[3]); d.setHours(0,0,0,0); return d;
+  }
+  function fmtFecha(d){ return d ? (d.getDate() + ' ' + MES_ABR[d.getMonth()]) : ''; }
+  function diffDias(d){ return d ? Math.round((d - hoy0()) / 86400000) : null; }
+  // Texto de "expira en N días" para la lista; devuelve {txt, cls} o null.
+  function avisoExpira(hastaStr){
+    var h = parseISO(hastaStr); if (!h) return null;
+    var n = diffDias(h);
+    if (n < 0)  return { txt:'Expiró el ' + fmtFecha(h), cls:'expired' };
+    if (n === 0) return { txt:'⚠️ Expira HOY', cls:'soon' };
+    if (n <= 3) return { txt:'Expira en ' + n + ' día' + (n!==1?'s':''), cls:'soon' };
+    return null;
+  }
+
+  // Estado de programación bajo las fechas: dice en lenguaje claro qué pasará.
+  function renderSched(){
+    var box = $('schedInfo'); if (!box) return;
+    var activo = $('f-activo').checked;
+    var desde = parseISO($('f-desde').value), hasta = parseISO($('f-hasta').value);
+    var t = hoy0(), cls = 'ok', ic = '✅', msg = '';
+
+    if (!activo){ cls = 'warn'; ic = '🚫'; msg = 'Quedará oculto: no se mostrará en el portal hasta activarlo.'; }
+    else if (hasta && hasta < t){ cls = 'alert'; ic = '⚠️'; msg = 'Ya expiró (' + fmtFecha(hasta) + '): no se mostrará.'; }
+    else if (desde && desde > t){
+      cls = 'prog'; ic = '🗓️';
+      msg = 'Programado: se publicará el ' + fmtFecha(desde) + (hasta ? ' y expirará el ' + fmtFecha(hasta) : '') + '.';
+    } else {
+      var n = diffDias(hasta);
+      if (hasta && n === 0){ cls = 'warn'; ic = '⏳'; msg = 'Activo · expira HOY (último día visible).'; }
+      else if (hasta && n <= 3){ cls = 'warn'; ic = '⏳'; msg = 'Activo · expira en ' + n + ' día' + (n!==1?'s':'') + ' (' + fmtFecha(hasta) + ').'; }
+      else if (hasta){ cls = 'ok'; ic = '✅'; msg = 'Activo · visible hasta el ' + fmtFecha(hasta) + '.'; }
+      else { cls = 'ok'; ic = '✅'; msg = 'Se publica ya y no caduca.'; }
+    }
+    box.className = 'sched ' + cls;
+    box.innerHTML = '<span class="si-ic">' + ic + '</span><span>' + msg + '</span>';
+  }
 
   // ── Campos visibles por formato ──
   var FIELDS = {
@@ -435,11 +490,13 @@
       if (a.desde) fechas.push('Desde ' + esc(a.desde));
       if (a.hasta) fechas.push('Expira ' + esc(a.hasta));
       var id = esc(a.id);
+      var av = (est === 'activo') ? avisoExpira(a.hasta) : null;
       return '<div class="item">'
         + '<div class="hd"><span class="badge">'+esc(a.formato)+'</span>'
         + '<span class="badge est '+est+'">'+(EST_LABEL[est]||est)+'</span>'
         + '<span class="tt">'+esc(tituloDe(a))+'</span></div>'
         + (fechas.length ? '<div class="hint">'+fechas.join(' · ')+'</div>' : '')
+        + (av ? '<div class="hint '+av.cls+'">'+av.txt+'</div>' : '')
         + '<div class="ac">'
         + '<button data-act="edit" data-id="'+id+'">Editar</button>'
         + '<button data-act="dup" data-id="'+id+'">Duplicar</button>'
@@ -476,7 +533,7 @@
     $('f-activo').checked = !!a.activo;
     $('btnPublicar').textContent = 'Guardar cambios';
     $('btnCancelar').classList.remove('hidden');
-    renderPreview();
+    renderPreview(); renderSched();
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 
@@ -555,6 +612,8 @@
   ['f-mensaje','f-titulo','f-cuerpo','f-desc','f-imagen','f-vigencia','f-ctaTexto','f-ctaUrl','f-cta2Texto','f-cta2Url']
     .forEach(function(id){ $(id).addEventListener('input', renderPreview); });
   $('f-icono').addEventListener('change', renderPreview);
+  ['f-desde','f-hasta'].forEach(function(id){ $(id).addEventListener('input', renderSched); $(id).addEventListener('change', renderSched); });
+  $('f-activo').addEventListener('change', renderSched);
   $('pvTheme').addEventListener('click', function(){
     var dark = $('preview').classList.toggle('dark');
     this.textContent = dark ? '☀️ Claro' : '🌙 Oscuro';
@@ -576,7 +635,7 @@
   });
 
   // Init
-  applyFormato('banner'); applyTono('info'); renderPreview(); cargarLista();
+  applyFormato('banner'); applyTono('info'); renderPreview(); renderSched(); cargarLista();
 </script>
 </body>
 </html>
