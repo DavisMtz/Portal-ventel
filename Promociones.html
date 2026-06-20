@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('ventel-theme')||'aurora');}catch(e){document.documentElement.setAttribute('data-theme','aurora');}})();</script>
+<script>(function(){try{var de=document.documentElement;de.setAttribute('data-theme',localStorage.getItem('ventel-theme')||'aurora');de.setAttribute('data-density',localStorage.getItem('ventel-density')||'cozy');de.setAttribute('data-textscale',localStorage.getItem('ventel-textscale')||'md');if(localStorage.getItem('ventel-contrast')==='1')de.setAttribute('data-contrast','high');}catch(e){document.documentElement.setAttribute('data-theme','aurora');}})();</script>
 <style>
 
 /* ════════════════════════════════════════════
@@ -80,7 +80,41 @@ a{text-decoration:none;color:inherit}
 input:focus-visible,select:focus-visible{outline:none}
 .ic{width:1.15em;height:1.15em;flex-shrink:0;display:inline-block;vertical-align:middle}
 .app{display:flex;min-height:100vh;align-items:flex-start}
-.sidebar{width:252px;flex-shrink:0;align-self:stretch;position:sticky;top:0;height:100vh;background:var(--side-bg);color:var(--side-ink);display:flex;flex-direction:column;padding:1.15rem 1rem 1rem;gap:.3rem;z-index:50;box-shadow:14px 0 40px -24px rgba(36,28,34,.5)}
+.sidebar{width:252px;flex-shrink:0;align-self:stretch;position:sticky;top:0;height:100vh;background:var(--side-bg);color:var(--side-ink);display:flex;flex-direction:column;padding:1.15rem 1rem 1rem;gap:.3rem;z-index:50;box-shadow:14px 0 40px -24px rgba(36,28,34,.5);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+.sidebar::-webkit-scrollbar{width:8px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:99px}
+.sidebar::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.42)}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent}
+
+/* ── Ajustes de vista: tamaño de texto / densidad / alto contraste (igual que en Index) ── */
+html{font-size:16px;transition:font-size .18s ease}
+html[data-textscale="sm"]{font-size:15px}
+html[data-textscale="md"]{font-size:16px}
+html[data-textscale="lg"]{font-size:17.5px}
+html[data-textscale="xl"]{font-size:19px}
+html[data-density="compact"] .promos-grid,
+html[data-density="compact"] .vig-group-list{gap:.6rem}
+html[data-density="compact"] .promo-card{padding:.85rem .9rem}
+html[data-contrast="high"]{--line:#0c1420;--line-soft:#22303f;--ink-soft:#2b3645;--ink-faint:#475160}
+html[data-contrast="high"][data-theme="carbon"]{--line:#7b8696;--line-soft:#5c6677;--ink-soft:#d6d2da;--ink-faint:#b4afbb}
+html[data-contrast="high"] .promo-card{border-width:2px}
+html[data-contrast="high"] :focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+
+.view-prefs-toggle{width:100%;margin-top:.7rem;display:flex;align-items:center;gap:.5rem;padding:.55rem .7rem;border-radius:8px;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid var(--side-line);color:var(--side-ink);font-size:.82rem;font-weight:600}
+.view-prefs-toggle:hover{background:rgba(255,255,255,.2)}
+.view-prefs-toggle .vp-chev{margin-left:auto;transition:transform .25s ease}
+.view-prefs-toggle[aria-expanded="true"] .vp-chev{transform:rotate(180deg)}
+.view-prefs{margin-top:.55rem;display:flex;flex-direction:column;gap:.6rem}
+.vp-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.vp-lbl{font-size:.78rem;color:var(--side-ink-soft);font-weight:600}
+.vp-seg{display:inline-flex;background:rgba(255,255,255,.12);border-radius:999px;padding:2px;gap:2px}
+.vp-btn{border:0;cursor:pointer;background:transparent;color:var(--side-ink-soft);padding:.3rem .6rem;border-radius:999px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-width:1.9rem}
+.vp-btn.active{background:#fff;color:var(--brand-deep)}
+.vp-switch{width:42px;height:24px;border-radius:999px;border:0;cursor:pointer;position:relative;background:rgba(255,255,255,.28);transition:background .2s ease;flex-shrink:0}
+.vp-switch[aria-checked="true"]{background:#fff}
+.vp-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s ease;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.vp-switch[aria-checked="true"] .vp-knob{transform:translateX(18px);background:var(--brand)}
 .side-brand{display:flex;align-items:center;gap:.7rem;padding:.4rem .55rem 1.05rem;border-bottom:1px solid var(--side-line);margin-bottom:.75rem}
 .side-brand img{height:26px;width:auto;filter:var(--side-logo-filter)}
 .side-brand .sb-divider{width:1px;height:22px;background:var(--side-line)}
@@ -617,6 +651,35 @@ select.filter-select:focus{border-color:var(--rosa);background-color:#fff}
       <button class="theme-btn active" data-theme-btn="aurora" onclick="setTheme('aurora')"><span class="sw aurora"></span>Aurora</button>
       <button class="theme-btn" data-theme-btn="slate" onclick="setTheme('slate')"><span class="sw slate"></span>Slate</button>
       <button class="theme-btn" data-theme-btn="carbon" onclick="setTheme('carbon')"><span class="sw carbon"></span>Carbón</button>
+    </div>
+
+    <button class="view-prefs-toggle" id="viewPrefsToggle" onclick="toggleViewPrefs()" aria-expanded="false">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg>
+      <span>Ajustes de vista</span>
+      <svg class="ic vp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+
+    <div class="view-prefs" id="viewPrefs" hidden>
+      <div class="vp-row">
+        <span class="vp-lbl" id="vpDensityLbl">Densidad</span>
+        <div class="vp-seg" role="group" aria-labelledby="vpDensityLbl">
+          <button class="vp-btn" data-density-btn="cozy"    onclick="setDensity('cozy')">Cómodo</button>
+          <button class="vp-btn" data-density-btn="compact" onclick="setDensity('compact')">Compacto</button>
+        </div>
+      </div>
+      <div class="vp-row">
+        <span class="vp-lbl" id="vpTextLbl">Texto</span>
+        <div class="vp-seg" role="group" aria-labelledby="vpTextLbl">
+          <button class="vp-btn" data-text-btn="sm" onclick="setTextScale('sm')" title="Texto pequeño" style="font-size:.78rem">A</button>
+          <button class="vp-btn" data-text-btn="md" onclick="setTextScale('md')" title="Texto normal">A</button>
+          <button class="vp-btn" data-text-btn="lg" onclick="setTextScale('lg')" title="Texto grande" style="font-size:1.02rem">A</button>
+          <button class="vp-btn" data-text-btn="xl" onclick="setTextScale('xl')" title="Texto más grande" style="font-size:1.16rem">A</button>
+        </div>
+      </div>
+      <div class="vp-row">
+        <span class="vp-lbl">Alto contraste</span>
+        <button class="vp-switch" id="contrastSwitch" role="switch" aria-checked="false" onclick="toggleContrast()"><span class="vp-knob"></span></button>
+      </div>
     </div>
   </div>
 </aside>
@@ -1358,6 +1421,41 @@ function setTheme(name){
   document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.themeBtn===name);});
   try{localStorage.setItem('ventel-theme',name);}catch(e){}
 }
+
+/* ──── Ajustes de vista (compartidos con Index vía localStorage) ──── */
+function setDensity(mode){
+  document.documentElement.setAttribute('data-density',mode);
+  try{localStorage.setItem('ventel-density',mode);}catch(e){}
+  syncViewPrefsUI();
+}
+function setTextScale(scale){
+  document.documentElement.setAttribute('data-textscale',scale);
+  try{localStorage.setItem('ventel-textscale',scale);}catch(e){}
+  syncViewPrefsUI();
+  if(window.ScrollTrigger) setTimeout(function(){ScrollTrigger.refresh();},60);
+}
+function toggleContrast(){
+  var on=document.documentElement.getAttribute('data-contrast')==='high';
+  if(on) document.documentElement.removeAttribute('data-contrast');
+  else document.documentElement.setAttribute('data-contrast','high');
+  try{localStorage.setItem('ventel-contrast',on?'0':'1');}catch(e){}
+  syncViewPrefsUI();
+}
+function toggleViewPrefs(force){
+  var box=document.getElementById('viewPrefs'),tog=document.getElementById('viewPrefsToggle');
+  if(!box||!tog)return;
+  var show=(force===undefined)?box.hasAttribute('hidden'):force;
+  if(show) box.removeAttribute('hidden'); else box.setAttribute('hidden','');
+  tog.setAttribute('aria-expanded',show?'true':'false');
+}
+function syncViewPrefsUI(){
+  var de=document.documentElement;
+  var den=de.getAttribute('data-density')||'cozy',txt=de.getAttribute('data-textscale')||'md',con=de.getAttribute('data-contrast')==='high';
+  document.querySelectorAll('[data-density-btn]').forEach(function(b){b.classList.toggle('active',b.dataset.densityBtn===den);});
+  document.querySelectorAll('[data-text-btn]').forEach(function(b){b.classList.toggle('active',b.dataset.textBtn===txt);});
+  var sw=document.getElementById('contrastSwitch');
+  if(sw) sw.setAttribute('aria-checked',con?'true':'false');
+}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('scrim').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('scrim').classList.remove('show');}
 function handleSideNav(e,link){
@@ -1369,7 +1467,7 @@ function handleSideNav(e,link){
   var href=link.getAttribute('href')||'';
   if(!href.startsWith('http')){e.preventDefault();var sec=link.dataset.sec||'';window.location.href='Index.html'+(sec?('#'+sec):'');}
 }
-document.addEventListener('DOMContentLoaded',function(){setTheme(document.documentElement.getAttribute('data-theme')||'aurora');});
+document.addEventListener('DOMContentLoaded',function(){setTheme(document.documentElement.getAttribute('data-theme')||'aurora');syncViewPrefsUI();});
 
 /* ──── Navegación por teclado en el buscador de promociones ──── */
 var pcIndex = -1;
