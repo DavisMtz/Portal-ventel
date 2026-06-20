@@ -126,7 +126,14 @@ a{text-decoration:none;color:inherit}
   display:flex;flex-direction:column;
   padding:1.15rem 1rem 1rem;gap:.3rem;z-index:50;
   box-shadow:14px 0 40px -24px rgba(36,28,34,.5);
+  overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
 }
+/* Scrollbar discreta dentro de la barra lateral */
+.sidebar::-webkit-scrollbar{width:8px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:99px}
+.sidebar::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.42)}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent}
 .side-brand{display:flex;align-items:center;gap:.7rem;padding:.4rem .55rem 1.05rem;border-bottom:1px solid var(--side-line);margin-bottom:.75rem}
 .side-brand img{height:26px;width:auto;filter:var(--side-logo-filter)}
 .side-brand .sb-divider{width:1px;height:22px;background:var(--side-line)}
@@ -6676,6 +6683,11 @@ function mockData(){
   })();
 
   /* ─────────── ESTADO DE CONEXIÓN ─────────── */
+  /* El banner se rige por el resultado REAL de la carga de datos (no por
+     navigator.onLine, que dentro del iframe de Apps Script no es fiable):
+     si una recarga fresca falla → "sin conexión"; si vuelve a entrar → se oculta. */
+  var _wasOffline = false;
+  function hideNet(){ var b = document.getElementById('netBanner'); if (b){ b.setAttribute('hidden',''); b.classList.remove('is-back'); } }
   function showNet(offline){
     var b = document.getElementById('netBanner');
     if (!b) return;
@@ -6688,12 +6700,26 @@ function mockData(){
       b.classList.add('is-back');
       document.getElementById('netBannerTxt').textContent = 'Conexión restablecida';
       b.removeAttribute('hidden');
-      setTimeout(function(){ b.setAttribute('hidden',''); b.classList.remove('is-back'); }, 2600);
-      if (typeof requestData === 'function') try{ requestData(false); }catch(e){}
+      setTimeout(hideNet, 2600);
     }
   }
-  window.addEventListener('offline', function(){ showNet(true); });
-  window.addEventListener('online',  function(){ showNet(false); });
+  // Engancha el resultado de la carga de datos del portal.
+  (function(){
+    var okFn = window.onToolsData, errFn = window.onToolsError;
+    if (typeof okFn === 'function') window.onToolsData = function(d, fromCache){
+      okFn.apply(this, arguments);
+      if (!fromCache && d && d.status !== 'error'){
+        if (_wasOffline){ _wasOffline = false; showNet(false); } else hideNet();
+      }
+    };
+    if (typeof errFn === 'function') window.onToolsError = function(){
+      errFn.apply(this, arguments);
+      _wasOffline = true; showNet(true);
+    };
+  })();
+  // Reacciona a los eventos del navegador (cuando sí son fiables).
+  window.addEventListener('offline', function(){ _wasOffline = true; showNet(true); });
+  window.addEventListener('online',  function(){ if (typeof requestData === 'function') try{ requestData(false); }catch(e){} });
 
   /* ─────────── ESCAPE GLOBAL para los nuevos overlays ─────────── */
   document.addEventListener('keydown', function(e){
@@ -6711,7 +6737,6 @@ function mockData(){
     syncViewPrefsUI();
     renderClips();
     renderCollections();
-    if (navigator && navigator.onLine === false) showNet(true);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
