@@ -3719,7 +3719,6 @@ table.ds-matrix{width:100%;border-collapse:separate;border-spacing:0;min-width:5
 
 <!-- ══ MODAL DE ANUNCIO (pop-up de bienvenida) ══ -->
 <div class="anc-modal-overlay" id="anuncioModal"></div>
-<div class="anc-modal-overlay" id="reloadModal"></div>
 
 <!-- ══ BOTTOM NAV (solo móvil) ══ -->
 <nav class="bottom-nav" aria-label="Navegación principal móvil">
@@ -4246,9 +4245,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // …y revalida contra Apps Script en segundo plano (lógica original intacta)
   requestData(false);
-
-  // Vigía de inactividad: avisa para recargar si hay una publicación más reciente.
-  startReloadWatch();
 });
 
 /* ──────── CARGA / ACTUALIZACIÓN DE DATOS ──────── */
@@ -4453,10 +4449,6 @@ function onToolsData(data, fromCache){
     avisos:         data.avisos         || [],
     anuncios:       anuncios
   };
-  // Referencia de "lo que el usuario ya tiene cargado": al primer dato fresco se
-  // guarda la firma de los anuncios. El vigía de inactividad la compara contra el
-  // servidor para avisar (modal) solo cuando hay una publicación más reciente.
-  if (!fromCache && ancBaselineSig === null) ancBaselineSig = anunciosSig(anuncios);
   setCount('herramientas', store.herramientas.length);
   setCount('presentaciones', store.presentaciones.length);
   setCount('paqueterias', store.paqueterias.length);
@@ -4690,94 +4682,6 @@ function closeAnuncioModal(id, permanente){
   }
   root.classList.remove('open');
   root.innerHTML = '';
-}
-
-/* ──────── AVISO DE RECARGA POR PUBLICACIÓN MÁS RECIENTE ──────── */
-/* Tras 10 min de INACTIVIDAD, el portal revisa en silencio si hay una publicación
-   más reciente que la que el usuario tiene cargada. Si la hay, muestra un modal que
-   permite "Recargar ahora" o "Seguir trabajando" (no recarga a la fuerza). El contador
-   se reinicia con cualquier interacción del usuario. */
-const RELOAD_IDLE_MS = 10 * 60 * 1000;   // 10 minutos sin actividad
-let ancBaselineSig   = null;             // firma de los anuncios que el usuario ya vio
-let pendingSig       = null;             // firma nueva detectada (a confirmar al cerrar)
-let lastActivity     = Date.now();
-let lastReloadCheck  = 0;
-let reloadModalOpen  = false;
-let reloadCheckInFlight = false;
-
-// Hash compacto y estable de la lista de anuncios: cambia si se publica, edita,
-// elimina o reordena cualquier anuncio visible.
-function hashStr(s){ let h = 5381; for (let i = 0; i < s.length; i++){ h = (((h << 5) + h) ^ s.charCodeAt(i)) >>> 0; } return h.toString(36); }
-function anunciosSig(list){ try { return hashStr(JSON.stringify(list || [])); } catch(e){ return 'n' + ((list || []).length); } }
-
-function markActivity(){ lastActivity = Date.now(); }
-
-function startReloadWatch(){
-  ['mousemove','mousedown','keydown','scroll','touchstart','click','wheel'].forEach(ev =>
-    window.addEventListener(ev, markActivity, { passive:true }));
-  setInterval(reloadWatchTick, 60000); // vigía: revisa el estado cada minuto
-}
-
-function reloadWatchTick(){
-  if (reloadModalOpen || reloadCheckInFlight) return;
-  const now = Date.now();
-  if (now - lastActivity < RELOAD_IDLE_MS) return;      // el usuario sigue activo
-  if (now - lastReloadCheck < RELOAD_IDLE_MS) return;   // ya se revisó hace poco
-  lastReloadCheck = now;
-  checkForNewerPublication();
-}
-
-function checkForNewerPublication(){
-  if (ancBaselineSig === null) return; // aún no hay referencia (no cargaron datos frescos)
-  if (!(typeof google !== 'undefined' && google.script && google.script.run)) return;
-  reloadCheckInFlight = true;
-  google.script.run
-    .withSuccessHandler(d => {
-      reloadCheckInFlight = false;
-      if (!d || d.status === 'error') return;
-      const anc = d.anuncios || (d.avisos || []).map((a, i) => ({
-        id:'avi-' + i, formato:'banner', tono:a.tipo || 'info', mensaje:a.mensaje || ''
-      }));
-      const sig = anunciosSig(anc);
-      if (sig !== ancBaselineSig) { pendingSig = sig; showReloadModal(); }
-    })
-    .withFailureHandler(() => { reloadCheckInFlight = false; })
-    .fetchToolsData();
-}
-
-function showReloadModal(){
-  const root = document.getElementById('reloadModal');
-  if (!root || reloadModalOpen) return;
-  reloadModalOpen = true;
-  root.innerHTML = `
-    <div class="anc-modal-card" role="dialog" aria-modal="true" aria-label="Nueva publicación">
-      <button class="anc-modal-close" id="reloadModalX" aria-label="Cerrar">${icon('close')}</button>
-      <div class="anc-modal-body">
-        <h3>${icon('megaphone')} Hay novedades en el portal</h3>
-        <p>Se publicó información más reciente desde que abriste el portal. Recarga la página para verla actualizada.</p>
-        <div class="anc-ctas">
-          <button class="anc-cta" id="reloadModalGo" type="button">${icon('refresh')} Recargar ahora</button>
-          <button class="anc-cta secundario" id="reloadModalStay" type="button">Seguir trabajando</button>
-        </div>
-      </div>
-    </div>`;
-  root.classList.add('open');
-  if (GS()) gsap.fromTo(root.querySelector('.anc-modal-card'),
-    { opacity:0, y:24, scale:.96 }, { opacity:1, y:0, scale:1, duration:.4, ease:'power3.out' });
-  document.getElementById('reloadModalGo').addEventListener('click', () => location.reload());
-  document.getElementById('reloadModalStay').addEventListener('click', dismissReloadModal);
-  document.getElementById('reloadModalX').addEventListener('click', dismissReloadModal);
-}
-
-// "Seguir trabajando": cierra el modal y adopta la firma nueva como referencia, para
-// no volver a avisar por el mismo cambio (sí avisará si después hay otra publicación).
-function dismissReloadModal(){
-  const root = document.getElementById('reloadModal');
-  if (root){ root.classList.remove('open'); root.innerHTML = ''; }
-  reloadModalOpen = false;
-  if (pendingSig){ ancBaselineSig = pendingSig; pendingSig = null; }
-  lastActivity = Date.now();
-  lastReloadCheck = Date.now();
 }
 
 function dismissAviso(btn){
