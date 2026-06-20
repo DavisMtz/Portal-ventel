@@ -3884,6 +3884,12 @@ html[data-density="compact"] .plt-card{ padding:.85rem .9rem; }
 html[data-density="compact"] .sec-head{ margin-bottom:.7rem; }
 html[data-density="compact"] .dash-label{ margin:1.1rem 0 .6rem; }
 html[data-density="compact"] .app-main main{ padding-top:.6rem; }
+html[data-density="compact"] .table-card{ padding:.55rem .65rem; }
+html[data-density="compact"] .data-table td,
+html[data-density="compact"] .data-table th{ padding-top:.5rem; padding-bottom:.5rem; }
+html[data-density="compact"] .filter-bar{ margin-bottom:.7rem; }
+html[data-density="compact"] .pres-card,
+html[data-density="compact"] .qa-card{ padding:.85rem .9rem; }
 
 /* ── Alto contraste (refuerza líneas y bordes, sin cambiar el tema) ── */
 html[data-contrast="high"]{
@@ -3939,6 +3945,8 @@ html[data-contrast="high"] :focus-visible{ outline:3px solid var(--brand); outli
 .collect-btn:hover{ color:var(--brand); border-color:var(--brand-soft); background:var(--brand-tint); }
 .collect-btn.saved{ color:#E0A100; border-color:#E7C200; background:rgba(231,194,0,.12); }
 .collect-btn .ic{ width:18px; height:18px; }
+.collect-btn.mini{ width:28px; height:28px; vertical-align:middle; }
+.collect-btn.mini .ic{ width:15px; height:15px; }
 
 /* ── Rejilla de colecciones en el dashboard ── */
 .col-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:.8rem; }
@@ -5198,7 +5206,7 @@ function renderPaq(items){
           ? `<a href="${esc(ligaStr)}" target="_blank" rel="noopener" class="link-sm">Abrir ${icon('external')}</a>`
           : (ligaStr ? `<span style="font-size:.85rem;">${esc(ligaStr)}</span>` : '—');
         return `<tr>
-          <td><span class="paq-name" style="--accent:${color}"><span class="paq-dot"></span>${esc(p.nombre)}</span></td>
+          <td><span class="paq-name" style="--accent:${color}"><span class="paq-dot"></span>${esc(p.nombre)}</span> ${collectBtn('paqueterias', p.nombre, 'mini')}</td>
           <td>${ligaHtml}</td>
           <td>${p.soms ? `<span class="soms-tag">${esc(String(p.soms))}</span>` : '<span style="color:var(--ink-soft)">—</span>'}</td>
         </tr>`;
@@ -6619,9 +6627,9 @@ function mockData(){
   function collectionsHas(type, name){
     return collections.some(function(c){ return c.items.some(function(it){ return it.type === type && it.name === name; }); });
   }
-  window.collectBtn = function(type, name){
+  window.collectBtn = function(type, name, cls){
     var saved = collectionsHas(type, name);
-    return '<button class="collect-btn'+(saved?' saved':'')+'" data-ctype="'+esc(type)+'" data-cname="'+esc(name)+'" '
+    return '<button class="collect-btn'+(saved?' saved':'')+(cls?' '+cls:'')+'" data-ctype="'+esc(type)+'" data-cname="'+esc(name)+'" '
       + 'onclick="openColPick(this)" title="'+(saved?'En una colección':'Guardar en una colección')+'" aria-label="Guardar en colección">'
       + icon(saved ? 'starfill' : 'star') + '</button>';
   };
@@ -6637,7 +6645,7 @@ function mockData(){
   }
 
   // Resolver de enlace/ícono de cada elemento guardado
-  var LINK_FIELD = { herramientas:'enlace', formatos:'liga', presentaciones:'liga', pdePago:'liga' };
+  var LINK_FIELD = { herramientas:'enlace', formatos:'liga', presentaciones:'liga', pdePago:'liga', paqueterias:'liga' };
   function colItemLink(type, name){
     var arr = (window.store && store[type]) || [];
     var nn = norm(name);
@@ -6661,6 +6669,7 @@ function mockData(){
     pickCtx = { type: btn.dataset.ctype, name: btn.dataset.cname };
     renderColPick();
     openOverlay(document.getElementById('colPick'), document.getElementById('colPickCard'), '.colpick-opt,#colNewName');
+    if (typeof GS === 'function' && GS()) gsap.fromTo('#colPickCard .colpick-opt', { opacity:0, x:-8 }, { opacity:1, x:0, duration:.28, stagger:.04, ease:'power2.out', clearProps:'transform' });
   };
   window.closeColPick = function(){
     closeOverlay(document.getElementById('colPick'));
@@ -6773,6 +6782,7 @@ function mockData(){
       });
     });
     openOverlay(document.getElementById('colModal'), document.getElementById('colCard'), '.colm-x');
+    if (typeof GS === 'function' && GS()) gsap.fromTo('#colCard .colm-item', { opacity:0, x:-8 }, { opacity:1, x:0, duration:.3, stagger:.04, ease:'power2.out', clearProps:'transform' });
   };
   window.closeColModal = function(){
     closeOverlay(document.getElementById('colModal'));
